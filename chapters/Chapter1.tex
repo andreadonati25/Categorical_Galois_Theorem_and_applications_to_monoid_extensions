@@ -1,0 +1,677 @@
+\chapter{The Categorical Galois Theorem}
+\label{cap:categorical_galois}
+
+In this chapter, we will prove the Categorical Galois Theorem, which forms the central focus of this thesis. This will lead to several applications discussed in later chapters, ranging from classical results to a Galois theory for monoids. Our approach is primarily based on the exposition presented in \textit{Galois Theories} by Borceux and Janelidze \cite{borceux2001galois}, which serves as a foundational reference for both the concepts and the proofs we present. Before diving into the proof, we need to establish some foundational tools, which we will recall and define in the first two sections.
+
+We begin in Section \ref{sec:preliminary_adjunctions} with two key adjunctions that will play a crucial role throughout the main part of the theorem. In Section \ref{sec:groupoids_presheaves}, we will introduce the concepts of internal categories, groupoids and presheaves. Finally, in Section \ref{sec:galois_theorem}, we will present and prove the theorem, relying on the tools developed in the previous sections.
+
+\section{Preliminary adjunctions}
+\label{sec:preliminary_adjunctions}
+%% INTRODUZIONE %%
+In the study of descent, adjunctions are useful because they formalize the interaction between categories of objects defined over different bases. To prepare for the categorical Galois theorem, we first examine two key adjunctions: $\Sigma_f\dashv f^*$, which describes the relationship between pullback and composition along a morphism, and $F_A\dashv G_A$, which arises naturally from a given adjunction $F\dashv G$. These adjunctions will provide the tools necessary for the theorem. We will not go into all the details, but enough to understand the main ideas we are working with.
+
+We begin by studying the first one: $\Sigma_f\dashv f^*$ for a morphism $f:X\to Y$ in a category $\mathcal{C}$. This connects the categories $\mathcal{C}/X$ and $\mathcal{C}/Y$ capturing how objects over $X$ and $Y$ relate through the morphism $f$.
+
+%% f^* %%
+Let $f:X\to Y$ be a morphism in a category $\mathcal{C}$ with pullbacks. We define the "pullback along $f$" functor
+\[ f^*:\mathcal{C}/Y\longrightarrow \mathcal{C}/X\text{, }(B,b)\to (X\times_YB, p_X) \]
+where the image of an object $(B,b)$ is given by a chosen pullback:
+\begin{center}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \pullback X\times_YB \arrow[rr, "p_B"] \arrow[dd, "p_X"'] & & B \arrow[dd, "b"] \\ \\ X \arrow[rr, "f"'] & & Y
+    \end{tikzcd}
+\end{center}
+
+\begin{oss*}
+    Note that in defining the functor $f^*$, we have made a choice for a specific pullback for every $(B,b)$ in $\mathcal{C}/Y$.
+\end{oss*}
+
+The action of $f^*$ on morphisms is defined as follows: given an arrow $g:B\to C$ in $\mathcal{C}/Y$, $f^*(g)$ is of the form $1_X\times g$, as shown in the diagram below.
+\begin{center}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \pullback X\times_YC \arrow[dddd] \arrow[rrrr] \arrow[rrdd, "1_X\times g", shift left=1.5] & & & & C \arrow[dd, "g"] \\ & & & & \\ & & \pullback X\times_YB \arrow[rr] \arrow[dd] & & B \arrow[dd, "b"] \\ & & & & \\ X \arrow[rr, "1_X"'] & & X \arrow[rr, "f"'] & & Y                
+    \end{tikzcd}
+\end{center}
+
+We now wish to study the monadicity of this functor.
+\begin{proposition}
+\label{prop:AdjointPullback}
+    Let $\mathcal{C}$ be a category with pullbacks and $f:X\to Y$ a morphism in $\mathcal{C}$. The "composition with $f$" functor
+    \[ \Sigma_f:\mathcal{C}/X\longrightarrow \mathcal{C}/Y\text{, }(A, a)\to (A, f\circ a) \]
+    is the left adjoint of $f^*$.
+    \begin{proof}
+        For every object $(A,a)$ in $\mathcal{C}/X$ and $(B,b)$ in $\mathcal{C}/Y$ we aim to prove that there is a natural bijection
+        \[Hom_{\mathcal{C}/Y}(\Sigma_f(A,a), (B,b))\cong Hom_{\mathcal{C}/X}((A,a), f^*(B,b)).\]
+        For every $h:(A,f\circ a)\to (B,b)$ in $\mathcal{C}/Y$ and $g:(A,a)\to (X\times_YB,p_X)$ in $\mathcal{C}/X$ we define two maps between the hom-sets such that $h\mapsto\limitmorph{a}{h}$ and $g\mapsto p_B\circ g$, as described in the diagrams below.
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                A \arrow[rrdd, "\limitmorph{a}{h}"' {yshift=-8pt, xshift=18pt}, dashed] \arrow[rrdddd, "a"'] \arrow[rrrrdd, "h"] & & & & & A \arrow[rrdd, "g"'] \arrow[rrdddd, "a"'] \arrow[rrrrdd, "p_B\circ g", dashed] \\ \\ & & \pullback X\times_YB \arrow[dd, "p_X"'] \arrow[rr, "p_B"] & & B \arrow[dd, "b"] & & & \pullback X\times_YB \arrow[dd, "p_X"'] \arrow[rr, "p_B"] & & B \arrow[dd, "b"] \\ \\ & & X \arrow[rr, "f"'] & & Y & & & X \arrow[rr, "f"'] & & Y
+            \end{tikzcd}
+        \end{center}
+        From the universal property of the pullback, we have that $p_B\circ\limitmorph{a}{h}=h$. Moreover $\limitmorph{a}{p_B\circ g}$ is the unique morphism for which the triangles commutes in the second diagram. Since $g$ satisfies this property, we conclude that $g = \limitmorph{a}{p_B\circ g}$. Therefore, we have shown that the two maps are inverses of each other.
+    \end{proof}
+\end{proposition}
+
+%% UNITA E COUNITA %%
+In this setting, the unit and counit of the adjunction are given by $\eta_{(A,a)} = \limitmorph{a}{1_A}$ and $\varepsilon_{(B,b)}=p_B$.
+
+%% MONADE %%
+The next step is to describe the actual form of the monad and what it means to be monadic. We have the monad $\mathbb{T} = (T, \eta, \mu)$ with the composite functor
+\[ T:= f^*\circ\Sigma_f: \mathcal{C}/X\longrightarrow\mathcal{C}/X \]
+with the map over $X$ that is $p_1\circ (1_X\times a)$ as shown from the two pullback squares below.
+\begin{center}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \pullback X\times_Y A \arrow[rr, "p_A"] \arrow[dd, "1_X\times a"'] & & A \arrow[dd, "a"] \\ \\ \pullback X\times_Y X \arrow[rr, "p_2"] \arrow[dd, "p_1"'] & & X \arrow[dd, "f"] \\ \\ X \arrow[rr, "f"'] & & Y
+    \end{tikzcd}
+\end{center}
+We deduce also that the unit and the multiplication of the monad are
+\[ \eta_{(A,a)}=\limitmorph{a}{1_A}: A\longrightarrow X\times_YA \]
+and
+\[ \mu_{(A,a)}=1_X\times p_A: X\times_YX\times_YA \longrightarrow X\times_YA. \]
+
+Let us describe now the comparison functor associated with this monad:
+\[ K^T:\mathcal{C}/Y\longrightarrow {\mathcal{C}/X}^T. \]
+We deduce that it sends an object $(B,b)$ of $\mathcal{C}/Y$ into algebras of the form $(X\times_YB,p_X)$ with a structure morphism defined as
+\[f^*(\varepsilon_{(B,b)}) = 1_X\times p_B:X\times_YX\times_YB\longrightarrow X\times_YB\]
+
+%% EFFECTIVE DESCENT %%
+\begin{definition}
+    Let $\mathcal{C}$ a category with pullbacks. A morphism $f:X\to Y$ in $\mathcal{C}$ is an effective descent morphism when the functor "pullback along $f$"
+    \[ f^*:\mathcal{C}/Y\longrightarrow\mathcal{C}/X \]
+    is monadic.
+\end{definition}
+
+The monadicity of $f^*$ implies that $K^T$ is an equivalence of categories. This means that every $\mathbb{T}$-algebra in $\mathcal{C}/X$ corresponds to an object in $\mathcal{C}/Y$. In other words, the local data over $X$, governed by the $\mathbb{T}$-structure, can be reconstructed as global objects over $Y$.
+
+Concretely, this property ensures the following: for every $(A,a)$ in $\mathcal{C}/X$ equipped with a structure morphism $v:X\times_YA\to A$, there exists an object $(B,b)$ in $\mathcal{C}/Y$ such that the $\mathbb{T}$-algebra $(X\times_YB, 1_X\times p_B)$ is isomorphic to $(A,v)$. This is why such morphisms are called of effective descent: they establish a correspondence between local and global perspectives, generalizing the process of transitioning between different bases.
+
+
+%% PASSAGGIO A F_A G_A %%
+Now, let us start the second part of this section and move to the second adjunction, $F_A\dashv G_A$, which arises naturally from an adjunction $F\dashv G$.
+
+%% DEFINIZIONE AGGIUNZIONE %%
+\begin{lemma}
+\label{lem:AdjointSpecialization}
+    Consider an adjunction
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \mathcal{A} \arrow[r, bend left, "F", ""{name=F}] & \mathcal{B} \arrow[l, bend left, "G", ""{name=G}] \arrow[phantom, from=F, to=G, "\dashv" rotate=-90]
+    \end{tikzcd}. Assume that $\mathcal{A}$ has pullbacks. For every $A\in Ob(\mathcal{A})$ the functor    
+    \begin{equation*}
+        F_A:\mathcal{A}/A \longrightarrow \mathcal{B}/F(A)\text{, } (X,\alpha)\to (F(X), F(\alpha))
+    \end{equation*}
+    has a right adjoint functor
+    \begin{equation*}
+        G_A:\mathcal{B}/F(A) \longrightarrow \mathcal{A}/A\text{, } (Y,\beta)\to (Z, \gamma)
+    \end{equation*}
+    where $(Z,\gamma)$ is defined by a chosen pullback
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \pullback Z \arrow[dd, "\gamma"'] \arrow[rr, "\delta"] & & G(Y) \arrow[dd, "G(\beta)"] \\ \\ A \arrow[rr, "\eta_A"'] & & GF(A)
+        \end{tikzcd}
+    \end{center}
+    in which $\eta$ is the unit of the adjunction $F\dashv G$.
+
+    %% G_A come \eta_A^* \circ G %%
+    \begin{oss*}
+        Observe that the functor $G_A$ is related to the pullback along the unit $\eta_A$ of the adjunction $F\dashv G$. Specifically, $G_A$ is the composition of the restriction of $G$ over $\mathcal{B}/F(A)$ and the functor ${\eta_A}^*:\mathcal{A}/GF(A)\longrightarrow \mathcal{A}/A$.
+    \end{oss*}
+
+    \begin{proof} 
+        For every object $(X,\alpha)$ in $\mathcal{A}/A$ and $(Y,\beta)$ in $\mathcal{B}/F(A)$, we aim to prove that there is a natural bijection
+        \[ Hom_{\mathcal{B}/F(A)}(F_A(X,\alpha),(Y,\beta)) \cong Hom_{\mathcal{A}/A}((X,\alpha), G_A(Y,\beta)). \]
+        From the original adjunction $F\dashv G$, we have a natural bijection
+        \[ Hom_{\mathcal{B}/F(A)}(F_A(X,\alpha),(Y,\beta)) \cong Hom_{\mathcal{A}/GF(A)}((X,\eta_A\circ\alpha), (G(Y),G(\beta))). \]
+        It is obvious now how we can use the previous result: if $\eta$ is the unit of $F\dashv G$, from Proposition \ref{prop:AdjointPullback}, the adjunction $\Sigma_{\eta_A}\dashv{\eta_A}^*$ ensures that
+        \[ Hom_{\mathcal{A}/GF(A)}((X,\eta_A\circ\alpha), (G(Y),G(\beta))) \cong Hom_{\mathcal{A}/A}((X,\alpha), {\eta_A}^*(G(Y),G(\beta))). \]
+        With the observation made before we have that ${\eta_A}^*G(Y,\beta) = G_A(Y,\beta)$ establishing the desired isomorphism.
+    \end{proof}
+\end{lemma}
+
+
+\section{Internal groupoids and internal presheaves}
+\label{sec:groupoids_presheaves}
+Let us introduce now the notion of internal category and internal groupoid in a category with pullbacks. Before we define it, let us first introduce this topic informally. 
+
+Let $S_0$ and $S_1$ be objects in a category with pullbacks. If we think of $S_0$ as a class of objects and $S_1$ as a class of arrows, if they also have a "domain" and a "codomain" arrows and the "identity" arrow along with some properties expressed as commutativity of diagrams, we can in fact consider these data as a category whose $Ob$ and $Arr$ classes are objects of the original category. The classic example will be any small category that could be seen as an internal category in the category $\textbf{Set}$ of sets.
+
+The concept of internal structure is the same if we consider a groupoid instead of just a category, so that an internal groupoid will be as a groupoid whose classes $Ob$ and $Arr$ are objects of any category with pullbacks. 
+
+Let us now state the formal definition of an internal groupoid. For more clarity, we will describe step by step the interpretation of every axiom that explains how it actually defines a groupoid.
+
+%% GRUPPOIDE INTERNO %%
+\begin{definition}
+\label{def:InternalGroupoid}
+    Let $\mathcal{A}$ be a category with pullbacks. An internal groupoid in $\mathcal{A}$ consists in a diagram
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            %% CON f_0 e f_1
+            %S_2 \arrow[rrr, "f_0", bend left, shift left=2] \arrow[rrr, "f_1"', bend right, shift right=2] \arrow[rrr, "m"] & & & S_1 \arrow[rrr, "d_1"', bend right, shift right=2] \arrow[rrr, "d_0", bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] & & & S_0 \arrow[lll, "n"']
+            
+            %% SENZA f_0 e f_1
+            S_1\times_{S_0}S_1 \arrow[rr, "m"] & &  S_1 \arrow[rrr, "d_1"', bend right, shift right=2] \arrow[rrr, "d_0", bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] & & & S_0 \arrow[lll, "n"']
+        \end{tikzcd}
+    \end{center}
+    with $S_0$ and $S_1$ objects of $\mathcal{A}$ that represent (respectively) the objects and the arrows of the internal category, $d_0$ and $d_1$ represent (respectively) the domain and codomain of an arrow, $n$ the identities over the objects, $m$ the composition of two arrows and $\tau$ that represents the inversion of an arrow. We also require the following conditions:
+    \begin{enumerate}[\bfseries (G1)]
+    
+        %%%%%% G1 %%%%%%
+        \item $S_1\times_{S_0}S_1$ is defined by a pullback
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback S_1\times_{S_0}S_1 \arrow[dd, "p_1"'] \arrow[rr, "p_0"] & & S_1 \arrow[dd, "d_1"] \\ \\ S_1 \arrow[rr, "d_0"'] & & S_0
+            \end{tikzcd}
+        \end{center}
+        so that $S_1\times_{S_0}S_1$ is defined to represent composable pairs of arrows, where the codomain of the first one is equal to the domain of the second one.
+        
+        %%%%%% G2 %%%%%%
+        \item The triangles
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                S_0 \arrow[rrdd, "1_{S_0}"', Rightarrow, no head] \arrow[rr, "n"] & & S_1 \arrow[dd, "d_0"] & & S_0 \arrow[rrdd, "1_{S_0}"', Rightarrow, no head] \arrow[rr, "n"] & & S_1 \arrow[dd, "d_1"] \\ \\ & & S_0 & & & & S_0
+            \end{tikzcd}
+        \end{center} are commutative to define the identity morphism $n$ so that the domain and codomain of the identity over an object are the object itself.
+        
+        %%%%%% G3 %%%%%%
+        \item The squares
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                S_1\times_{S_0}S_1 \arrow[dd, "p_0"'] \arrow[rr, "m"] & & S_1 \arrow[dd, "d_0"] & &  S_1\times_{S_0}S_1 \arrow[rr, "m"] \arrow[dd, "p_1"'] & & S_1 \arrow[dd, "d_1"] \\ \\ S_1 \arrow[rr, "d_0"'] & & S_0 & & S_1 \arrow[rr, "d_1"'] & & S_0
+            \end{tikzcd}
+        \end{center} are commutative to define the composition morphism $m$ so that the domain of the composition is indeed the domain of the first component and dually the codomain is the one of the second component.
+
+        %%%%%% G4 %%%%%%
+        \item The triangles
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+               S_1 \arrow[rrdd, "1_{S_1}"', Rightarrow, no head] \arrow[rr, "\limitmorph{n\circ d_1}{1_{S_1}}"] & & S_1\times_{S_0}S_1 \arrow[dd, "m"] & & S_1 \arrow[rrdd, "1_{S_1}"', Rightarrow, no head] \arrow[rr, " \limitmorph{1_{S_1}}{n\circ d_0}"] & & S_1\times_{S_0}S_1 \arrow[dd, "m"] \\ \\ & & S_1 & & & & S_1
+            \end{tikzcd} 
+        \end{center} are commutative. With this we ensure that the identity is the unit of the composition.
+
+        %%%%%% G5 %%%%%%
+        \item Considering the pullback in the first diagram
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback S_3 \arrow[rr, "\pi_0"] \arrow[dd, "\pi_1"'] & & S_1\times_{S_0}S_1 \arrow[dd, "p_1"] & & S_3 \arrow[dd, "\limitmorph{m\circ \pi_0}{p_1\circ \pi_1}"'] \arrow[rr, "\limitmorph{p_0\circ \pi_0}{m\circ \pi_1}"] & & S_1\times_{S_0}S_1 \arrow[dd, "m"] \\ \\ S_1\times_{S_0}S_1 \arrow[rr, "p_0"'] & & S_1 & & S_1\times_{S_0}S_1 \arrow[rr, "m"'] & & S_1
+            \end{tikzcd}
+        \end{center} the second square is commutative. This axiom introduces $S_3$, which can be interpreted as pairs of pairs of composable arrows where the second and third arrows coincide ($p_1\circ \pi_0 = p_0\circ \pi_1$). Consequently, these pairs can also be viewed as triplets of composable arrows, with the commutativity of the second square requiring the associativity of the composition.
+
+        %%%%%% G6 %%%%%%
+        \item The triangles
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                S_1 \arrow[rrdd, "d_1"'] \arrow[rr, "\tau"] & & S_1 \arrow[dd, "d_0"] & & S_1 \arrow[rr, "\tau"] \arrow[rrdd, "d_0"'] & & S_1 \arrow[dd, "d_1"] \\ \\ & & S_0 & & & & S_0                 
+            \end{tikzcd}
+        \end{center} are commutative to define the inverse morphism $\tau$ so that the inverse of an arrow has switched domain and codomain.
+
+        %%%%%% G7 %%%%%%
+        \item The squares
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                S_1 \arrow[rr, "\limitmorph{1_{S_1}}{\tau}"] \arrow[dd, "d_1"'] & & S_1\times_{S_0}S_1 \arrow[dd, "m"] & & S_1 \arrow[rr, "\limitmorph{\tau}{1_{S_1}}"] \arrow[dd, "d_0"'] & & S_1\times_{S_0}S_1 \arrow[dd, "m"] \\ \\ S_0 \arrow[rr, "n"'] & & S_1 & & S_0 \arrow[rr, "n"'] & & S_1
+            \end{tikzcd}
+        \end{center} are commutative to ensure that the inverse of an arrow is indeed the one that composed with the original one (in both ways) gives the identity over the domain or over the codomain.
+    \end{enumerate}
+\end{definition}
+\begin{oss*}
+    Note that we require $\tau$, \textbf{(G6)} and \textbf{(G7)} only to define an internal groupoid. Without $\tau$ and these two axioms we have just the definition of an internal category.
+\end{oss*}
+
+%% CATEGORIA PICCOLA è INTERNA A SET %%
+\begin{example}
+\label{ex:InternalCategorySets}
+    Let us consider a small category $\mathcal{S}$. We have that $Ob(\mathcal{S})$ and $Arr(\mathcal{S})$ are sets. It is quite intuitive that we can see $\mathcal{S}$ as an internal category in $\textbf{Set}$. 
+
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            {\{(g,f)\in Arr(\mathcal{S})^2 : dom(g) = cod(f)\}} \arrow[rr, "\_\circ \_"] &  & Arr(\mathcal{S}) \arrow[rr, "cod(\_)"', bend right] \arrow[rr, "dom(\_)", bend left] &  & Ob(\mathcal{S}) \arrow[ll, "1_{\_}"']
+        \end{tikzcd}
+    \end{center}
+
+    Of course it satisfies all the axioms \textbf{(G1)} - \textbf{(G5)} thanks to the definition of $\mathcal{S}$ as a category:
+    \begin{enumerate}[\bfseries (G1)]
+        \item The set of composable arrows $S_2 := \{(g,f)\in Arr(\mathcal{S})^2 : dom(g) = cod(f)\}$ is the pullback in $\textbf{Set}$ of $dom(\_)$ and $cod(\_)$.
+        \item $dom(1_A) = A$ and $cod(1_A) = A$ for all $A \in Ob(\mathcal{S})$.
+        \item $dom(g\circ f) = dom(f)$ and $cod(g\circ f) = cod(g)$ for all composable pair $(f,g)$.
+        \item $1_B \circ f = f$ and $f \circ 1_A = f$ for all $f:A\to B$ in $Arr(\mathcal{S}).$
+        \item The pullback $S_3$ is $\{ ((h,g), (g,f))\in S_2^2\}$ or the set of composable triplets and then we have the requirement from the second diagram: the associativity $h \circ (g \circ f) = (h \circ g) \circ f $.
+    \end{enumerate}
+
+    If then $\mathcal{S}$ is a groupoid, i.e. all morphisms are isomorphisms, then for each $f\in Arr(\mathcal{S})$ we have $f^{-1} \in Arr(\mathcal{S})$ such that $dom(f^{-1}) = cod(f)$ and $cod(f^{-1}) = dom(f)$, as \textbf{(G6)} states, and $f\circ f^{-1} = 1_{cod(f)}$ and $f\circ f^{-1} = 1_{cod(f)}$ as \textbf{(G7)} requires.
+\end{example}
+
+%% PREFASCI INTERNI %%
+\begin{definition}
+\label{def:InternalPresheaves}
+    Let $\mathcal{A}$ be a category with pullbacks and $\mathcal{S}$ an internal category in $\mathcal{A}$. An internal covariant presheaf on the internal category $\mathcal{S}$ is a triple $(P,p,\pi)$ where
+    \begin{enumerate}[(i)]
+        \item $P$ is an object of $\mathcal{A}$
+        \item $p:P\longrightarrow S_0$ is a morphism in $\mathcal{A}$
+        \item $\pi:S_1\times_{S_0}P\longrightarrow P$ is a morphism in $\mathcal{A}$ such that the following diagram commutes:
+        \begin{equation}
+        \label{diag:InternalPresheaves}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                S_1\times_{S_0}S_1\times_{S_0}P \arrow[dd, "m\times 1_P"'] \arrow[rr, "1_{S_1}\times \pi"] & & S_1\times_{S_0}P \arrow[dd, "\pi"] & & P \arrow[ll, "\limitmorph{n\circ p}{1_P}"'] \\ & & & & \\ S_1\times_{S_0}P \arrow[rr, "\pi"] \arrow[dd, "\alpha_1"'] & & P \arrow[dd, "p"] \arrow[rruu, Rightarrow, no head] & & \\ & & & & \\ S_1 \arrow[rr, "d_1"'] & & S_0
+            \end{tikzcd}
+        \end{equation}
+        where both $S_1\times_{S_0}P$ are defined by the pullback of $p$ along $d_0$, and $S_1\times_{S_0}S_1\times_{S_0}P$ is defined by the pullback of $p$ along $d_0\circ m$.
+    \end{enumerate}
+\end{definition}
+
+%% PREFASCI INTERNI IN SET %%
+\begin{example}
+\label{ex:InternalPresheavesSets}
+    To get an intuition of this notion, let us describe the setting with $\mathcal{A} = \textbf{Set}$ and $\mathcal{S}$ a small category. In Example \ref{ex:InternalCategorySets}, we have seen $\mathcal{S}$ as an internal category in $\textbf{Set}$. We have $S_0 := Ob(\mathcal{S})$ and $S_1:=Arr(\mathcal{S})$ and $m$ and $n$, respectively, the composition and the identity map in $\mathcal{S}$. We wish to show how Definition \ref{def:InternalPresheaves} gives us a classical covariant presheaf on the small category $\mathcal{S}$. 
+    
+    We wish to construct a functor $\mathcal{P}:\mathcal{S}\longrightarrow Set$ from an internal covariant presheaf $(P,p,\pi)$. Fixing the map $p:P\to S_0$ is equivalent to defining the family $(p^{-1}(s))_{s\in S_0}$, so that we can define $\mathcal{P}(s):=p^{-1}(s)$.
+    In this setting, one has
+    \[ S_1\times_{S_0}P = \{(f,a)\in S_1\times P:p(a)=dom(f)\}=\{(f,a)\in S_1\times P:a\in p^{-1}(dom(f))\}. \]
+    Fixing the map $\pi:S_1\times_{S_0}P\to P$ is equivalent to defining, for each pair $(f,a)$ such that $a\in\mathcal{P}(dom(f))$, an element $\pi(f,a) \in P$. The commutativity of the bottom square in Diagram (\ref{diag:InternalPresheaves}) shows that $p(\pi(f,a))=cod(f)$, so that $\pi(f,a)\in p^{-1}(cod(f))=\mathcal{P}(cod(f))$.
+    Thus, we can define a map $\mathcal{P}(f):\mathcal{P}(dom(f))\to\mathcal{P}(cod(f))$ such that $\mathcal{P}(f)(a) = \pi(f,a)$.
+    It remains to prove the axioms for the compatibility of $\mathcal{P}$ with compositions and identities.
+    The commutativity of the top square in Diagram (\ref{diag:InternalPresheaves}) gives us the composition axiom:
+    \[ \mathcal{P}(m(g,f))(a) = \pi(m(g,f),a) = \pi(g,\pi(f,a)) = \mathcal{P}(g)(\mathcal{P}(f)(a)). \]
+    Moreover, for every $s\in S_0$ and $a\in p^{-1}(s)=\mathcal{P}(s)$, one states the identity axiom from the commutativity of the triangle in Diagram (\ref{diag:InternalPresheaves}):
+    \[ \mathcal{P}(1_s)(a) = \pi(1_s,a) = a = 1_{\mathcal{P}(s)}(a). \]
+\end{example}
+
+%% TRASFORMAZIONE NATURALE %%
+\begin{definition}
+\label{def:InternalNaturalTransformation}
+    Let $\mathcal{A}$ be a category with pullbacks and $\mathcal{S}$ an internal category in $\mathcal{A}$. Given two internal covariant presheaves $(P,p,\pi)$ and $(P',p',\pi')$ on $\mathcal{S}$, an internal natural transformation between them
+    \[ \gamma:(P,p,\pi)\Rightarrow(P',p',\pi') \]
+    is a morphism $\gamma:P\longrightarrow P'$ such that the following diagram commutes:
+    \begin{equation}
+    \label{diag:InternalTransformation}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            S_1\times_{S_0}P \arrow[rr, "\pi"] \arrow[dd, "1_{S_1}\times \gamma"'] & & P \arrow[rrdd, "p"] \arrow[dd, "\gamma"] \\ \\ S_1\times_{S_0}P' \arrow[rr, "\pi'"'] & & P' \arrow[rr, "p'"'] & & S_0
+        \end{tikzcd}
+    \end{equation}
+\end{definition}
+
+%% TRASFORMAZIONI NATURALI IN SET %%
+\begin{example}
+    Let us continue our example with $\mathcal{S}$ a small category seen as an internal category in $\textbf{Set}$. An internal natural transformation between two internal covariant presheaves is indeed a natural transformation between the functors defined in Example \ref{ex:InternalPresheavesSets}.
+
+    Note that for every $s\in S_0$, a map $\gamma:P\longrightarrow P'$ such that $p = p'\circ\gamma$ splits into a family of maps $\gamma_s:p^{-1}(s)\longrightarrow p'^{-1}(s)$. Moreover, the commutativity of the square in Diagram (\ref{diag:InternalTransformation}) gives us the naturality axiom: for every $f:s\to r$ and every $a\in \mathcal{P}(s)=p^{-1}(s)$, one has:
+    \[ \gamma_r(\mathcal{P}(f)(a)) = \gamma(\pi(f,a)) = \pi'(f,\gamma(a)) = \mathcal{P}'(f)(\gamma_s(a)). \]
+\end{example}
+
+We will denote by $\mathcal{A}^{\mathcal{S}}$ the category of internal covariant presheaves on $\mathcal{S}$ with internal natural transformations as arrows.
+%% MONADICITA FUNTORE PREFASCI SLICE %%
+\begin{proposition}
+\label{prop:PresheavesFunctorMonadic}
+    Let $\mathcal{A}$ be a category with pullbacks and $\mathcal{S}$ an internal category in $\mathcal{A}$. The forgetful functor
+    \[{\mathcal{A}}^{\mathcal{S}}\longrightarrow \mathcal{A}/S_0\text{, }(P,p,\pi)\mapsto (P,p)\]
+    is monadic. Moreover, the functorial part of the monad is the composite
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \mathcal{A}/S_0 \arrow[rr, "{d_0}^*"] & & \mathcal{A}/S_1 \arrow[rr, "\Sigma_{d_1}"] & & \mathcal{A}/S_0
+        \end{tikzcd}
+    \end{center}
+    where ${d_0}^*$ is the "pullback along $d_0$" functor and $\Sigma_{d_1}$ is the "composition with $d_1$" functor.
+    \begin{proof}
+        Let us call $T$ the composite $\Sigma_{d_1}\circ {d_0}^*$ and show that it is part of a monad on $\mathcal{A}/S_0$.
+        For every $(A,a)$ in $\mathcal{A}/S_0$, define $\eta_{(A,a)}:=\limitmorph{n\circ a}{1_A}$ and $\mu_{(A,a)}:=m\times 1_A$. One has that the axioms for $(T,\eta, \mu)$ to be a monad on $\mathcal{A}/S_0$ arise from the unit axiom of $n$ and the associativity of $m$ (axioms \textbf{(G4)} and \textbf{(G5)} of Definition \ref{def:InternalGroupoid}).
+
+        An algebra for this monad is then a pair $(A,a)$ in $\mathcal{A}/S_0$ along with a structure morphism $v:(S_1\times_{S_0}A,d_1\circ p_{S_1})\longrightarrow (A,a)$ such that the following diagram commutes:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                S_1\times_{S_0}S_1\times_{S_0}A \arrow[dd, "m\times 1_A"'] \arrow[rr, "1_{S_1}\times v"] & & S_1\times_{S_0}A \arrow[dd, "v"] & & A \arrow[ll, "\limitmorph{n\circ a}{1_A}"'] \\ & & & & \\ S_1\times_{S_0}A \arrow[rr, "v"] \arrow[dd, "p_{S_1}"'] & & A \arrow[dd, "a"] \arrow[rruu, Rightarrow, no head] & & \\ & & & & \\ S_1 \arrow[rr, "d_1"'] & & S_0
+            \end{tikzcd}
+        \end{center}
+        It is obvious that the requirements for a triple $(A,a,v)$ to be an algebra for the monad $(T,\eta,\mu)$ coincide with the requirements of Definition \ref{def:InternalPresheaves} for $(A,a,v)$ to be an internal covariant presheaf on $\mathcal{S}$.
+    \end{proof}
+\end{proposition}
+
+Let us now introduce a specific kind of internal groupoid in a category with pullbacks that will be the one we will consider in the next section.
+%% KERNEL PAIR COME GRUPPOIDE INTERNO E REL EQUIVALENZA %%
+\begin{example}
+\label{ex:KernelPairInternalGroupoid}
+    Let $\mathcal{A}$ be a category with pullbacks and $\sigma:S\to R$ a morphism in $\mathcal{A}$.
+
+    Consider the kernel pair
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        S\times_RS \arrow[rr, "p_1", shift left=1.5] \arrow[rr, "p_2"', shift right=1.5] & & S \arrow[rr, "\sigma"] & & R
+    \end{tikzcd} of $\sigma$. From the universal property of the pullback, one has the diagonal map $\Delta:=\limitmorph{1_S}{1_S}:S\to S\times_RS$ and the twisting isomorphism $\tau:=\limitmorph{p_2}{p_1}:S\times_RS\to S\times_RS$. Moreover, consider the pullback
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \pullback (S\times_RS)\times_S (S\times_RS) \arrow[rr, "p_3"] \arrow[dd, "p_4"'] & & S\times_RS \arrow[dd, "p_2"] \\ \\ S\times_RS \arrow[rr, "p_1"'] & & S
+        \end{tikzcd}
+    \end{center}
+    and denote $\pi_1:=p_1\circ p_3$ and $\pi_4:=p_2\circ p_4$. One has the unique morphism
+    \[ \limitmorph{\pi_1}{\pi_4}:(S\times_RS)\times_S (S\times_RS)\to S\times_RS. \]
+
+    It is just a computation to show that these choices satisfy all the axioms of Definition \ref{def:InternalGroupoid}. Thus, we have the following groupoid $K(\sigma)$, induced by the kernel pair of $\sigma:S\to R$.
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            (S\times_RS)\times_S(S\times_RS) \arrow[rr, "\limitmorph{\pi_1}{\pi_4}"] & &  S\times_RS \arrow[rrr, "p_2"', bend right, shift right=2] \arrow[rrr, "p_1", bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] & & & S \arrow[lll, "\Delta"']
+        \end{tikzcd}
+    \end{center}
+\end{example}
+
+%% GRUPPOIDE RELAZIONE EQUIVALENZA %%
+\begin{oss*}
+    This is just a reformulation of the fact that the kernel pair of $\sigma$ is an equivalence relation on $S$. Let us show that in the case $\mathcal{A}=\textbf{Set}$. In this setting, one has that $S\times_RS$ is the set of pairs $(s,r)$ such that $\sigma(s)=\sigma(r)$ and 
+    \[ \limitmorph{\pi_1}{\pi_4}((s,r),(r,h)) = (s,h) \]
+    is just the projection on the first and fourth element.
+    The groupoid structure indeed expresses the reflexivity, symmetry, and transitivity of the relation $\equiv_\sigma$ induced by $\sigma$:
+    \[ s\equiv_\sigma r \iff \sigma(s) = \sigma(r), \]
+    through, respectively, the maps $\Delta$, $\tau$, and $\limitmorph{\pi_1}{\pi_4}$.
+\end{oss*}
+
+
+
+\section{The Galois Theorem}
+\label{sec:galois_theorem}
+
+With all the needed prerequisites recalled, let us introduce the actual Galois theorem. We will need to restrict our work to some "good enough" adjunctions and, in that setting, to use the previous instruments to prove the main theorem.
+
+%% AMMISSIBILE %%
+\begin{definition}
+\label{def:AdmissibleClassArrows}
+    Let $\mathcal{A}$ be a category. A class $\overline{\mathcal{A}}$ of arrows is admissible when
+    \begin{enumerate}[(i)]
+        \item every isomorphism is in $\overline{\mathcal{A}}$;
+        \item $\overline{\mathcal{A}}$ is closed under composition;
+        \item if $a, b \in\overline{\mathcal{A}}$, considering a pullback
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback \bullet \arrow[r, "c"] \arrow[d, "d"'] & \bullet \arrow[d, "b"] \\ \bullet \arrow[r, "a"'] & \bullet
+            \end{tikzcd}, one has also $c, d\in\overline{\mathcal{A}}$.
+    \end{enumerate}
+
+    For an object $A$ in $\mathcal{A}$, we will write $\overline{\mathcal{A}}/A$ for the full subcategory of $\mathcal{A}/A$ in which the objects are admissible arrows. So, pairs $(X,f)$, as in $\mathcal{A}/A$, where $f:X\to A\in\overline{\mathcal{A}}$.
+\end{definition}
+\begin{definition}
+\label{def:AdmissibleAdjunction}
+    A relatively admissible adjunction consists in
+    \begin{enumerate}[(i)]
+        \item an adjunction
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \mathcal{A} \arrow[r, bend left, "\mathcal{S}", ""{name=S}] & \mathcal{P} \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+        \end{tikzcd};
+        \item two admissible classes of arrows $\overline{\mathcal{A}}$ and $\overline{\mathcal{P}}$ such that
+        \begin{itemize}
+            \item for all $f\in Arr(\mathcal{A})$, $f\in\overline{\mathcal{A}}\Longrightarrow\mathcal{S}(f)\in\overline{\mathcal{P}}$
+            \item for all $g\in Arr(\mathcal{P})$, $g\in\overline{\mathcal{P}}\Longrightarrow\mathcal{C}(g)\in\overline{\mathcal{A}}$
+            \item for all $A\in Ob(\mathcal{A})$, $\eta_A\in\overline{\mathcal{A}}$, where $\eta$ is the unit of $\mathcal{S}\dashv\mathcal{C}$
+            \item for all $X\in Ob(\mathcal{P})$, $\varepsilon_X\in\overline{\mathcal{P}}$, where $\varepsilon$ is the counit of $\mathcal{S}\dashv\mathcal{C}$.
+        \end{itemize}
+    \end{enumerate}
+    We will write 
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        (\mathcal{A},\overline{\mathcal{A}}) \arrow[r, bend left, "\mathcal{S}", ""{name=S}] & (\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}
+    for a relatively admissible adjunction.
+\end{definition}
+
+The conditions specified in Definitions \ref{def:AdmissibleClassArrows} and \ref{def:AdmissibleAdjunction} clearly lead to the following two lemmas.
+%% RESTRIZIONE AD AMMISSIBILE %%
+\begin{lemma}
+    Let $\mathcal{A}$ be an admissible class of arrows in a category $\mathcal{A}$ with pullbacks. For every morphism $\sigma:S\to R$ in $\overline{\mathcal{A}}$, the adjunction $\Sigma_\sigma\dashv\sigma^*$ of Proposition \ref{prop:AdjointPullback} restricts to an adjunction
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \overline{\mathcal{A}}/R \arrow[r, bend left, "\sigma^*", ""{name=pullback}] & \overline{\mathcal{A}}/S \arrow[l, bend left, "\Sigma_\sigma", ""{name=comp}] \arrow[phantom, from=pullback, to=comp, "\dashv" rotate=90]
+        \end{tikzcd}
+    \end{center}
+    \begin{proof}
+        Just note from Definition \ref{def:AdmissibleClassArrows} that $\overline{\mathcal{A}}$ is closed under composition and pullbacks. If $g:X\to S$ is in $\overline{\mathcal{A}}$, the composition $\sigma\circ g$ is again in $\overline{\mathcal{A}}$. Similarly, if $f:X\to R$ is in $\overline{\mathcal{A}}$, the pullback along $\sigma$ gives us that $p_S:S\times_RX\to S$ is again in $\overline{\mathcal{A}}$. 
+    \end{proof}
+\end{lemma}
+\begin{lemma}
+\label{lem:RestrictionInducedAdjunction}
+    Let 
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        (\mathcal{A},\overline{\mathcal{A}}) \arrow[r, bend left, "\mathcal{S}", ""{name=S}] & (\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}
+    be a relatively admissible adjunction where $\mathcal{A}$ is a category with pullbacks. For every $A\in Ob(\mathcal{A})$ the adjunction between $\mathcal{A}/A$ and $\mathcal{P}/\mathcal{S}(A)$ obtained by Lemma \ref{lem:AdjointSpecialization} restricts to an adjunction
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \overline{\mathcal{A}}/A \arrow[r, bend left, "\mathcal{S}_A", ""{name=S_A}] & \ \ \ \ \ \overline{\mathcal{P}}/\mathcal{S}(A) \arrow[l, bend left, "\mathcal{C}_A", ""{name=C_A}] \arrow[phantom, from=S_A, to=C_A, "\dashv" rotate=-90]
+        \end{tikzcd}
+    \end{center}
+    \begin{proof}
+        Recall that $\mathcal{S}_A$ acts as $\mathcal{S}$ on the slice category and $\mathcal{C}_A$ is the composition of $\mathcal{C}$ and ${\eta_A}^*$ as seen in Lemma \ref{lem:AdjointSpecialization}. For every $f\in\overline{\mathcal{A}}$ and $g\in\overline{\mathcal{P}}$, Definition \ref{def:AdmissibleAdjunction} give us that $\mathcal{S}(f)\in\overline{\mathcal{P}}$, $\mathcal{C}(g)\in\overline{\mathcal{A}}$ and $\eta_A\in\overline{\mathcal{A}}$. Again from Definition \ref{def:AdmissibleClassArrows}, the pullback of $\mathcal{C}(g)$ along $\eta_A$ is in the admissible class $\overline{\mathcal{A}}$.
+    \end{proof}
+\end{lemma}
+
+We have established that the adjunctions from Section \ref{sec:preliminary_adjunctions} can be restricted to the admissible classes. Now, we introduce a specific property for morphisms in $\overline{\mathcal{A}}$ that will play a crucial role in the Galois Theorem. Specifically, we consider morphisms that establish a meaningful link between the two adjunctions involved. To achieve this, we will require the pullback functor to be monadic, ensuring a smooth transition when shifting perspectives between objects over $R$ and objects over $S$. Moreover, our focus will be on objects in $\overline{\mathcal{A}}/R$ whose pullback is in a full subcategory of $\overline{\mathcal{A}}/S$, which is equivalent to $\overline{\mathcal{P}}/\mathcal{S}(S)$ through the adjunction $\mathcal{S}_S\dashv\mathcal{C}_S$.
+%% DEFINIZIONI %%
+\begin{definition}
+    Let $\overline{\mathcal{A}}$ be an admissible class of arrows in a category $\mathcal{A}$ with pullbacks. An arrow $\sigma:S\to R$ is an effective descent morphism relatively to $\overline{\mathcal{A}}$ if
+    \begin{enumerate}[(i)]
+        \item $\sigma\in\overline{\mathcal{A}}$;
+        \item the functor $\sigma^*:\overline{\mathcal{A}}/R\longrightarrow\overline{\mathcal{A}}/S$ is monadic.
+    \end{enumerate}
+\end{definition}
+\begin{definition}
+\label{def:SplitObjectSigma}
+    Let 
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        (\mathcal{A},\overline{\mathcal{A}}) \arrow[r, bend left, "\mathcal{S}", ""{name=S}] & (\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}
+    be a relatively admissible adjunction, where $\mathcal{A}$ is a category with pullbacks. An object $(A,a)\in Ob(\overline{\mathcal{A}}/R)$ is split by a morphism $\sigma:S\to R$ of $\overline{\mathcal{A}}$ when the unit
+    \[\eta_{\sigma^*(A,a)}^S:\sigma^*(A,a)\longrightarrow\mathcal{C}_S\mathcal{S}_S(\sigma^*(A,a))\]
+    of $\mathcal{S}_S\dashv\mathcal{C}_S$ is an isomorphism at the object $\sigma^*(A,a)$.
+
+    We will write $Split_R(\sigma)$ for the full subcategory of $\overline{\mathcal{A}}/R$ of those objects split by $\sigma:S\to R$.
+\end{definition}
+\begin{definition}
+\label{def:MorphismRelativeGaloisDescent}
+    Let 
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        (\mathcal{A},\overline{\mathcal{A}}) \arrow[r, bend left, "\mathcal{S}", ""{name=S}] & (\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}
+    be a relatively admissible adjunction where $\mathcal{A}$ and $\mathcal{P}$ are categories with pullbacks. A morphism $\sigma:S\to R$ is of relative Galois descent with respect to these data when
+    \begin{enumerate}[(i)]
+        \item $\sigma$ is an effective descent morphism relatively to $\overline{\mathcal{A}}$;
+        \item the counit $\varepsilon^S$ of the adjunction $\mathcal{S}_S\dashv\mathcal{C}_S$ is an isomorphism at every object;
+        \item the object $\Sigma_\sigma\mathcal{C}_S(X,f)$ is split by $\sigma$, for every $(X,f)$ object of $\overline{\mathcal{P}}/\mathcal{S}(S)$.
+    \end{enumerate}
+\end{definition}
+
+%% CONDIZIONI COSTANTI %%
+From now on and for the rest of this chapter, we will be in the conditions of Definition \ref{def:MorphismRelativeGaloisDescent}.
+Let us highlight the key components of the setup: we fix a morphism $\sigma:S\to R$ of relative Galois descent with respect to a relatively admissible adjunction between categories with pullbacks. We have the following two adjunctions that arise from these data:
+\begin{equation}
+\label{diam:InvolvedAdjunctions}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \overline{\mathcal{A}}/R \arrow[rr, "\sigma^*", bend left, ""{name=pull}] & & \overline{\mathcal{A}}/S \arrow[ll, "\Sigma_\sigma", bend left, ""{name=comp}] \arrow[rr, "\mathcal{S}_S", bend left, ""{name=Ss}] & & \overline{\mathcal{P}}/\mathcal{S}(S) \arrow[ll, "\mathcal{C}_S", bend left, ""{name=Cs}] \arrow[phantom, from=pull, to=comp, "\dashv" rotate=90] \arrow[phantom, from=Ss, to=Cs, "\dashv" rotate=-90]
+    \end{tikzcd}
+\end{equation}
+We will denote by $\eta^S$ and $\varepsilon^S$ the unit and counit of the adjunction $\mathcal{S}_S\dashv\mathcal{C}_S$.
+
+%% LEMMI OGGETTI SPEZZATI %%
+\begin{lemma}
+\label{lem:ObjectsSplitUnit}
+    The following conditions are equivalent for an object $(A,a)$ of $\overline{\mathcal{A}}/S$:
+    \begin{enumerate}
+        \item $(A,a)$ is split by $1_S:S\to S$.
+        \item $\eta_{(A,a)}^S:(A,a)\longrightarrow\mathcal{C}_S\mathcal{S}_S(A,a)$ is an isomorphism.
+        \item $(A,a)\cong\mathcal{C}_S(X,f)$ for some object $(X,f)$ of $\overline{\mathcal{P}}/\mathcal{S}(S)$.
+    \end{enumerate}
+    \begin{proof}
+        \begin{itemize}
+            \item[] $1.\iff 2.$ It is just Definition \ref{def:SplitObjectSigma} if we recall that $(A,a)\cong {1_S}^*(A,a)$.     
+            \item[] $2. \Rightarrow 3.$ Just choose $(X,f):=\mathcal{S}_S(A,a)$; then $\eta^S_{(A,a)}:(A,a)\longrightarrow\mathcal{C}_S(X,f)$ is the desired isomorphism.
+            \item[] $3. \Rightarrow 2.$ For every $(A,a)$ in $\overline{\mathcal{A}}/S$ there is $(X,f)$ in $\overline{\mathcal{P}}/\mathcal{S}(S)$ such that $(A,a)\cong \mathcal{C}_S(X,f)$. From Definition \ref{def:MorphismRelativeGaloisDescent}, one has that $\varepsilon^S_{(X,f)}$ is an isomorphism and so is $\mathcal{C}_S(\varepsilon^S_{(X,f)})$. Using the triangular identity
+            \[ \mathcal{C}_S(\varepsilon^S_{(X,f)}) \circ \eta^S_{\mathcal{C}_S(X,f)} = 1_{\mathcal{C}_S(X,f)}, \]
+            we deduce that also $\eta^S$ is an isomorphism $\mathcal{C}_S(X,f)\cong(A,a)$.
+        \end{itemize}
+    \end{proof}
+\end{lemma}
+\begin{corollary}
+\label{cor:ObjectsSplitSigma}
+    The following conditions are equivalent for an object $(A,a)$ of $\overline{\mathcal{A}}/R$:
+    \begin{enumerate}
+        \item $(A,a)$ is split by $\sigma:S\to R$.
+        \item $\sigma^*(A,a)$ is split by $1_S:S\to S$.
+        \item $\sigma^*(A,a)\cong\mathcal{C}_S(X,f)$ for some object $(X,f)$ of $\overline{\mathcal{P}}/\mathcal{S}(S)$.
+    \end{enumerate}
+\end{corollary}
+
+%% RESTRIZIONI AGGIUNZIONI A SPEZZATI %%
+\begin{lemma}
+\label{lem:PullbackMonadicSplitCategory}
+    Consider the adjunction $\Sigma_\sigma\dashv\sigma^*$ in Diagram (\ref{diam:InvolvedAdjunctions}); it restricts to an adjunction
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            Split_R(\sigma) \arrow[r, bend left, "\sigma^*", ""{name=pullback}] & Split_S(1_S) \arrow[l, bend left, "\Sigma_\sigma", ""{name=comp}] \arrow[phantom, from=pullback, to=comp, "\dashv" rotate=90]
+        \end{tikzcd}.
+    \end{center}
+    Moreover, the functor
+    \[\sigma^*:Split_R(\sigma)\longrightarrow Split_S(1_S)\]
+    is monadic.
+    \begin{proof}
+        If $(A,a)$ is split by $1_S:S\to S$, by Lemma \ref{lem:ObjectsSplitUnit} we have $(A,a)\cong\mathcal{C}_S(X,f)$ for some $(X,f)$ in $\overline{\mathcal{P}}/\mathcal{S}(S)$. By Definition \ref{def:MorphismRelativeGaloisDescent}, $\Sigma_\sigma\mathcal{C}_S(X,f)\cong\Sigma_\sigma(A,a)$ is split by $\sigma$. On the other hand, by Corollary \ref{cor:ObjectsSplitSigma}, if $(A,a)$ is split by $\sigma$, then $\sigma^*(A,a)$ is split by $1_S$, so that the restriction is well defined.
+
+        We will prove the monadicity with Beck's criterion (see \cite{pedicchio2004categoricalV}, Chapter \rom{5}): since $\sigma^*:\overline{\mathcal{A}}/R\longrightarrow\overline{\mathcal{A}}/S$ is monadic, it reflects isomorphisms, thus the same holds for its restriction to the full subcategory of split objects. Moreover, consider two morphisms 
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            (B,b) \arrow[rr, "u", shift left=1.5] \arrow[rr, "v"', shift right=1.5] & & (A,a)
+        \end{tikzcd}
+        in $Split_R(\sigma)$ such that the following is a split coequalizer of $\sigma^*(u)$ and $\sigma^*(v)$ in $Split_S(1_S)$:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \sigma^*(B,b) \arrow[rr, "\sigma^*(u)", shift left=1.5] \arrow[rr, "\sigma^*(v)"', shift right=1.5] & & \sigma^*(A,a) \arrow[ll, "t"', bend right] \arrow[rr, "h"] & & (Q,q) \arrow[ll, "r"', bend right]
+            \end{tikzcd}
+        \end{center}
+
+        This split coequalizer is also a split coequalizer in $\overline{\mathcal{A}}/S$, so that the Beck's criterion in the case of $\sigma^*:\overline{\mathcal{A}}/R\longrightarrow\overline{\mathcal{A}}/S$ implies the existence of a coequalizer $(C,c)$ of $u$ and $v$ in $\overline{\mathcal{A}}/R$ which is preserved by $\sigma^*$; thus, $\sigma^*(C,c)\cong(Q,q)$ and by Corollary \ref{cor:ObjectsSplitSigma} we obtain that $(C,c)$ is indeed in $Split_R(\sigma)$.
+    \end{proof}
+\end{lemma}
+\begin{lemma}
+\label{lem:EquivalenceSplitP/S(S)}
+    Consider the adjunction $\mathcal{S}_S\dashv\mathcal{C}_S$ in Diagram (\ref{diam:InvolvedAdjunctions}); it restricts to an equivalence of categories
+    \[ Split_S(1_S) \approx \overline{\mathcal{P}}/\mathcal{S}(S) \]
+    \begin{proof}
+        If $(X,f)$ is an object in $\overline{\mathcal{P}}/\mathcal{S}(S)$, by Lemma \ref{lem:ObjectsSplitUnit} we have that $\mathcal{C}_S(X,f)$ is split by $1_S$, so that the restriction is well defined. Moreover, $\eta^S$ is an isomorphism on split objects and the counit $\varepsilon^S$ is an isomorphism from Definition \ref{def:MorphismRelativeGaloisDescent}.
+    \end{proof}
+\end{lemma}
+\begin{corollary}
+\label{cor:CompositionMonadic}
+    The functor
+    \[ \mathcal{S}_S\circ\sigma^* : Split_R(\sigma)\longrightarrow \overline{\mathcal{P}}/\mathcal{S}(S) \]
+    is monadic.
+    \begin{proof}
+        It is the composite of an equivalence of categories with a monadic functor as shown in Lemma \ref{lem:PullbackMonadicSplitCategory} and Lemma \ref{lem:EquivalenceSplitP/S(S)}.
+    \end{proof}
+\end{corollary}
+
+The relative Galois descent property of $\sigma$ allowed us to restrict our work on split objects while maintaining the monadicity of $\sigma^*$. Thus, we can describe the setting with the following diagram:
+\begin{equation}
+\label{diag:InvolvedFunctors}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \overline{\mathcal{A}}/R \arrow[rr, "\sigma^*", bend left, ""{name=pull}] & & \overline{\mathcal{A}}/S \arrow[ll, "\Sigma_\sigma", bend left, ""{name=comp}] \arrow[rrd, "\mathcal{S}_S", bend left=20, ""{name=Ss}] \\ & & & & \overline{\mathcal{P}}/\mathcal{S}(S) \arrow[llu, "\mathcal{C}_S", bend left=20, ""{name=Cs}] \arrow[dll, bend right=20, ""{name=Csequi}] \\ Split_R(\sigma) \arrow[uu, tail] \arrow[rr, "\sigma^*", bend left, ""{name=pullres}] & & Split_S(1_S) \arrow[uu, tail] \arrow[urr, bend right=20, "\mathcal{S}_S"', ""{name=Ssequi}] \arrow[ll, "\Sigma_\sigma", bend left, ""{name=compres}] \arrow[phantom, from=pull, to=comp, "\dashv" rotate=90] \arrow[phantom, from=pullres, to=compres, "\dashv" rotate=90] \arrow[phantom, from=Ss, to=Cs, "\dashv" rotate=-120] \arrow[phantom, from=Ssequi, to=Csequi, "\approx" rotate=30]
+    \end{tikzcd}
+\end{equation}
+
+Moreover, the monadicity of $\mathcal{S}_S\circ\sigma^*$ ensure an equivalence of categories between $Split_R(\sigma)$ and the algebras over $\overline{\mathcal{P}}/\mathcal{S}(S)$. Let us describe the structure of this monad: the functorial part of the monad is the composite:
+\[ T^\sigma = \mathcal{S}_S\circ\sigma^*\circ\Sigma_\sigma\circ\mathcal{C}_S: \overline{\mathcal{P}}/\mathcal{S}(S)\longrightarrow\overline{\mathcal{P}}/\mathcal{S}(S), \]
+it is just the image under $\mathcal{S}_S$ of the composite $\sigma^*\circ\Sigma_\sigma$ over objects $\mathcal{C}_S(X,f)$. Recall that $\eta^S$ and $\varepsilon^S$ are isomorphisms on split objects, so that $\mathcal{C}_S\circ\mathcal{S}_S(A,a)\cong(A,a)$ and $(X,f)\cong\mathcal{S}_S\circ\mathcal{C}_S(X,f)$; we can exploit these isomorphisms to describe unit and multiplication in terms of the unit and multiplication of the monad seen in Section \ref{sec:preliminary_adjunctions}: $\eta_{(A,a)}=\limitmorph{a}{1_A}$ and $\mu_{(A,a)}=1_S\times p_A$. For every $(X,f)$ in $\overline{\mathcal{P}}/\mathcal{S}(S)$, one has:
+\[ \eta^\sigma_{(X,f)}:(X,f)\xrightarrow{\varepsilon^S_{(X,f)}}\mathcal{S}_S\circ\mathcal{C}_S(X,f)\xrightarrow{\mathcal{S}_S(\eta_{\mathcal{C}_S(X,f)})}\mathcal{S}_S\circ\sigma^*\circ\Sigma_\sigma\circ\mathcal{C}_S(X,f) \]
+and
+\[ \mu^\sigma_{(X,f)}:T^\sigma\circ T^\sigma(X,f)\xrightarrow{\mathcal{S}_S\sigma^*\Sigma_\sigma(\eta^S_{\sigma^*\Sigma_\sigma\mathcal{C}_S(X,f)})}\mathcal{S}_S\circ\sigma^*\circ\Sigma_\sigma\circ\sigma^*\circ\Sigma_\sigma\circ\mathcal{C}_S(X,f)\xrightarrow{\mathcal{S}_S(\mu_{\mathcal{C}_S(X,f)})}T^\sigma(X,f). \]
+
+Concretely, up to a composition with isomorphisms $\varepsilon^S$ and $\eta^S$, the unit $\eta^\sigma_{(X,f)}$ and the multiplication $\mu^\sigma_{(X,f)}$ are just the images under $\mathcal{S}_S$ of $\eta$ and $\mu$ over objects $\mathcal{C}_S(X,f)$. If we denote $(A,a):=\mathcal{C}_S(X,f)$:
+\[ \eta^\sigma_{(X,f)} = \mathcal{S}_S(\limitmorph{a}{1_A})\circ\varepsilon^S_{(X,f)} \]
+and
+\[ \mu^\sigma_{(X,f)} = \mathcal{S}_S(1_S\times p_A)\circ\mathcal{S}_S\sigma^*\Sigma_\sigma(\eta^S_{(S\times_RA,p_S)}). \]
+We will denote by $\mathbb{T}^\sigma$ the monad $(T^\sigma, \eta^\sigma, \mu^\sigma)$ associated with the adjunction $\Sigma_\sigma\circ\mathcal{C}_S\dashv\mathcal{S}_S\circ\sigma^*$.
+
+
+Let us now apply the framework introduced in Section \ref{sec:groupoids_presheaves} to define the Galois groupoid associated with the morphism $\sigma$. This groupoid is constructed specifically to capture the structure of $\sigma$, and the Galois Theorem will show that the category of internal covariant presheaves on this groupoid is equivalent to the category $Split_R(\sigma)$ of objects split by $\sigma$.
+%% GRUPPOIDE DI GALOIS %%
+\begin{lemma}
+\label{lem:GaloisGroupoid}
+    The functor $\mathcal{S}:\mathcal{A}\longrightarrow\mathcal{P}$ transforms the groupoid $K(\sigma)$ in $\mathcal{A}$ generated by the kernel pair of $\sigma:S\to R$, as described in Example \ref{ex:KernelPairInternalGroupoid}, into a groupoid in $\overline{\mathcal{P}}$.
+    \begin{proof} Let us first recall the structure of $K(\sigma)$:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                (S\times_RS)\times_S(S\times_RS) \arrow[rr, "\limitmorph{\pi_1}{\pi_4}"] & &  S\times_RS \arrow[rrr, "p_2"', bend right, shift right=2] \arrow[rrr, "p_1", bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] & & & S \arrow[lll, "\Delta"']
+            \end{tikzcd}
+        \end{center}
+        where 
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback (S\times_RS)\times_S (S\times_RS) \arrow[rr, "p_3"] \arrow[dd, "p_4"'] & & S\times_RS \arrow[dd, "p_2"] \\ \\ S\times_RS \arrow[rr, "p_1"'] & & S
+            \end{tikzcd}
+        \end{center}
+        and $\pi_1:=p_1\circ p_3$ and $\pi_4:=p_2\circ p_4$.
+
+        Note that $\sigma\in\overline{\mathcal{A}}$ implies that all the arrows involved are in the admissible class $\overline{\mathcal{A}}$ too. Thus, we can see the last pullback as the "object part" of a pullback in $\overline{\mathcal{A}}/S$ considering the projections as morphisms over $S$. Let us prove that it lies in fact in $Split_S(1_S)$: it is just a computation to show that $(S,1_S)$ is split by $1_S$; moreover, $S\times_RS\cong\sigma^*\circ\Sigma_\sigma(S,1_S)$ and by Lemma \ref{lem:PullbackMonadicSplitCategory} it is an object split by $1_S$. The same argument applies for $(S\times_RS)\times_S (S\times_RS)\cong S\times_RS\times_RS$, and it can be proved by induction for any other iterated pullback of $(S,1_S)$.
+
+        Applying the equivalence $\mathcal{S}_S:Split_S(1_S)\longrightarrow\overline{\mathcal{P}}/\mathcal{S}(S)$, we get a pullback in $\overline{\mathcal{P}}/\mathcal{S}(S)$:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback \mathcal{S}_S((S\times_RS)\times_S (S\times_RS)) \arrow[rr, "\mathcal{S}_S(p_3)"] \arrow[dd, "\mathcal{S}_S(p_4)"'] & & \mathcal{S}_S(S\times_RS) \arrow[dd, "\mathcal{S}_S(p_2)"] \\ \\ \mathcal{S}_S(S\times_RS) \arrow[rr, "\mathcal{S}_S(p_1)"'] & & \mathcal{S}_S(S)
+            \end{tikzcd}
+        \end{center}
+        Since pullbacks in $\overline{\mathcal{P}}/\mathcal{S}(S)$ are computed as in $\overline{\mathcal{P}}$, we get that 
+        \[ \mathcal{S}((S\times_RS)\times_S (S\times_RS)) \cong \mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}\mathcal{S}(S\times_RS). \]
+        An analogous argument applies to prove
+        \[ \mathcal{S}((S\times_RS)\times_S (S\times_RS)\times_S (S\times_RS)) \cong \mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}\mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}\mathcal{S}(S\times_RS). \]
+
+        The axioms for $\mathcal{S}(K(\sigma))$ to be an internal groupoid are expressed by commutativity of some diagrams involving the previous two pullbacks. Since $\mathcal{S}$ preserves them and the commutativity of diagrams, as any functor, one has that $\mathcal{S}(K(\sigma))$ is indeed an internal groupoid in $\overline{\mathcal{P}}$.
+    \end{proof}
+\end{lemma}
+\begin{definition}
+\label{def:GaloisGroupoid}
+    We will call Galois groupoid of $\sigma$ the groupoid $Gal[\sigma]:=\mathcal{S}(K(\sigma))$ described in Lemma \ref{lem:GaloisGroupoid}:
+    \begin{equation}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+             \mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}\mathcal{S}(S\times_RS) \arrow[rr, "\limitmorph{\mathcal{S}(\pi_1)}{\mathcal{S}(\pi_4)}"] & &  \mathcal{S}(S\times_RS) \arrow[rrr, "\mathcal{S}(p_2)"', bend right, shift right=2] \arrow[rrr, "\mathcal{S}(p_1)", bend left, shift left=2] \arrow["\mathcal{S}(\tau)"', loop, distance=2em, in=305, out=235] & & & \mathcal{S}(S) \arrow[lll, "\mathcal{S}(\Delta)"']
+        \end{tikzcd}
+    \end{equation}
+\end{definition}
+
+We are set to prove the categorical Galois Theorem. Let us note that in our setting we established two monadic functors on $\overline{\mathcal{P}}/\mathcal{S}(S)$: the pullback functor along $\sigma$ composed with the equivalence $\mathcal{S}_S$, as shown in Corollary \ref{cor:CompositionMonadic}, and the forgetful functor from the internal covariant presheaf category $\overline{\mathcal{P}}^{Gal[\sigma]}$, as shown in Proposition \ref{prop:PresheavesFunctorMonadic}. We will prove that the two monads are equivalent, establishing in this way an equivalence of categories through their respective categories of algebras.
+%% TEOREMA %%
+\begin{theorem}
+\label{thm:CategoricalGaloisTheorem}
+    Let
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        (\mathcal{A},\overline{\mathcal{A}}) \arrow[r, bend left, "\mathcal{S}", ""{name=S}] & (\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}
+    be a relatively admissible adjunction where $\mathcal{A}$ and $\mathcal{P}$ are categories with pullbacks. Let $\sigma:S\to R$ be of relative Galois descent with respect to these data. There exists an equivalence of categories
+    \[ Split_R(\sigma)\approx\overline{\mathcal{P}}^{Gal[\sigma]} \]
+    between the category of those objects in $\overline{\mathcal{A}}/R$ that are split by $\sigma$ and the category of internal covariant presheaves $(P,p,\pi)$ on the internal groupoid $Gal[\sigma]$ in $\mathcal{P}$, in which $p\in\overline{\mathcal{P}}$.
+    \begin{proof}
+
+        As said before, we have two monads on $\overline{\mathcal{P}}/\mathcal{S}(S)$: 
+        \[ (T = \Sigma_{\mathcal{S}(p_2)}\circ{\mathcal{S}(p_1)}^*, \limitmorph{\mathcal{S}(\Delta)\circ f}{1_X}, \limitmorph{\mathcal{S}(\pi_1)}{\mathcal{S}(\pi_4)}\times 1_X), \]
+        given in Proposition \ref{prop:PresheavesFunctorMonadic} applied to the Galois groupoid of $\sigma$, and 
+        \[ (T^\sigma = \mathcal{S}_S\circ\sigma^*\circ\Sigma_\sigma\circ\mathcal{C}_S, \eta^\sigma, \mu^\sigma). \] 
+        
+       Putting $(A,a)=\mathcal{C}_S(X,f)$, we have that $\sigma^*\circ\Sigma_\sigma(A,a)\cong\Sigma_{p_2}\circ{p_1}^*(A,a)$, as shown in the two pullback diagrams below, and applying the equivalence $\mathcal{S}_S$ the pullbacks are preserved.
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback S\times_RA \arrow[dd, "a_1"'] \arrow[rr] & & A \arrow[dd, "a"] & & & \pullback \mathcal{S}_S(S\times_RA) \arrow[dd, "\mathcal{S}(a_1)"'] \arrow[rr] & & \mathcal{S}_S(A)\cong X \arrow[dd, "\mathcal{S}(a)=f"] \\ \\ \pullback S\times_RS \arrow[rr, "p_1"] \arrow[dd, "p_2"'] & & S \arrow[dd, "\sigma"] \arrow[rrr, "\mathcal{S}_S", Rightarrow, bend left] & & & \mathcal{S}_S(S\times_RS) \arrow[dd, "\mathcal{S}(p_2)"'] \arrow[rr, "\mathcal{S}(p_1)"] & & \mathcal{S}_S(S) \\ \\ S \arrow[rr, "\sigma"'] & & R & & & \mathcal{S}_S(S)
+            \end{tikzcd}
+        \end{center}
+        Thus, we have 
+        \[ (\mathcal{S}_S(S\times_RA), \mathcal{S}(p_2)\circ\mathcal{S}(a_1)) \cong (\mathcal{S}_S(S\times_RS)\times_{\mathcal{S}_S(S)}\mathcal{S}_S(A), \mathcal{S}(p_2)\circ\mathcal{S}(a_1))  \]
+        and, recalling that $\mathcal{S}_S(A)=\mathcal{S}_S\mathcal{C}_S(X,f)\cong(X,f)$, the functorial parts of the two monads are isomorphic:
+        \[ T^\sigma(X,f) = \mathcal{S}_S\circ\sigma^*\circ\Sigma_\sigma(A,a) \cong \Sigma_{\mathcal{S}(p_2)}\circ{\mathcal{S}(p_1)}^*(X,f) = T(X,f). \]
+
+        Similarly, one has
+        \[ \mathcal{S}_S(S\times_RS\times_RA)\cong \mathcal{S}_S(S\times_RS)\times_{\mathcal{S}_S(S)}\mathcal{S}_S(S\times_RS)\times_{\mathcal{S}_S(S)}\mathcal{S}_S(A). \]
+
+        Moreover, for all $(X,f)$ in $\overline{\mathcal{P}}/\mathcal{S}(S)$, we have shown that, up to isomorphisms, $\eta^\sigma_{(X,f)}$ is $\mathcal{S}_S(\eta_{(A,a)})$ and $\mu^\sigma_{(X,f)}$ is $\mathcal{S}_S(\mu_{(A,a)})$ where $(A,a)=\mathcal{C}_S(X,f)$ and $\eta$ and $\mu$ are the unit and the multiplication of the monad $(\sigma^*\circ\Sigma_\sigma, \eta, \mu)$ from Section \ref{sec:preliminary_adjunctions} where we have shown that $\eta_{(A,a)} = \limitmorph{a}{1_A}$ and $\mu_{(A,a)} = 1_S\times p_A = p_1\times1_A$. It is straightforward to show that, up to the isomorphisms above, the unit and multiplication coincide:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                (X,f) \arrow[dd, "\cong"', leftrightarrow] \arrow[rrr, "\limitmorph{\mathcal{S}(\Delta)\circ f}{1_X}"] & & & \mathcal{S}_S(S\times_RS)\times_{\mathcal{S}_S(S)}X \arrow[dd, "\cong", leftrightarrow] \\ \\ \mathcal{S}_S(A,a) \arrow[rrr, "\mathcal{S}_S(\limitmorph{a}{1_A})"'] & & & \mathcal{S}_S(S\times_RA)
+            \end{tikzcd}
+        \end{center}
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \mathcal{S}_S(S\times_RS)\times_{\mathcal{S}_S(S)}\mathcal{S}_S(S\times_RS)\times_{\mathcal{S}_S(S)}X \arrow[dd, "\cong"', leftrightarrow] \arrow[rrrr, "\limitmorph{\mathcal{S}(\pi_1)}{\mathcal{S}(\pi_4)}\times 1_X"] & & & & \mathcal{S}_S(S\times_RS)\times_{\mathcal{S}_S(S)}X \arrow[dd, "\cong", leftrightarrow] \\ \\ \mathcal{S}_S(S\times_RS\times_RA) \arrow[rrrr, "\mathcal{S}_S(p_1\times 1_A)"'] & & & & \mathcal{S}_S(S\times_RA)
+            \end{tikzcd}
+        \end{center}
+
+        The desired equivalence is then given via their respective categories of algebras:
+        \[ Split_R(\sigma)\approx{\overline{\mathcal{P}}/\mathcal{S}(S)}^{T^\sigma}\approx{\overline{\mathcal{P}}/\mathcal{S}(S)}^T\approx\overline{\mathcal{P}}^{Gal[\sigma]}. \]
+    \end{proof}
+\end{theorem}
+
+\begin{oss*}
+    A key observation about Theorem \ref{thm:CategoricalGaloisTheorem} is that the core of its proof relies on two fundamental results: the isomorphism $\sigma^*\circ\Sigma_\sigma(A,a)\cong\Sigma_{p_2}\circ{p_1}^*(A,a)$ and the equivalence $Split_S(1_S)\approx\overline{\mathcal{P}}/\mathcal{S}(S)$. These two steps form the backbone of the argument.
+\end{oss*}

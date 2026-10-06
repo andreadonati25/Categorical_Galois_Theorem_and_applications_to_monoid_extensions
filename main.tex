@@ -1,0 +1,121 @@
+%%%%%%%%%%%%%%%%%%%%%%  PACKAGES  %%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt, a4paper, twoside, openright]{book}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{comment}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{tikz-cd}
+\usepackage{pgfplots}
+\usepackage{csquotes}
+\usepackage{mathtools}
+\usepackage[a-1b]{pdfx}
+\usepackage[pdfa]{hyperref}
+
+%\usepackage{refcheck}
+%\norefnames
+
+%%%%%%%%%%%%%  STYLE & COMMAND  %%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}{Corollary}[theorem]
+
+\theoremstyle{definition}
+\newtheorem*{oss*}{Observation}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\parindent = 0pt
+
+\newcommand{\rrightarrow}{\mathrel{\mathrlap{\rightarrow}\mkern1mu\rightarrow}}
+\newcommand{\tens}[1]{\otimes_{#1}}
+\DeclareRobustCommand\longrrightarrow
+     {\relbar\joinrel\rrightarrow}
+\newcommand{\pullback}{|[label={[label distance=-2mm]-45:\lrcorner}]|}
+\newcommand{\limitmorph}[2]{\langle{#1},{#2}\rangle}
+\newcommand{\opcat}[1]{{#1}^{\mathrm{op}}}
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+% tikzcd center picture
+\tikzset{
+    trim node/.default=1cm,
+    trim node/.style={
+    overlay,
+    append after command={% restore smaller bounding box
+    ([xshift={+#1}]\tikzlastnode.north west)
+    ([xshift={+-#1}]\tikzlastnode.south east)}},
+    down and trim/.default=1cm,
+    down and trim/.style={
+    yshift=-(\pgfmatrixcurrentcolumn-1)*1.5\baselineskip,
+    trim node={#1}},
+    downup and trim/.default=1cm,
+    downup and trim/.style={
+    yshift=iseven(\pgfmatrixcurrentcolumn) ? -1.5\baselineskip : 0pt,
+    trim node={#1}},
+    -|/.style={to path={-|(\tikztotarget)\tikztonodes}},
+    |-/.style={to path={|-(\tikztotarget)\tikztonodes}},
+    -| sl/.style={-|, xslant=-1},
+    |- sl/.style={|-, xslant= 1},
+    center picture/.style={
+    trim left=(current bounding box.center),
+    trim right=(current bounding box.center)}
+}
+
+% changes to the layout
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\topmargin}{0cm}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{23cm}
+
+\linespread{1.0}
+\pagestyle{plain}
+\pgfplotsset{compat = 1.18}
+
+%%%%%%%%%%%%%%%%%%%%%%  BIBLIOGRAFIA  %%%%%%%%%%%%
+\usepackage[
+    backend=biber,
+    style=numeric,
+    sorting=nyt,
+    maxbibnames=10,
+  ]{biblatex}
+\addbibresource{bibliography/biblio.bib}
+
+%%%%%%%%%%%%%%%%%%%%%  DOCUMENTO INIZIO  %%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%  TITOLO E CIT  %%%%%%%%%%%%%%%%%%
+\include{chapters/Titol_Cite}
+
+%%%%%%%%%%%%%%%%%%%%%%  PREFACE  %%%%%%%%%%%%
+\frontmatter
+\include{chapters/Preface}
+
+%%%%%%%%%%%%  INDICE  %%%%%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents
+
+%%%%%%%%%%%% MAIN %%%%%%%%%%%%%%%%%%%%%%%%%
+\mainmatter
+\include{chapters/Chapter1}
+\include{chapters/Chapter2}
+\include{chapters/Chapter3}
+
+\appendix
+\include{chapters/Appendix}
+
+%%%%%%%%%%%%  BIBLIO  %%%%%%%%%%%%%%%%%%%%%%%%%
+\printbibliography
+
+\end{document}

@@ -1,0 +1,607 @@
+\chapter{From Categorical to Classical Galois theory}
+\label{cap:categorical_classical}
+
+%% INTRODUZIONE %%
+In this chapter, we apply Theorem \ref{thm:CategoricalGaloisTheorem} to a fundamental case: the classical setting that originally inspired its formulation. The theorem is called "Galois" for a reason, and here we explore why, demonstrating that it contains and generalizes the well-known Galois correspondence. Our approach follows a natural progression: in Section \ref{sec:preliminary_results}, we need to recall some preliminary results that will be instrumental in the following sections. Next, in Section \ref{sec:comm_rings} we establish the appropriate concrete algebraic setting by considering an adjunction involving the category of $R$-algebras and the category of profinite spaces, and a ring homomorphism $\sigma:R\to S$. Finally, in Section \ref{sec:field_case}, we specialize further to the field case, where $\sigma:K\hookrightarrow L$ is a Galois extension of fields. In this setting, we show that the categorical notion of splitting corresponds exactly to the classical definition of a field being split by an extension, and that the internal Galois groupoid recovers the classical Galois group. This analysis will confirm that the classical Galois theory is fully contained within the categorical framework developed in Chapter \ref{cap:categorical_galois}. Once again, our approach is primarily based on the exposition presented in \textit{Galois Theories} by Borceux and Janelidze \cite{borceux2001galois}. Before proceeding, we note that throughout this chapter we will assume that all rings and algebras are commutative and have a unit.
+
+\section{Preliminary results}
+\label{sec:preliminary_results}
+
+%% INTRODUZIONE %%
+In the first place, we need to recall some preliminary results that will be instrumental in the following sections. When proving these results is not in the focus of this thesis, we will state them without any proof and direct the reader to the appropriate references for detailed proofs. To begin, we introduce the Pierce spectrum functor between the category \textbf{Ring} of rings and the category \textbf{Prof} of profinite spaces.
+
+%% DEFINIZIONE SPAZIO PROFINITO %%
+\begin{definition}
+    A topological space is profinite when it is the projective limit of finite discrete topological spaces. Equivalent conditions are to be a compact, Hausdorff, totally disconnected space or a compact, Hausdorff space such that the clopen subsets form a base for the topology (see \cite{magid2014separable}, Proposition $2.4$, $2.5$).
+\end{definition}
+
+%% DEFINIZIONE ULTRAFILTRO %%
+\begin{definition}
+\label{def:FilterBool}
+    Let $B$ be a Boolean algebra. A proper filter in $B$ is a subset $F\subset B$ such that
+    \begin{enumerate}
+        \item $1\in F$;
+        \item $x\in F$ and $y\in F$, then $x\wedge y\in F$;
+        \item $x\in F$ and $x\leq y$, then $y\in F$;
+        \item $0\not\in F$;
+    \end{enumerate}
+    An ultrafilter in $B$ is a maximal element in the poset of proper filters in $B$ ordered by inclusion. We will write $Spec(B)$ for the set of ultrafilters in $B$.
+\end{definition}
+
+%% DEFINIZIONE SPEC(B) %%
+\begin{definition}
+    Let $B$ be a Boolean algebra. For every $b\in B$, the subsets
+    \[ U_b = \{ F\in Spec(B)\text{ : }b\in F \} \]
+    constitute a basis of clopens for a topology $\mathcal{T}$ on $Spec(B)$ (Lemma \ref{lem:Spec(B)}). The topological space $(Spec(B)\text{, }\mathcal{T})$ is called the spectrum of the Boolean algebra $B$.
+\end{definition}
+
+We now introduce functors between these objects, whose composition will play a key role in Section \ref{sec:comm_rings}. First, we consider those establishing the Stone duality theorem, which is discussed in more detail in \cite{borceux2001galois}, Section $4.1$, and briefly summarized in Appendix \ref{sec:AppendixStone}, while a much more extensive treatment can be found in \cite{johnstone1982stone}.
+%% DUALITA DI STONE %%
+\begin{theorem}[Stone duality]
+    The functors
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            Spec:\opcat{\textbf{Bool }} \arrow[r] & \textbf{Prof} & & & Clopen:\textbf{Prof} \arrow[r] & \opcat{\textbf{Bool }} \\
+            B \arrow[dd, "f"'] \arrow[r] & Spec(B) & & & X \arrow[dd, "g"'] \arrow[r] & Clopen(X) \\ \\
+            B' \arrow[r] & Spec(B') \arrow[uu, "f^{-1}"'] & & & X' \arrow[r] & Clopen(X') \arrow[uu, "g^{-1}"']
+        \end{tikzcd}
+    \end{center}
+    form an equivalence of categories. Here, the arrows are represented as in \textbf{Bool} and not in $\opcat{\textbf{Bool }}$, $Spec(B)$ is the spectrum of the Boolean algebra $B$ and we denoted with $Clopen(X)$ the set of clopens of $X$, which has a natural structure of Boolean algebra (Lemma \ref{lem:Clopen(X)}). 
+\end{theorem}
+
+Another functor that we introduce gives us a link between the categories of rings and of Boolean algebras, allowing us to construct a contravariant functor from \textbf{Ring} to \textbf{Prof}.
+%% IDEMPOTENTI SONO UN'ALGEBRA DI BOOLE %%
+\begin{proposition}[\cite{borceux2001galois}, Proposition $4.2.1$]
+    Let $R$ be a ring. The set of idempotents of $R$, with the operations
+    \[ e\wedge e':= ee', \]
+    \[ e\vee e':= e + e' - ee', \]
+    \[ e^c := 1 - e, \]
+    constitutes a Boolean algebra. Moreover, if $f:R\to R'$ is a ring homomorphism, then $f$ maps idempotents of $R$ onto idempotents of $R'$ and preserves the mentioned operations.
+\end{proposition}
+
+%% DEFINIZIONE PIERCE SPECTRUM FUNCTOR %%
+\begin{definition}
+\label{def:PierceSpectrum}
+    We will write $Idemp:\textbf{Ring}\longrightarrow\textbf{Bool}$ for the functor that sends a ring $R$ to the Boolean algebra of its idempotents and a morphism to its restriction.
+    The Pierce spectrum functor
+    \[ Sp:\opcat{\textbf{Ring}}\longrightarrow \textbf{Prof} \]
+    is given by the composition between $Idemp$ on the opposite categories and $Spec$. Let us explicitly state how it acts also on morphisms: for any ring homomorphism $f:A\to B$,
+    \begin{align*}
+        Sp(f):Sp(B)&\longrightarrow  Sp(A)\\
+        F&\longmapsto  f^{-1}(F)=\{a\in Idemp(A)\text{ : }f(a)\in F\}
+    \end{align*}
+    since $Idemp$ acts trivially on morphisms.
+\end{definition}
+
+%% INTRODUZIONE PARTE SUI GRUPPI %%
+In Section \ref{sec:comm_rings}, we will also describe more concretely the structure of internal covariant presheaves in \textbf{Prof}. In doing so, it will be useful to recall the notion of $G$-sets.
+%% DEFINIZIONE G-SET %%
+\begin{definition}
+    Let $G$ be a group. A (left) $G$-set is a set $X$ provided with a (left) action of $G$
+    \[ G\times X\longrightarrow X\text{, }(g,x)\mapsto g\cdot x \]
+    that satisfies the axioms $1\cdot x=x$ and $g\cdot(g'\cdot x)=(gg')\cdot x$, for all $x\in X$ and $g,g'\in G$. A morphism $f:X\to Y$ between $G$-sets is a map which preserves the action of $G$, that is, $f(g\cdot x)=g\cdot f(x)$ for all $x\in X$ and $g\in G$.
+
+    We will write $G\textbf{-Set}$ for the category of (left) $G$-sets and their morphism, and $G\textbf{-Set}_f$ for the full subcategory of finite (left) $G$-sets.
+\end{definition}
+
+Note that $G$ is indeed a $G$-set with the canonical action of (left) multiplication. In Section \ref{sec:field_case}, we will need a relation between the two different points of view on $G$: as a group or as a $G$-set.
+%% SOTTOGRUPPI G BIEZIONE AI QUOZIENTI DI G COME G-SET %%
+\begin{proposition}
+\label{prop:BijectionSubgruopsQuotients}
+    Let $G$ be a group. There exists a bijection between the subgroups $H$ of $G$ and the surjections $p:G\rrightarrow Q$ of $G$-sets.
+    \begin{proof}
+        Let us exhibit the bijection. With every $H\leq G$ is associated the equivalence relation
+        \[ x\equiv y \iff x^{-1}y\in H; \]
+        consider the quotient $p_H:G\rrightarrow G/H$, with $G/H$ provided with the canonical structure of a $G$-set $g\cdot[x] = [gx]$, for every $g,x\in G$. $p_H$ is clearly a morphism of $G$-sets and note that
+        \[ p_H(g)=p_H(1)\iff[g]=[1]\iff g\in H.\]
+        Now, for every surjection $p:G\rrightarrow Q$ of $G$-sets we have that
+        \[ p(xy) = x\cdot p(y) \]
+        for every $x,y\in G$. Consider $H_p = \{g\in G\text{ : }p(g) = p(1)\}$. It is a subgroup of $G$ since obviously $1\in H_p$ and
+        \[ p(xy) = x\cdot p(y) = x\cdot p(1) = p(x) = p(1), \]
+        \[ p(x^{-1}) = x^{-1}\cdot p(1) = x^{-1}\cdot p(x) = p(1). \]
+        for all $x, y \in H_p$. The two maps are inverses of each other: obviously $H_{p_H} = H$; conversely, we need to show that
+        \[ p(x) = p(y) \iff [x] = [y] \text{ in }G/H_p \iff x^{-1}y\in H_p \iff p(x^{-1}y)=p(1) \]
+        for all $x,y \in G$. Indeed, if $p(x) = p(y)$,
+        \[ p(x^{-1}y) = x^{-1}\cdot p(y) = x^{-1} \cdot p(x) = p(x^{-1}x) = p(1). \]
+        On the other hand, if $p(x^{-1}y)=p(1)$,
+        \[ p(x) = p(x1) = x\cdot p(1) = x\cdot p(x^{-1}y) = p(xx^{-1}y) = p(y). \]
+    \end{proof}
+\end{proposition}
+
+%% INTRODUZIONE PARTE SUI CAMPI %%
+Before moving on to the next section, we recollect some essential properties of field extensions. In particular, we need to recall that field extensions are faithfully flat and to establish a key property in the relation between a field extension $K\hookrightarrow L$ and a $K$-algebra $A$. These results will be useful in Section \ref{sec:field_case}.
+
+%% DEFINIZIONE FEDELMENTE PIATTO %%
+\begin{definition}
+    A module $M$ over a ring $R$ is faithfully flat when the functor
+    \[ M\tens{R}-:\textbf{Mod}_R\to \textbf{Mod}_R \]
+    preserves and reflects exact sequences.
+\end{definition}
+
+%% ESTENSIONI DI CAMPI SONO FEDELMENTE PIATTE %%
+\begin{proposition}
+\label{prop:LFaithfullyFlat}
+    Let $\sigma:K\hookrightarrow L$ be a field extension; then $L$ is faithfully flat as a $K$-module.
+    \begin{proof}
+        It follows directly from the fact that every $K$-module is free and that the tensor product of free modules is again a free module.
+    \end{proof}
+\end{proposition}
+
+%% DEFINZIONE ALGEBRE SPEZZATE %%
+\begin{definition}
+\label{def:SplitAlgebras}
+     Let $\sigma:K\hookrightarrow L$ be a field extension. A $K$-algebra $A$ is split by $L$ when
+    \begin{enumerate}
+        \item for every $a\in A$, there exists a non-zero polynomial $p(X)\in K[X]$ such that $p(a)=0$. Among all such polynomials, there is a unique one of minimal degree with leading coefficient $1$, which we call the minimal polynomial of $a$ over $K$;
+        \item for every $a\in A$, the minimal polynomial of $a$ over $K$ factors entirely in $L[X]$ in polynomials of degree $1$ with distinct roots.
+    \end{enumerate}
+
+    We will write $Split_K(L)$ for the full subcategory of \textbf{K-Alg} of those objects split by $L$.
+\end{definition}
+
+%% IN CASO FINITO + SPLIT <-> L\tens{K}A\cong L^n %%
+\begin{proposition}
+\label{prop:Gelfand}
+    Let $\sigma:K\hookrightarrow L$ be an extension of fields and $A$ a $K$-algebra of finite dimension $n$. Then $A$ is split by $L$ if and only if there is an isomorphism of $L$-algebras
+    \begin{equation}
+    \label{eq:Gelfand}
+        L\tens{K}A\cong L^n.    
+    \end{equation}
+    \begin{proof}
+        Let $a\in A$ have minimal polynomial $p(X)\in K[X]$ of degree $n$. Since $A$ is split by $L$, $p(X)$ factors in $L[X]$ in $n$ distinct polynomials of degree $1$ and we obtain (\ref{eq:Gelfand}) for the $K$-algebra $K(a)$:
+        \[ L\tens{K}K(a)\cong L\tens{K}\frac{K[X]}{\langle p(X)\rangle}\cong \frac{L[X]}{\langle p(X)\rangle}\cong L^n. \]
+        
+        Now, consider the algebra $A_1\cdot A_2$ generated by $A_1$ and $A_2$, where both satisfy (\ref{eq:Gelfand}) and their dimension over $K$ are respectively $n_1$ and $n_2$. The $K$-algebra $A_1\cdot A_2$ can be viewed as a quotient
+        \[ A_1\tens{K}A_2\longrrightarrow A_1\cdot A_2\text{, where } a_1\otimes a_2\longmapsto a_1\cdot a_2. \]
+        Since $L\tens{K}-$ has a right adjoint, it preserves quotients and we obtain the quotient
+        \[ L\tens{K}(A_1\tens{K}A_2)\longrrightarrow L\tens{K}(A_1\cdot A_2). \]
+        Putting $n = n_1n_2$, by the assumption on $A_1$ and $A_2$, we get
+        \[ L^n \cong L^{n_1}\tens{K}A_2 \cong (L\tens{K}A_1)\tens{K}A_2 \cong L\tens{K}(A_1\tens{K}A_2). \]
+        Let us consider the kernel $I$ of the last quotient: it is well known that ideals of $L^{n}$ are of the form
+        \[ I =\{ (l_i)\in L^n\text{ : }l_j = 0\text{, }\forall j\in J \}\text{ for some }J\subset\{1,\dots, n\} \]
+        and $I\cong L^{d}$, where $d$ is given by the cardinality of $J$.
+        We get 
+        \[ L\tens{K}(A_1\cdot A_2)\cong L^n/I\cong L^{n-d}. \]
+        Thus, we obtained that (\ref{eq:Gelfand}) holds also for the $K$-algebra $A_1\cdot A_2$.
+
+        We have that $A$ is a finitely generated $K$-algebra, and so it is generated by a finite number of $K$-subalgebras $K(a_i)$, for some $a_i\in A$, each of them satisfying (\ref{eq:Gelfand}). Applying the previous argument finitely many times, we obtain the thesis:
+        \[ L\tens{K}A\cong L^n. \]
+
+        On the other hand, let $a\in A$ have a minimal polynomial $p(X)\in K[X]$ of degree $n$. Recall that the roots of $p(X)$ in $L$ are in bijection with $\text{Hom}_K(K[X]/\langle p(X)\rangle,L)$. If $L\tens{K}A\cong L^n$, then 
+        \[ n = \#\text{Hom}_L(L^n, L) = \#\text{Hom}_L(L\tens{K}A, L)=\# \text{Hom}_K(A, L) = \#\text{Hom}_K(\frac{K[X]}{\langle p(X)\rangle}, L), \]
+        so that $p(X)$ splits in $n$ factors of degree $1$ in $L[X]$ and $A$ is a $K$-algebra split by $L$.
+    \end{proof}
+\end{proposition}
+
+\section{Galois theory of commutative rings}
+\label{sec:comm_rings}
+
+%% INTRODUZIONE %%
+In this section, we apply Theorem \ref{thm:CategoricalGaloisTheorem} to an adjunction involving the Pierce spectrum functor defined in Definition \ref{def:PierceSpectrum} on the category of $R$-algebras. In particular, we will prove the existence of a right adjoint and we will state the theorem in this algebraic setting. Since we will work with the opposite categories of rings, we will always underline if a given morphism is considered as an arrow in the opposite category or if it is considered as a ring homomorphism.
+
+%% AGGIUNTO DELLO SPETTRO DI PIERCE %%
+\begin{proposition}
+\label{prop:AdjointPierceSpectrum}
+    Let $R$ be a ring. The Pierce spectrum functor
+    \[ Sp:\opcat{\textbf{R-Alg}}\longrightarrow\textbf{Prof} \]
+    admits as right adjoint the functor
+    \[ \mathcal{C}(-,R):\textbf{Prof}\longrightarrow\opcat{\textbf{R-Alg}} \]
+    where $\mathcal{C}(X,R)$ denotes the ring of continuous maps and $R$ is provided with the discrete topology. The functor $\mathcal{C}(-,R)$ acts on the arrows of \textbf{Prof} by composition.
+
+    \begin{proof}
+        We will construct the corresponding unit and counit and prove the required triangular identities. Let us construct the counit
+        \[ \varepsilon_{X}:Sp(\mathcal{C}(X,R))\longrightarrow X \]
+        for a profinite space $X$. By Stone duality, this reduces to constructing a homomorphism of Boolean algebras
+        \[ \tilde{\varepsilon}_X:Clopen(X)\longrightarrow Idemp(\mathcal{C}(X,R)). \]
+        For every $U\in Clopen(X)$, we define
+        \[ f_U:X\longrightarrow R\text{, }f_U(x) = \begin{cases}
+            1 \text{ if }x\in U,\\
+            0 \text{ if }x\not\in U.
+        \end{cases} \]
+        It is clearly an idempotent continuous map and the association $U\mapsto f_U$ is a homomorphism of Boolean algebras. Moreover, $\tilde\varepsilon$ is natural: if $h:X\to Y$ is a continuous map, for every $V\in Clopen(Y)$ and $x\in X$,
+        \[ f_{h^{-1}(V)}(x) = 1 \iff x \in h^{-1}(V) \iff h(x)\in V \iff f_{V}(h(x)) = 1 \]
+        from which the commutativity of the diagram
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                Clopen(X) \arrow[rr, "\tilde{\varepsilon}_X"] & & Idemp(\mathcal{C}(X,R)) \\ \\ Clopen(Y) \arrow[uu, "h^{-1}"] \arrow[rr, "\tilde{\varepsilon}_Y"'] & & Idemp(\mathcal{C}(Y,R)) \arrow[uu, "-\circ h"']
+            \end{tikzcd}
+        \end{center}
+        Note that it is expressed in \textbf{Bool} and not in $\opcat{\textbf{Bool}}$.
+        
+        Next, let us construct the unit
+        \[ \eta_A:A\longrightarrow \mathcal{C}(Sp(A), R) \]
+        for an $R$-algebra $A$. Since we are working in $\opcat{\textbf{R-Alg}}$, we need a homomorphism of $R$-algebras
+        \[ \eta_A:\mathcal{C}(Sp(A),R)\longrightarrow A. \]
+        For every continuous map $f:Sp(A)\to R$, we shall prove the existence of a finite partition $Sp(A)=U_{e_1}\cup\dots\cup U_{e_n}$ of $Sp(A)$ into clopens $U_{e_i}$, with $e_i\in A$ idempotent, such that $f$ is constant on each $U_{e_i}$ with different values $r_i\in R$. We define
+        \[\eta_A(f) = \sum_{i=1}^{n}r_ie_i.\] 
+        We have a partition $Sp(A) = \bigcup_{r\in R}f^{-1}(r)$ and, since $R$ is discrete, each $f^{-1}(r)$ is a clopen. Since $Sp(A)$ is compact, we can extract a finite subpartition of $Sp(A)$
+        \[ Sp(A) = f^{-1}(r_1)\cup\dots\cup f^{-1}(r_n) \]
+        and each $f^{-1}(r_i)$ is compact in $Sp(A)$, so it can be written as a finite union of elements of the basis $U_e$ and it is easy to check that
+        \[ f^{-1}(r_i) = \bigcup_{j=1}^mU_{e_j} = U_{e_1\vee\dots\vee e_m}, \]
+        so that we can fix for every $i=1,\dots,n$ a unique $e_i\in Idemp(A)$ such that
+        \[ Sp(A) = f^{-1}(r_1)\cup\dots\cup f^{-1}(r_n) \text{ and } f^{-1}(r_i) = U_{e_i}. \]
+        Let us show that the definition $\eta_A(f) = \sum_{i=1}^{n}r_ie_i$ does not depend on the construction we have made by showing it is the only partition with this properties. Consider another partition $Sp(A) = \bigcup_{j=1}^{m}U_{e_j}$ with the same properties. The fact that $f$ is constant on each piece of the partition implies that for every $j=1,\dots, m$, there exists an $i=1,\dots, n$ such that
+        \[ U_{e_j}\subset f^{-1}(r_i). \]
+        Moreover, if it is a proper subset, then there exists $k\not=j$ such that 
+        \[ U_{e_k}\subset f^{-1}(r_i)\setminus U_{e_j}, \]
+        contradicting the condition that $f$ is constant on each piece with different values.
+        It is just a computation to show that $\eta_A$ is a homomorphism of $R$-algebras. Let us show the naturality: if $h:A\to B$ is a homomorphism of $R$-algebras, consider any $f\in \mathcal{C}(Sp(A),R)$; we need to establish that \[ h(\eta_A(f)) = h(\sum_{i=1}^{n}r_ie_i) = \sum_{i=1}^{n}r_ih(e_i) = \eta_B(f\circ Sp(h)), \]
+        in order to obtain the commutativity of the diagram
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \mathcal{C}(Sp(A),R) \arrow[dd, "-\circ Sp(h)"']\arrow[rr, "\eta_A"] & & A \arrow[dd, "h"]\\ \\ \mathcal{C}(Sp(B),R) \arrow[rr, "\eta_B"'] & & B
+            \end{tikzcd}
+        \end{center}
+        It is sufficient to prove that for every $i=1,\dots,n$ and for every $F\in U_{h(e_i)}$, 
+        \[ f\circ Sp(h)(F) = r_i. \]
+        But we have
+        \[ U_{h(e_i)} = \{F\in Sp(B)\text{ : }e_i\in h^{-1}(F)\} = \{F\in Sp(B)\text{ : }e_i\in Sp(h)(F)\}, \]
+        so that $Sp(h)(F)\in U_{e_i}$ and by definition $f(Sp(h)(F)) = r_i$.
+
+
+        We must now prove the triangular identities of the adjunction. The first one is the commutativity of the left triangle below,
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                Sp(A) \arrow[rrdd, Rightarrow, no head] \arrow[rr, "Sp(\eta_A)"] & & Sp(\mathcal{C}(Sp(A),R)) \arrow[dd, "\varepsilon_{Sp(A)}"] & & Idemp(A) \arrow[rrdd, Rightarrow, no head] & & Idemp(\mathcal{C}(Sp(A),R)) \arrow[ll, "\eta_A"'] \\ \\ & & Sp(A) & & & & Idemp(A) \arrow[uu, "\tilde{\varepsilon}_{Sp(A)}"']
+            \end{tikzcd}
+        \end{center}
+        which is equivalent to the commutativity of the right triangle, identifying the clopens of $Sp(A)$ with the idempotents of $A$, via $Clopen(Sp(A))\cong Idemp(A)$. An idempotent $e\in A$ is mapped by $\tilde{\varepsilon}_{Sp(A)}$ to $f_e$, from which
+        \[ \eta_A(f_e) = 1e + 0(1-e) = e. \]
+
+        The second triangular identity is the commutativity of 
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \mathcal{C}(X,R) \arrow[rrdd, Rightarrow, no head] \arrow[rr, "-\circ\varepsilon_X"] & & \mathcal{C}(Sp(\mathcal{C}(X,R)),R) \arrow[dd, "\eta_{\mathcal{C}(X,R)}"] \\ \\ & & \mathcal{C}(X,R)
+            \end{tikzcd}
+        \end{center}
+        Choose $g\in \mathcal{C}(X,R)$ and consider the composite $g\circ\varepsilon_X$. As before, $Sp(\mathcal{C}(X,R))$ can be written as a finite partition of clopens
+        \[ Sp(\mathcal{C}(X,R)) = (g\circ\varepsilon_X)^{-1}(r_1)\cup\dots\cup (g\circ\varepsilon_X)^{-1}(r_n).  \]
+        and for every $i=1,\dots,n$,
+        \[  (g\circ\varepsilon_X)^{-1}(r_i) = \varepsilon_X^{-1}(g^{-1}(r_i)) = U_{\tilde{\varepsilon}_{X}(g^{-1}(r_i))} = U_{f_{g^{-1}(r_i)}}, \]
+        so that
+        \[ \eta_{\mathcal{C}(X,R)}(g\circ\varepsilon_X) = \sum_{i=1}^{n}r_if_{g^{-1}(r_i)}. \]
+        By definition of $f_{g^{-1}(r_i)}$, we have for every $x\in X$
+        \[ f_{g^{-1}(r_i)}(x)=1\iff x\in g^{-1}(r_i) \iff g(x) = r_i, \]
+        obtaining
+        \[ g = \sum_{i=1}^nr_if_{g^{-1}(r_i)} = \eta_{\mathcal{C}(X,R)}(g\circ\varepsilon_X). \]
+    \end{proof}
+\end{proposition}
+
+%% TEOREMA %%
+To apply the categorical Galois theorem in this setting, we consider as class of admissible arrows all morphisms in both categories. This choice ensures that the adjunction $Sp\dashv\mathcal{C}(-,R)$ is relatively admissible. Moreover, observe that both $\opcat{\textbf{R-alg}}$ and \textbf{Prof} admit pullbacks.
+\begin{theorem}[Galois theorem of rings]
+\label{thm:GaloisTheoremRing}
+    Consider the adjunction
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \opcat{\textbf{R-Alg}} \arrow[r, bend left, "Sp", ""{name=Sp}] & \textbf{Prof} \arrow[l, bend left, "\mathcal{C}(-{,}R)", ""{name=C}] \arrow[phantom, from=Sp, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}. Let $\sigma:S\to R$ be of relative Galois descent with respect to these data. There exists an equivalence of categories
+    \[ \opcat{Split_R(\sigma)}\approx{\textbf{Prof }}^{Gal[\sigma]} \]
+    between the dual of the category of $R$-algebras split by $\sigma$ and the category of internal covariant presheaves $(P,p,\pi)$ on the internal groupoid $Gal[\sigma]$ in the category \textbf{Prof} of profinite spaces.
+\end{theorem}
+
+%% ANALISI ELEMENTI NEL SETTING %%
+Let us analyse more concretely some of the elements involved. First of all, let us recall the meaning of the assumption for $\sigma:S\to R$ to be a morphism of relative Galois descent in this setting. We ask for a ring homomorphism $\sigma:R\to S$ that satisfies the following:
+\begin{enumerate}
+    \item the pullback functor along $\sigma$ in $\opcat{\textbf{R-alg}}$ is monadic;
+    \item the counit $\varepsilon^S$ of the adjunction $Sp_S\dashv{\mathcal{C}(-,R)}_S$ is an isomorphism at every object $(X,f)$ of \textbf{Prof}$/Sp(S)$. More explicitly, writing $\mathcal{C}_S$ for ${\mathcal{C}(-,R)}_S$, we ask for the counit $\varepsilon^S$
+    \[ Sp( \mathcal{C}_S(X,f) )\cong X \]
+    to be an homeomorphism for every profinite space $X$ along with a continuous map $f:X\to Sp(S)$;
+    \item the object $\mathcal{C}_S(X,f)$, seen as an $R$-algebra, is split by $\sigma$, for every $(X,f)$ in \textbf{Prof}$/Sp(S)$. More explicitly, let us clarify what it means for an $R$-algebra $A$ to be split by $\sigma$: we are asking for the unit $\eta^S$ of the adjunction $Sp_S\dashv{\mathcal{C}(-,R)}_S$
+    \[ S\tens{R}A\cong\mathcal{C}_S(Sp(S\tens{R}A)). \]
+    to be an isomorphism of $S$-algebras on $S\tens{R}A$.
+\end{enumerate}
+These last two conditions will be analyzed more deeply in the next part of this section, where we will gain a clearer understanding of the functor ${\mathcal{C}(-,R)}_S$ under one more assumption on $S$.
+
+Note that the pullback along $\sigma$ in $\opcat{\textbf{R-Alg}}$ is the pushout in $\textbf{R-Alg}$. Conversely, the functor $\Sigma_\sigma$ is indeed a forgetful functor: an $S$-algebra $A$ is a ring provided with a ring homomorphism $\rho_A:S\to A$, and the composition with the ring homomorphism $\sigma:R\to S$ provides to $A$ the structure of an $R$-algebra. From now on we will omit the functor $\Sigma_\sigma$ since it simply represents the process of viewing an $S$-algebra as an $R$-algebra. For the sake of clarity, we will indicate explicitly when we regard an object in this way rather than introducing additional notation, keeping the presentation more readable. Now, let us show the functors involved as in Diagram \ref{diag:InvolvedFunctors}, recalling that for every $R$-algebra $S$, one has an isomorphism of categories $\opcat{\textbf{R-Alg}}/S\cong\opcat{\textbf{S-Alg}}$.
+
+\begin{equation}
+\label{diag:InvolvedFunctorsRing}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \opcat{\textbf{R-Alg}} \arrow[rr, "\sigma^*", bend left, ""{name=pull}] & & \opcat{\textbf{S-Alg}} \arrow[ll, bend left, ""{name=comp}] \arrow[rrd, "{Sp}_S", bend left=15, ""{name=Sps}] \\ & & & & \textbf{Prof}/Sp(S) \arrow[llu, "{\mathcal{C}(-{,}R)}_S", bend left=15, ""{name=Cs}] \arrow[dll, bend right=20, ""{name=Csequi}] \\ \opcat{Split_R(\sigma)} \arrow[uu, tail] \arrow[rr, "\sigma^*", bend left, ""{name=pullres}] & & \opcat{Split_S(1_S)} \arrow[uu, tail] \arrow[urr, bend right=20, "{Sp}_S"', ""{name=Spsequi}] \arrow[ll, bend left, ""{name=compres}] \arrow[phantom, from=pull, to=comp, "\dashv" rotate=90] \arrow[phantom, from=pullres, to=compres, "\dashv" rotate=90] \arrow[phantom, from=Sps, to=Cs, "\dashv" rotate=-120] \arrow[phantom, from=Spsequi, to=Csequi, "\approx" rotate=30]
+    \end{tikzcd}
+\end{equation}
+
+The localized adjunction ${Sp}_S\dashv{\mathcal{C}(-,R)}_S$ is given as in Section \ref{sec:preliminary_adjunctions} of Chapter \ref{cap:categorical_galois}; explicitly, the left adjoint ${Sp}_S$ acts as $Sp$ on the category of $S$-algebras
+\[ A\longmapsto (Sp(A),Sp(\rho_A)) \]
+for an $S$-algebra $\rho_A:S\to A$. The right adjoint ${\mathcal{C}(-,R)}_S$ has the following expression that will be clarified further under one more assumption: recalling that ${\mathcal{C}(-,R)}_S$ is the composition of $\mathcal{C}(-,R)$ and the pullback functor along the unit $\eta_S$ of $Sp\dashv\mathcal{C}(-,R)$, one has
+
+\begin{equation}
+\label{diag:ExpressionC(X,R)_S}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \pullback {\mathcal{C}(X,R)}_S:=S\tens{\mathcal{C}(Sp(S),R)}\mathcal{C}(X,R) \arrow[rr] \arrow[dd] & & \mathcal{C}(X,R) \arrow[dd, "-\circ f"] \\ \\ S \arrow[rr, "\eta_S"'] & & \mathcal{C}(Sp(S),R)
+    \end{tikzcd}
+\end{equation}
+
+for every profinite space $X$ along with a morphism $f:X\to Sp(S)$. Note that we have expressed Diagram \ref{diag:ExpressionC(X,R)_S} following the theoretic definition, so as a pullback in $\opcat{\textbf{R-Alg}}$. 
+
+%% CI LIMITIAMO A S CON ESATTAMENTE DUE IDEMPOTENTI %%
+Since our goal is to specialize this setting to the case of fields extensions, we now examine certain properties that arise specifically when $S$ has exactly two idempotent elements, namely $0$ and $1$. It is a strong condition to assume on a ring, but whenever a result remains valid without this assumption we will explicitly state it. We will only provide proofs under this hypothesis. In particular, under the idempotents assumption, we get a clearer form for the functor ${\mathcal{C}(-,R)}_S$. Moreover, we will show that the requirement on the counit $\varepsilon^S$ to be an isomorphism is unnecessary, as it is always satisfied, even without this assumption.
+
+%% SPETTRO E BANALE %%
+%% FUNTORE FUNZIONI CONTINUE FULL AND FAITHFULL %%
+%% AGGIUNTO DESTRO LOCALIZZATO SONO FUNZIONI CONTINUE %%
+\begin{proposition}
+\label{prop:ContinuousExactlyIdempotent}
+    Let $R$ be a ring and $S$ an $R$-algebra with exactly two idempotent elements. The functor
+    \[ \mathcal{C}(-,S):\textbf{Prof}\longrightarrow\opcat{\textbf{S-Alg}} \]
+    is full and faithful. Moreover, $Sp(S)$ is a singleton, and there is an isomorphism between the functor
+    \[ \mathcal{C}(-,S):\textbf{Prof}\longrightarrow\opcat{\textbf{S-Alg}} \]
+    and
+    \[ {\mathcal{C}(-,R)}_S:\textbf{Prof}/Sp(S)\longrightarrow\opcat{\textbf{S-Alg}}, \]
+    establishing an isomorphism of $S$-algebras 
+    \[ S\otimes_R\mathcal{C}(X,R) \cong \mathcal{C}(X,S) \]
+    for every profinite space $X$.
+    \begin{proof}
+        To prove that $\mathcal{C}(-,S)$ is full and faithful, we show that $\varepsilon_X:Sp(\mathcal{C}(X,S))\to X$, the counit of $Sp\dashv \mathcal{C}(-,S)$ described in Proposition \ref{prop:AdjointPierceSpectrum}, is a homeomorphism for every profinite space $X$. Since it is a continuous map between Hausdorff spaces, it suffices to prove its bijectivity.
+        If $X=\emptyset$, then $Sp(\mathcal{C}(X,S)) = \emptyset$ and obviously $\varepsilon_X$ is a homeomorphism. Otherwise, we show that $\tilde{\varepsilon}_X:Clopen(X)\to Idemp(\mathcal{C}(X,S))$ is an isomorphism of Boolean algebras by constructing an inverse. An idempotent continuous map $f:X\to S$ takes values on idempotent of $S$, so only $0$ and $1$. Since $S$ is discrete, the preimage of $1$ is a clopen of $X$ and the preimage of $0$ is its complement. Therefore, the map $f\longmapsto f^{-1}(1)$ is the inverse of $\tilde{\varepsilon}_X$, and $\varepsilon_X$ is bijective for every profinite space $X$. Moreover, considering $X = \{*\}$, we get $\mathcal{C}(X, S)\cong S$ and so
+        \[ Sp(S) \cong Sp(\mathcal{C}(X,S))\cong X = \{*\}. \]
+        We could also have computed directly
+        \[ Sp(S) = Spec(Idemp(S)) = Spec(\{0,1\}) = \{ \{1\} \}, \]
+        since $\{1\}$ is the only ultrafilter in the Boolean algebra $\{0,1\}$.
+
+        Finally, since $Sp(S) = \{*\}$ is the terminal object in \textbf{Prof}, it is clear that $\textbf{Prof}/Sp(S)\cong\textbf{Prof}$ and ${Sp}_S=Sp:\opcat{\textbf{S-Alg}}\longrightarrow\textbf{Prof}$. So that there is an isomorphism between the two right adjoints $\mathcal{C}(-,S)$ and ${\mathcal{C}(-,R)}_S$ of $Sp$. Explicitly, Diagram \ref{diag:ExpressionC(X,R)_S} is in the form
+        \begin{equation*}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback \mathcal{C}(X,S) \cong {\mathcal{C}(X,R)}_S \arrow[rr] \arrow[dd] & & \mathcal{C}(X,R) \arrow[dd] \\ \\ S \arrow[rr, "\eta_S"'] & & \mathcal{C}(Sp(S),R)\cong R
+            \end{tikzcd}
+        \end{equation*}
+        establishing the desired isomorphism
+        \[ \mathcal{C}(X,S)\cong S\tens{R}\mathcal{C}(X,R) \]
+        for every profinite space $X$.
+    \end{proof}
+\end{proposition}
+
+Actually, to prove that the counit $\varepsilon^S$ is an isomorphism, it is not needed that $S$ has exactly two idempotents. In general, the functor ${\mathcal{C}(-,R)}_S$ has a different explicit form as a $\text{Hom}$-functor, considering the Pierce structural space, and it can be shown that it remains full and faithful. Some details can be found in Appendix \ref{sec:AppendixRing}.
+%% NON SERVE IN GENERALE IPOTESI DUE %%
+\begin{proposition}[\cite{borceux2001galois}, Theorem $4.3.6$]
+\label{prop:InducedFullFaithfulRingGeneral}
+    Let $R$ be a ring. For every $R$-algebra $S$, the functor
+    \[ {\mathcal{C}(-,R)}_S:\textbf{Prof}/Sp(S)\longrightarrow\opcat{\textbf{S-Alg}} \]
+    is full and faithful.
+\end{proposition}
+
+%% RISCRIVENDO IPOTESI SUL MORFISMO %%
+In Proposition \ref{prop:ContinuousExactlyIdempotent} we have shown that it is not necessary to ask for the counit $\varepsilon^S$ to be an isomorphism. Moreover, with this new assumption on $S$, we got a clearer view on the functor ${\mathcal{C}(-,R)}_S$ and we can proceed to exhibit once again Diagram \ref{diag:InvolvedFunctorsRing} and the conditions on the ring homomorphism $\sigma:R\to S$ in the case of $S$ having exactly two idempotent elements. We obtained the following:
+
+\begin{equation}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \opcat{\textbf{R-Alg}} \arrow[rr, "S\tens{R}-", bend left, ""{name=pull}] & & \opcat{\textbf{S-Alg}} \arrow[ll, bend left, ""{name=comp}] \arrow[rrd, "Sp", bend left=15, ""{name=Sps}] \\ & & & & \textbf{Prof} \arrow[llu, "\mathcal{C}(-{,}S)", bend left=15, ""{name=Cs}] \arrow[dll, bend right=20, ""{name=Csequi}] \\ \opcat{Split_R(\sigma)} \arrow[uu, tail] \arrow[rr, "S\tens{R}-", bend left, ""{name=pullres}] & & \opcat{Split_S(1_S)} \arrow[uu, tail] \arrow[urr, bend right=20, "Sp"', ""{name=Spsequi}] \arrow[ll, bend left, ""{name=compres}] \arrow[phantom, from=pull, to=comp, "\dashv" rotate=90] \arrow[phantom, from=pullres, to=compres, "\dashv" rotate=90] \arrow[phantom, from=Sps, to=Cs, "\dashv" rotate=-120] \arrow[phantom, from=Spsequi, to=Csequi, "\approx" rotate=30]
+    \end{tikzcd}
+\end{equation}
+
+Regarding the assumption on the ring homomorphism $\sigma:R\to S$, we need only two conditions:
+\begin{enumerate}
+    \item the functor $S\tens{R}-:\opcat{\textbf{R-Alg}}\longrightarrow\opcat{\textbf{S-Alg}}$ is monadic;
+    \item the object $\mathcal{C}(X,S)$, seen as an $R$-algebra, is split by $\sigma$, for every profinite space $X$. Explicitly, the splitting condition for an $R$-algebra $A$ is given by the unit $\eta$ of the adjunction $Sp\dashv\mathcal{C}(-,S)$, described in Proposition \ref{prop:AdjointPierceSpectrum}, to be an isomorphism of $S$-algebras on $S\tens{R}A$:
+    \[ S\tens{R}A \cong \mathcal{C}(Sp(S\tens{R}A), S). \]
+\end{enumerate}
+
+%% GRUPPOIDE DI GALOIS E UN GRUPPO %%
+Finally, let us show another property that arises when $S$ has exactly two idempotent elements regarding the Galois groupoid:
+\begin{proposition}
+\label{prop:GroupoidIsGroup}
+    In the setting above consider the Galois groupoid $Gal[\sigma]$ of $\sigma$. Suppose $S$ has exactly two idempotent elements; then $Gal[\sigma]$ is a profinite group. Moreover, there is an isomorphism of categories
+    \[ {\textbf{Prof }}^{Gal[\sigma]}\cong Gal[\sigma]\textbf{-Prof} \]
+    between the category of internal covariant presheaves on $Gal[\sigma]$ in \textbf{Prof} and the category of profinite spaces provided with a continuous group action of $Gal[\sigma]$.
+    \begin{proof}
+        Let us recall Definition \ref{def:GaloisGroupoid} in this setting:
+        \begin{equation*}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                 Sp(S\tens{R}S)\tens{Sp(S)}Sp(S\tens{R}S) \arrow[rr, "\text{\scriptsize$\limitmorph{Sp(\pi_1)}{Sp(\pi_4)}$}"] & &  Sp(S\tens{R}S) \arrow[rrr, "Sp(p_2)"', bend right, shift right=2] \arrow[rrr, "Sp(p_1)", bend left, shift left=2] \arrow["Sp(\tau)"', loop, distance=2em, in=305, out=235] & & & Sp(S) \arrow[lll, "Sp(\Delta)"']
+            \end{tikzcd}
+        \end{equation*}
+        By Proposition \ref{prop:ContinuousExactlyIdempotent}, $Sp(S)=\{*\}$ is a singleton and so the Galois groupoid has only one object; it is isomorphic to an internal group in \textbf{Prof}, given by $Sp(S\tens{R}S)$, that is a profinite group. Moreover, an internal covariant presheaf $(P,p,\pi)$ on $Gal[\sigma]$ in \textbf{Prof} is a profinite space $P$, along with the unique map $p:P\to \{*\}$ and a continuous map
+        \[ \pi: Sp(S\tens{R}S)\times P\to P. \]
+        The axioms in Definition \ref{def:InternalPresheaves} correspond exactly to the axioms for $\pi$ to be a group action on $P$ of $Gal[\sigma]\cong Sp(S\tens{R}S)$. Furthermore, an internal natural transformation $\gamma:P\Rightarrow P'$ in \textbf{Prof} is a continuous map $\gamma:P\to P'$ and the axioms in Definition \ref{def:InternalNaturalTransformation} are exactly the requirement that $\gamma$ is compatible with the actions $\pi$ and $\pi'$.
+    \end{proof}
+\end{proposition}
+
+To conclude, we can state Theorem \ref{thm:GaloisTheoremRing} once again with the idempotents condition considered on $S$ and explicitly stating the assumption and the conclusion as analysed in this section.
+\begin{theorem}
+\label{thm:GaloisTheoremRingIdemp}
+    Let $\sigma:R\to S$ be a ring homomorphism such that
+    \begin{enumerate}
+        \item $S$ has exactly two idempotent elements;
+        \item the functor $S\tens{R}-:\opcat{\textbf{R-Alg}}\longrightarrow\opcat{\textbf{S-Alg}}$ is monadic;
+        \item for every profinite space $X$, the unit $\eta$ of the adjunction $Sp\dashv\mathcal{C}(-,S)$ is an isomorphism on $S\tens{R}\mathcal{C}(X,S)$; explicitly
+        \[ S\tens{R}\mathcal{C}(X,S)\cong \mathcal{C}(Sp(S\tens{R}\mathcal{C}(X,S)),S). \]
+    \end{enumerate}
+    Then there is an equivalence of categories given by
+    \[ Sp(S\tens{R}-):\opcat{Split_R(\sigma)}\longrightarrow Gal[\sigma]\textbf{-Prof} \]
+    between the opposite category of $R$-algebras split by $\sigma$ and the category of profinite spaces along with a continuous group action of $Gal[\sigma]\cong Sp(S\tens{R}S)$.
+\end{theorem}
+
+
+\section{The field case: recovering the classical Galois correspondence}
+\label{sec:field_case}
+
+%% INTRODUZIONE %%
+In this section, we further specialize to the field case. Specifically, we consider the same setting developed in Section \ref{sec:comm_rings}, now with $R=K$ and $S=L$, where $\sigma:K\hookrightarrow L$ is a field extension. In particular, as assumed at the end of the previous section, $L$ has exactly two idempotent elements. The purpose of this section is to recover completely the classical theories that inspired the categorical theorem of Chapter \ref{cap:categorical_galois} and to derive the classical Galois correspondence in the context of a finite Galois extension of fields. To do so, we first establish that a Galois extension of fields satisfies the assumption on the morphism $\sigma:K\hookrightarrow L$ required by Theorem \ref{thm:GaloisTheoremRingIdemp}.
+
+%% ESTENSIONE DI GALOIS %%
+\begin{definition}
+     Let $\sigma:K\hookrightarrow L$ be a field extension. $\sigma$ is Galois when
+    \begin{enumerate}
+        \item for every $l\in L$, there exists a non-zero polynomial $p(X)\in K[X]$ such that $p(l)=0$. Among all such polynomials, there is a unique one of minimal degree with leading coefficient $1$, which we call the minimal polynomial of $l$ over $K$;
+        \item for every $l\in L$, the minimal polynomial of $l$ over $K$ factors entirely in $L[X]$ in polynomials of degree $1$ with distinct roots.
+    \end{enumerate}
+\end{definition}
+It follows from Definition \ref{def:SplitAlgebras} that:
+\[ \sigma:K\hookrightarrow L\text{ is Galois}\iff L \text{ is a $K$-algebra split by } L. \]
+
+%% PRIMA DI PROCEDERE RECALL CHE A ED L SONO COLIMITI DELLE FINITE %%
+\begin{lemma}
+\label{lem:ColimitFinite}
+    Let $\sigma:K\hookrightarrow L$ be a Galois extension of fields. $L$ is a filtered colimit of its finite dimensional Galois subextension $K\hookrightarrow M\hookrightarrow L$. Analogously, every $K$-algebra $A$ split by $L$ is a filtered colimit of its finite dimensional subalgebras $B\subset A$, each of them being itself split by a finite dimensional Galois subextension of $L$.
+    \begin{proof}
+        If $l\in L$ has a minimal polynomial $p(X)\in K[X]$ with roots $l_1,\dots,l_n\in L$, then
+        \[ l\in K(l_1,\dots,l_n)\hookrightarrow L \]
+        where $K\hookrightarrow K(l_1,\dots,l_n)$ is a finite dimensional Galois extension, so that $L$ is the set-theoretical union of its finite dimensional Galois subextension. Moreover, it is filtered since the subalgebra generated by two finite dimensional Galois extension is still a finite dimensional Galois extension of $K$. A similar argument applies in the second case: if $a\in A$ has a minimal polynomial $p(X)\in K[X]$ with roots $a_1,\dots,a_n\in L$, then $a\in B$, where $B$ is the finite $K$-algebra generated by $a_1,\dots,a_n$. Furthermore, $B$ is split by the finite dimensional Galois subextension $K\hookrightarrow K(a_1,\dots,a_n)\hookrightarrow L$.
+    \end{proof}
+\end{lemma}
+\begin{oss*}
+    We have given a profinite structure to $\text{Hom}_K(A,L)$ for every $K$-algebra $A$ split by $L$. Indeed, recall that the functor $\text{Hom}_K(-,-):\opcat{\textbf{K-Alg}}\times\textbf{K-alg}\longrightarrow \textbf{Set}$ preserves limits in both arguments, so that
+    \[ \text{Hom}_K(A,L)\cong \text{Hom}_K(\underset{B}{\text{colim }}B,L)\cong \underset{B}{\text{lim }}\text{Hom}_K(B,L).  \]
+    Moreover, $\text{Hom}_K(B,L)\cong\text{Hom}_K(B,M)$ for some finite dimensional subextension $K\hookrightarrow M\hookrightarrow L$ and so it is a finite set.
+\end{oss*}
+
+%% Sp TRASFORMA COLIMITI IN K-ALG IN LIMITI IN PROF %%
+\begin{lemma}
+\label{lem:SpTransformsLimitColimit}
+    The functor $Sp:\opcat{\textbf{K-Alg}}\longrightarrow \textbf{Prof}$ preserves cofiltered limits.
+    \begin{proof}
+        Applying Stone duality, we need to prove that the functor
+        \[ Idemp:\textbf{K-Alg}\longrightarrow\textbf{Bool} \]
+        preserves filtered colimits. Both categories are algebraic, thus colimits are computed as in \textbf{Set}, and $Idemp$ is the factorization, through \textbf{Bool}, of the representable functor
+        \[ \text{Hom}(K[X]/\langle X^2\rangle),-):\textbf{K-Alg}\longrightarrow\textbf{Set}. \]
+        This representable functor preserves filtered colimits, because $K[X]/\langle X^2\rangle$ is finitely presented as a $K$-algebra (see \cite{rosicky1994locally}).
+    \end{proof}
+
+\end{lemma}
+
+Before moving on, let us underline that in general, since $Sp:\opcat{\textbf{K-Alg}}\longrightarrow \textbf{Prof}$ is a left adjoint, it preserves colimits. Explicitly, $Sp$ transforms limits in \textbf{K-Alg} into colimits in \textbf{Prof} since it is a left adjoint, and filtered colimits in \textbf{K-Alg} into cofiltered limits in \textbf{Prof} because of the previous Lemma.
+%% ESTENSIONE DI GALOIS IMPLICA DISCESA DI GALOIS %%
+\begin{proposition}
+\label{prop:GaloisIsDescent}
+    Let $\sigma:K\hookrightarrow L$ be a Galois extension of fields. Then $\sigma:L\to K$ is a morphism in $\opcat{\textbf{K-Alg}}$ of relative Galois descent.
+    \begin{proof}
+        We have seen that to be of relative Galois descent, we need to establish the following:
+        \begin{enumerate}
+            \item the functor $L\tens{K}-:\opcat{\textbf{K-Alg}}\longrightarrow\opcat{\textbf{L-Alg}}$ is monadic;
+            \item the object $\mathcal{C}(X,L)$, seen as an $K$-algebra, is split by $\sigma$, for every profinite space $X$. Explicitly,
+            \[ L\tens{K}\mathcal{C}(X,L)\cong \mathcal{C}(Sp(L\tens{K}\mathcal{C}(X,L)), L). \]
+        \end{enumerate}
+        To prove the first condition, recall that $L$ is faithfully flat as a $K$-module, as stated in Proposition \ref{prop:LFaithfullyFlat}. Since the forgetful functors $\textbf{K-Alg}\longrightarrow\textbf{Mod}_K$ and $\textbf{L-Alg}\longrightarrow\textbf{Mod}_L$ preserve and reflect exact sequences, the restriction of the functor $L\tens{K}-$ to the categories of algebras preserves and reflects exact sequences. Moreover, since $\textbf{K-Alg}$ and $\textbf{L-Alg}$ have equalizers computed as in $\textbf{Mod}_K$ and $\textbf{Mod}_L$, the functor
+        \[ L\tens{K}-:\textbf{K-Alg}\longrightarrow\textbf{L-Alg} \]
+        reflects isomorphisms and preserves equalizers. The monadicity follows from Beck's criterion.
+
+        About the second condition, we will prove that for every $K$-algebra $A$ split by $L$ and for every profinite space $X$, the morphism
+        \begin{equation}
+        \label{eq:IsomorphismSplit}
+            A\tens{K}\mathcal{C}(X,L)\longrightarrow\mathcal{C}(Sp(A\tens{K}\mathcal{C}(X,L)), L)
+        \end{equation}
+        is an isomorphism of $L$-algebras. Since $\sigma$ is a Galois extension, $L$ is split by $L$ as a $K$-algebra, and putting $A=L$ we get the desired isomorphism. By Lemma \ref{lem:ColimitFinite}, we have
+        \[ A\tens{K}L\cong (\underset{B}{\text{colim }}B)\tens{K}(\underset{M}{\text{colim }}M)\cong\underset{(B,M)}{\text{colim }}B\tens{K}M \]
+        where $B$ and $M$ are finite dimensional over $K$, and by Proposition \ref{prop:ContinuousExactlyIdempotent}
+        \[ \mathcal{C}(X,L)\cong L\tens{K}\mathcal{C}(X,K). \]
+        Note that the previous isomorphism holds even for the finite extension $K\hookrightarrow M$. Recall that $\mathcal{C}(-,K):\textbf{Prof}\longrightarrow\opcat{\textbf{K-Alg}}$ transforms limits in \textbf{Prof} into colimits in \textbf{K-Alg}, since it is a right adjoint.
+        Now, suppose (\ref{eq:IsomorphismSplit}) holds in the finite dimensional case, we have the following chain of isomorphisms:
+        \begin{align*}
+            A\tens{K}\mathcal{C}(X,L) & \cong A\tens{K}L\tens{K}\mathcal{C}(X,K)\\
+            & \cong \underset{(B,M)}{\text{colim }}B\tens{K}M\tens{K}\mathcal{C}(X,K)\\
+            & \cong \underset{(B,M)}{\text{colim }}B\tens{K}\mathcal{C}(X,M)\\
+            (*)& \cong \underset{(B,M)}{\text{colim }}\mathcal{C}(Sp(B\tens{K}\mathcal{C}(X,M)),M)\\
+            & \cong \underset{(B,M)}{\text{colim }}M\tens{K} \mathcal{C}(Sp(B\tens{K}\mathcal{C}(X,M)),K)\\
+            %& \cong \underset{(B,M,M')}{\text{colim }}M'\tens{K} \mathcal{C}(Sp(B\tens{K}M\tens{K}\mathcal{C}(X,K)),K)\\
+            & \cong L\tens{K}\underset{(B,M)}{\text{colim }}\mathcal{C}(Sp(B\tens{K}M\tens{K}\mathcal{C}(X,K)),K)\\
+            & \cong L\tens{K}\mathcal{C}(\underset{(B,M)}{\text{lim }}Sp(B\tens{K}M\tens{K}\mathcal{C}(X,K)),K)\\
+            (\text{Lemma \ref{lem:SpTransformsLimitColimit}})& \cong L\tens{K}\mathcal{C}(Sp(\underset{(B,M)}{\text{colim }}B\tens{K}M\tens{K}\mathcal{C}(X,K)),K)\\
+            & \cong L\tens{K}\mathcal{C}(Sp(A\tens{K}L\tens{K}\mathcal{C}(X,K)),K)\\
+            & \cong L\tens{K}\mathcal{C}(Sp(A\tens{K}\mathcal{C}(X,L)),K)\\
+            & \cong \mathcal{C}(Sp(A\tens{K}\mathcal{C}(X,L)),L).
+        \end{align*}
+
+        It remains to prove the argument $(*)$: it is (\ref{eq:IsomorphismSplit}) in the finite dimensional case. In this setting, $B\tens{K}M\cong M^n$ as in Proposition \ref{prop:Gelfand}, where $n$ is the dimension of $B$ as a $K$-algebra. We have the following:
+        \begin{align*}
+            B\tens{K}\mathcal{C}(X,M) & \cong B\tens{K}M\tens{K}\mathcal{C}(X,K)\\
+            & \cong M^n\tens{K}\mathcal{C}(X,K)\\
+            & \cong (M\tens{K}\mathcal{C}(X,K))^n\\
+            & \cong \mathcal{C}(X,M)^n = \prod_n\mathcal{C}(X,M)\\
+            & \cong \mathcal{C}(\coprod_nX, M)\\
+            (**)& \cong \mathcal{C}(\coprod_nSp(\mathcal{C}(X,M)),M)\\
+            & \cong \mathcal{C}(Sp(\prod_n\mathcal{C}(X,M)), M)\\
+            %& \cong \mathcal{C}(Sp(M^n\tens{K}\mathcal{C}(X,K)), M)\\
+            %& \cong \mathcal{C}(Sp(B\tens{K}M\tens{K}\mathcal{C}(X,K)),M)\\
+            & \cong \mathcal{C}(Sp(B\tens{K}\mathcal{C}(X,M)),M)
+        \end{align*}
+        where we used Proposition \ref{prop:ContinuousExactlyIdempotent} for the isomorphism $X\cong Sp(\mathcal{C}(X,M))$ in the argument $(**)$.
+    \end{proof}
+\end{proposition}
+\begin{oss*}
+    Note that the first part of the proof required only that $L$ is faithfully flat as a $K$-module. Indeed, the monadicity of the pullback functor holds also in the case of rings, if $S$ is faithfully flat as an $R$-module. More generally, in a Barr-exact category, the pullback functor $\sigma^*$ is monadic if and only if $\sigma$ is a regular epimorphism and, in an algebraic category, it is the case if and only if $\sigma$ is a surjection.
+\end{oss*}
+
+We have proved that Theorem \ref{thm:GaloisTheoremRingIdemp} applies for a Galois extension of fields. Now, let us proceed to establish the equivalence between $Split_K(L)$ and $Split_K(\sigma)$, and to gain a clearer view of the functor that realizes the Galois equivalence.
+
+%% SPLIT(L) = SPLIT(\sigma) %%
+\begin{proposition}
+\label{prop:Split=Split}
+    Let $\sigma: K\hookrightarrow L$ be a Galois extension of fields. There is an isomorphism of categories
+    \[ Split_K(L)\cong Split_K(\sigma) \]
+    between the full subcategory of $K$-algebras split by $L$ and the full subcategory of $K$-algebras split by $\sigma$.
+    \begin{proof}
+        It is sufficient to prove that for every $K$-algebra $A$
+        \[ A \text{ is split by }\sigma \iff A \text{ is split by }L. \]
+        In proposition \ref{prop:GaloisIsDescent} we have established that for every $K$-algebra $A$ split by $L$ and for every profinite space $X$
+        \begin{equation}\tag{\ref{eq:IsomorphismSplit}}
+            A\tens{K}\mathcal{C}(X,L)\longrightarrow \mathcal{C}(Sp(A\tens{K}\mathcal{C}(X,L)),L)
+        \end{equation}
+        is an isomorphism of $L$-algebras. Putting $X = \{*\}$ gives us $\mathcal{C}(X,L)\cong L$. Thus,
+        \[ A\tens{K}L\cong \mathcal{C}(Sp(A\tens{K}L), L) \]
+        establishing that $A$ is also split by $\sigma$. On the other hand, if $A$ is split by $\sigma$, by Corollary \ref{cor:ObjectsSplitSigma}, there exists a profinite space $X$ such that
+        \[ L\tens{K}A\cong \mathcal{C}(X,L)\cong L\tens{K}\mathcal{C}(X,K). \]
+        It is sufficient to prove for every profinite space $X$, that $\mathcal{C}(X,K)$ is a $K$-algebra split by $L$. Write $X = \underset{i\in I}{\text{lim }}X$ as a cofiltered limit of finite discrete spaces. For every $i\in I$, $X_i$ and $K$ are discrete spaces, so that
+        \[ \mathcal{C}(X_i, K) = \text{Hom}(X_i, K)\cong K^{n_i}, \]
+        where $n_i = \# X_i$. By Proposition \ref{prop:Gelfand}, $\mathcal{C}(X_i,K)$ is split by $L$ for every $i\in I$. Moreover,
+        \[ \mathcal{C}(X,K) = \mathcal{C}(\underset{i\in I}{\text{lim }}X_i, K)\cong \underset{i\in I}{\text{colim }}\mathcal{C}(X_i, K) \]
+        and it is a filtered colimit in \textbf{K-Alg}, so that it is computed as in \textbf{Set}. Let us show that a filtered colimit $A$ of $K$-algebras $A_i$ split by $L$ remains split by $L$: each $a\in A$ has the form $[a_i]$ for some $i\in I$ and $a_i\in A_i$; the minimal polynomial $p(X)$ of $a$ over $K$ is a factor of the minimal polynomial $p_i(X)$ of $a_i$ over $K$. Since $A_i$ is split by $L$, $p_i$ factors in $L[X]$ into different factors of degree $1$, so that $p(X)$ also factors in $L[X]$ in polynomials of degree $1$ with distinct roots.
+    \end{proof}
+\end{proposition}
+
+%% SP(L\tens{K}-) = HOM(-,L) %%
+\begin{proposition}
+\label{prop:SP=HOM}
+    Let $\sigma: K\hookrightarrow L$ be a Galois extension of fields. The functor
+    \[ Sp(L\tens{K}-):\opcat{Split_K(L)}\longrightarrow \textbf{Prof} \]
+    is isomorphic to the functor
+    \[ \text{Hom}_K(-,L):\opcat{Split_K(L)}\longrightarrow \textbf{Prof}. \]
+    \begin{proof}
+        When the $K$-algebra $A$ is finite dimensional, we know $\text{Hom}_K(A,L)\cong \text{Hom}_K(A,M)$ for some finite subextension $K\hookrightarrow M\hookrightarrow L$ and this isomorphism is clearly natural in $A$. Moreover, $\text{Hom}_K(A,M)$ is a finite discrete space of cardinality $n$, where $n$ is the dimension of $A$ as a $K$-algebra. From Proposition \ref{prop:Gelfand}, $L\tens{K}A\cong L^n$ and this isomorphism is again natural in $A$. Since $L$ has only $0$ and $1$ as idempotents, one has also that $Sp(L\tens{K}A)\cong Sp(L^n)$ is a finite discrete space of cardinality $n$, establishing a natural isomorphism
+        \[ Sp(L\tens{K}A)\cong \text{Hom}_K(A,L) \]
+        for a finite dimensional $K$-algebra $A$.
+        Now, when $A$ is infinite dimensional, $A\cong\underset{B}{\text{colim }}B$ in \textbf{K-Alg}, where $B$ runs through the finite dimensional subalgebras of $A$. Applying \ref{lem:SpTransformsLimitColimit}, we obtain
+        \begin{align*}
+            Sp(L\tens{K}A) &\cong Sp(\underset{B}{\text{colim }}L\tens{K}B) \cong \underset{B}{\text{lim }}Sp(L\tens{K}B) \\
+            & \cong  \underset{B}{\text{lim }}\text{Hom}_K(B,L) \cong\text{Hom}_K(\underset{B}{\text{colim }}B,L) \cong \text{Hom}_K(A,L).
+        \end{align*}
+    \end{proof}
+\end{proposition}
+
+Recall that $\sigma:K\hookrightarrow L$ is Galois if and only if $L$ is split by itself as a $K$-algebra, thus we obtain a clearer form of the Galois group:
+\[ Gal[\sigma]\cong Sp(L\tens{K}L)\cong \text{Hom}_K(L,L) = \text{Aut}_K(L)=:Gal[L:K]. \]
+
+This last two arguments are exactly the relation between the classical Galois theory of fields and the categorical Galois theory developed in this thesis. We moved from the categorical Theorem \ref{thm:CategoricalGaloisTheorem} to Theorem \ref{thm:GaloisTheoremRing}, fixing an adjunction and a morphism in the category of rings. When we looked into the special case of fields (actually, rings with exactly two idempotents), we got Theorem \ref{thm:GaloisTheoremRingIdemp}: an equivalence of categories
+\[ Sp(L\tens{K}-):\opcat{Split_K(\sigma)}\longrightarrow Gal[\sigma]\textbf{-Prof} \]
+with the Galois group presented as $Sp(L\tens{K}L)$. Now, with Propositions \ref{prop:Split=Split} and \ref{prop:SP=HOM}, we get that
+\[ \text{Hom}_K(-,L):\opcat{Split_K(L)}\longrightarrow Gal[L:K]\textbf{-Prof} \]
+is the same equivalence of categories, but this time in a full field-theoretical version. Finally, we can state the Galois theorem with the classical notation.
+%% RECAP E RITROVIAMO TEOREMA SUI CAMPI 3.5.8 PAGINA 74 %%
+\begin{theorem}[Galois theorem of fields]
+    Let $\sigma:K\hookrightarrow L$ be a Galois extension of fields. There exists an equivalence of categories
+    \[ \text{Hom}_K(-, L):\opcat{Split_K(L)} \longrightarrow Gal[L:K]\textbf{-Prof} \]
+    between the dual of the category of $K$-algebras split by $L$ and the category of profinite spaces provided with a continuous group action of $Gal[L:K]\cong \text{Aut}_K(L)$.
+\end{theorem}
+
+If we restrict our work on the finite dimensional case, recall that a finite profinite space is a finite discrete space, so that we obtain the following:
+\begin{theorem}
+    Let $\sigma:K\hookrightarrow L$ be a finite Galois extension of fields. There exists an equivalence of categories
+    \[ \text{Hom}_K(-, L):\opcat{Split_K(L)}_f \longrightarrow Gal[L:K]\textbf{-Set}_f \]
+    between the dual of the category of finite dimensional $K$-algebras split by $L$ and the category of finite $Gal[L:K]$-sets, where $Gal[L:K]\cong \text{Aut}_K(L)$.
+\end{theorem}
+
+To conclude the chapter, let us consider the special case of a finite dimensional $K$-algebra split by $L$ that it is also a field. In this scenario, the previous equivalence gives us a contravariant isomorphism between the lattice of subobjects $M$
+\[ K\hookrightarrow M\hookrightarrow L \]
+in $Split_K(L)_f$ and the lattice of quotients
+\[ Gal[L:K]\cong \text{Hom}_K(L,L)\longrrightarrow \text{Hom}_K(M,L) \longrrightarrow \text{Hom}_K(K,L) = \{\sigma\} \]
+in $Gal[L:K]\textbf{-Set}_f$. By Proposition \ref{prop:BijectionSubgruopsQuotients}, there is a bijection between the quotients
+\[ Gal[L:K]\longrrightarrow \text{Hom}_K(M,L) \]
+and the subgroups of those $g\in\text{Aut}_K(L)$ that are the identity when restricted to $M$. In this way, we have established a contravariant isomorphism between the subfields $K\hookrightarrow M\hookrightarrow L$ and the subgroups $\text{Aut}_M(L)\leq \text{Aut}_K(L)$ retrieving the classical Galois correspondence.
+
+\begin{theorem}[Classical Galois correspondence]
+    Let $\sigma:K\hookrightarrow L$ be a finite Galois extension of fields. There is a contravariant isomorphism 
+    \[ \{ M \text{ : } K\hookrightarrow M\hookrightarrow L \} \longleftrightarrow \{ G \text{ : } G\leq\text{Aut}_K(L) \} \]
+    between the intermediate field extensions $K\hookrightarrow M\hookrightarrow L$ and the subgroups $G$ of $\text{Aut}_K(L)$. Explicitly, it is given by
+    \[ M\longmapsto \text{Aut}_M(L) \]
+    and
+    \[ G \longmapsto \text{Fix}(G) = \{ l\in L \text{ : } g(l) = l\text{, }\forall g\in G\}  \]
+\end{theorem}

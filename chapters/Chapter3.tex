@@ -1,0 +1,786 @@
+\chapter{Galois theory for monoids}
+\label{cap:GaloisMonoids}
+
+%% INTRODUZIONE %%
+In this chapter, we apply the work of Chapter \ref{cap:categorical_galois} to an adjunction between the category of monoids and the category of groups. In particular, in Section \ref{sec:GaloisStructureMonoids}, we restrict our work to an admissible class of arrows in order to satisfy some conditions of Theorem \ref{thm:CategoricalGaloisTheorem}: we prove that the adjunction is admissible with respect to surjections in both categories and that we cannot consider all morphisms as we did in Chapter \ref{cap:categorical_classical}. In Section \ref{sec:Extensions}, we introduce the notions of trivial, central, and normal extensions related to a Galois structure; these turns out to be just a reformulation of the categorical notion of splitting we gave in Section \ref{sec:galois_theorem}. In Section \ref{sec:SpecialHomoSurjections}, we characterize the extensions with respect to the monoid Galois structure considered in Section \ref{sec:GaloisStructureMonoids}, and describe the Galois groupoid in that setting. In particular, central extensions are precisely the so-called special homogeneous surjections, and the Galois groupoid $Gal[\sigma]$ of $\sigma$ is uniquely determined by a single group: the kernel of $\sigma$. Before starting, we underline that the work in this chapter is primarily based on the recent paper \textit{A Galois theory for monoids} by Montoli, Rodelo and Van der Linden \cite{montoli2014galois}. Throughout this chapter, we restrict ourselves to Barr-exact categories, and we will always take canonical kernels and pullbacks when considering the algebraic setting of monoids or groups.
+
+\section{Galois structure for monoids}
+\label{sec:GaloisStructureMonoids}
+
+%% INTRODUZIONE %%
+In this section, we develop the basis for a Galois theory for monoids. We define an adjunction between the category of monoids and the category of groups and will prove that it is admissible with respect to a specific class of admissible arrows. In particular, in an analysis of the hypothesis of Theorem \ref{thm:CategoricalGaloisTheorem}, one can see that there are two possible points of view: the first one is to consider a larger class of admissible arrows $\overline{\mathcal{A}}$ (for example, the class of all morphisms satisfies Definition \ref{def:AdmissibleClassArrows}) and to consider a morphism $\sigma:S\to R$ that meets all the requirements in Definition \ref{def:MorphismRelativeGaloisDescent}; the second one is to restrict our work into a smaller class of admissible arrows, such that the requirement $\sigma\in\overline{\mathcal{A}}$ gives us already some conditions to be of relative Galois descent. In this way, we will first consider only the adjunction and the admissible classes of arrows, in order to describe the morphisms involved in Theorem \ref{thm:CategoricalGaloisTheorem} in later sections.
+
+%% DEFINIZIONE STRUTTURA GALOIS %%
+\begin{definition}
+\label{def:GaloisStructure}
+    A Galois structure $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ consists of an adjunction
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \mathcal{A} \arrow[rr, bend left, "\mathcal{S}", ""{name=S}] & & \mathcal{P} \arrow[ll, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+        \end{tikzcd}
+    \end{center}
+    with unit $\eta:1_{\mathcal{A}}\Rightarrow \mathcal{C}\mathcal{S}$ and counit $\varepsilon:\mathcal{S}\mathcal{C}\Rightarrow1_{\mathcal{P}}$ between categories $\mathcal{A}$ and $\mathcal{P}$, as well as classes of morphisms $\overline{\mathcal{A}}$ in $\mathcal{A}$ and $\overline{\mathcal{P}}$ in $\mathcal{P}$ such that:
+    \begin{enumerate}
+        \item $\overline{\mathcal{A}}$ and $\overline{\mathcal{P}}$ contain all isomorphisms;
+        \item $\overline{\mathcal{A}}$ and $\overline{\mathcal{P}}$ are pullback-stable
+        \item $\overline{\mathcal{A}}$ and $\overline{\mathcal{P}}$ are closed under composition
+        \item $\mathcal{S}(\overline{\mathcal{A}})\subset \overline{\mathcal{P}}$;
+        \item $\mathcal{C}(\overline{\mathcal{P}})\subset \overline{\mathcal{A}}$.
+    \end{enumerate}
+\end{definition}
+\begin{oss*}
+    Note that a Galois structure is what we called a relatively admissible adjunction in Definition \ref{def:AdmissibleAdjunction}. The only differences are the requirements for the unit and the counit to be in the admissible classes, but in general it is not a necessary condition to establish a Galois correspondence. Moreover, in the algebraic setting where we will work there are no differences with the results of Chapter \ref{cap:categorical_galois}, even without this assumption.
+\end{oss*}
+
+%% DEFINIZIONE STRUTTURA AMMISSIBILE %%
+Considering Definition \ref{def:MorphismRelativeGaloisDescent}, one can note that the requirement for the counit of the induced adjunction to be an isomorphism is not exactly on the morphism $\sigma:S\to R$, but it is a request on the adjunction induced on the domain $S$ of $\sigma$. In this new point of view, we do not want it to be a condition on the morphism, but to be a condition on the adjunction: in this way, we define an admissible Galois structure.
+\begin{definition}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be a Galois structure. $\Gamma$ is said to be admissible when for every $S\in Ob(\mathcal{A})$, the induced functor
+    \[ \mathcal{C}_S:\overline{\mathcal{P}}/\mathcal{S}(S)\longrightarrow \overline{\mathcal{A}}/S \]
+    is full and faithful.
+\end{definition}
+
+%% ESEMPIO RING %%
+\begin{example}
+    In Section \ref{sec:comm_rings} we studied the Galois structure
+    \[ (\opcat{\textbf{R-Alg}}, \textbf{Prof}, Sp, \mathcal{C}(-,R), \eta, \varepsilon, \overline{\opcat{\textbf{R-Alg}}}, \overline{\textbf{Prof}}), \]
+    with $\overline{\opcat{\textbf{R-Alg}}}$ and $\overline{\textbf{Prof}}$ the classes of all arrows in their respective categories, and we stated that it is admissible in Proposition \ref{prop:InducedFullFaithfulRingGeneral}. Moreover, when we restricted ourselves to field extensions in Section \ref{sec:field_case}, the monadicity of the pullback functor automatically followed from the intrinsic properties of the considered morphism, without the need to impose it as an explicit assumption.
+\end{example}
+
+Let us now define a Galois structure for monoids. We will restrict ourselves to specific classes of arrows so that the only requirement on a morphism $\sigma:S\to R$ will be the third in Definition \ref{def:MorphismRelativeGaloisDescent}. Explicitly, we will work in a Galois structure where every morphism has a monadic pullback functor and we will prove that the Galois structure considered is admissible. 
+%% DEFINIZIONE GRUPPO GROTHENDIECK
+\begin{definition}
+    Let $(M,\cdot, 1)$ be a monoid. The Grothendieck group (or group completion) of $M$ is given by a group $Gp(M)$ together with a monoid homomorphism $M\to Gp(M)$ which is universal with respect to monoid homomorphisms from $M$ to groups. More precisely,
+    \[ Gp(M)=\frac{GpF(M)}{N(M)}, \]
+    where $GpF(M)$ denotes the free group on $M$ and $N(M)$ the normal subgroup generated by elements of the form $[m_1][m_2][m_1\cdot m_2]^{-1}$. This gives us that the concatenation of words is compatible with the monoid structure on $M$. Thus, an arbitrary element in $Gp(M)$ can be represented by a word of the form
+    \[ [m_1][m_2]^{-1}[m_3][m_4]^{-1}\cdots[m_n]^{\iota(n)}\text{ or } [m_1]^{-1}[m_2][m_3]^{-1}[m_4]\cdots[m_n]^{\iota(n)}, \]
+    where $\iota(n)=\pm1$, $n\in \mathbb{N}$, $m_1,\dots,m_n\in M$ and no further cancellation is possible. 
+\end{definition}
+\begin{oss*}
+    In order to be completely explicit, let us note the difference between $GpF(M)$ and $Gp(M)$. We will denote a class in $GpF(M)$ with $[\text{ }]$ and a class in the quotient $Gp(M)$ with $\overline{[\text{ }]}$. For example, fix $m_1,m_2\in M$ and $m_3:=m_1\cdot m_2$. One has
+    \[ [m_1][m_2] \not= [m_3],\text{ but }\overline{[m_1][m_2]} = \overline{[m_3]}, \]
+    since $[m_1][m_2]$ and $[m_3]$ are simply different words with letters in $M$. In the construction of the free group, the monoid structure on $M$ is not considered. What we ask for is the compatibility between the concatenation of words and the operation in $M$. This also implies
+    \[ \overline{[m]^{-1}} = \overline{[m^{-1}]}, \]
+    for every invertible $m\in M^*$. Thus, if $M=G$ is a group, $Gp(G)\cong G$ because an arbitrary element of $Gp(G)$ can be represented as $[g]$, for a single $g\in G$.
+\end{oss*}
+%% DEFINIZIONE AGGIUNZIONE
+\begin{definition}
+    Let \textbf{Mon} and \textbf{Grp} represent the categories of monoids and groups, respectively. The group completion of a monoid determines an adjunction
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \textbf{Mon} \arrow[rr, bend left, "Gp", ""{name=Gp}] & & \textbf{Grp} \arrow[ll, bend left, "U", ""{name=U}] \arrow[phantom, from=Gp, to=U, "\dashv" rotate=-90]
+        \end{tikzcd}
+    \end{center}
+    where $U$ is the forgetful functor. To simplify the notation, we write $Gp(M)$ instead of $U(Gp(M))$ when referring to the monoid structure of $Gp(M)$.
+
+    The counit is $\varepsilon = 1_{\textbf{Grp}}$ and the unit is defined by
+    \[ \eta_M:M\longrightarrow Gp(M)\text{, }m\longmapsto \overline{[m]}. \]
+\end{definition}
+
+Recall that in a Barr-exact category regular epimorphisms are exactly the effective descent morphisms (see \cite{pedicchio2004categoricalVIII}) and in an algebraic category regular epimorphisms are exactly the surjections. If we restrict ourselves to the classes of surjections in \textbf{Mon} and \textbf{Grp}, we get at once that every surjection $\sigma:M\rrightarrow N$ has a monadic pullback functor. Obviously, in the considered categories, these classes satisfy the conditions in Definition \ref{def:GaloisStructure}. We consider the Galois structure
+\[ \Gamma = (\textbf{Mon}, \textbf{Grp}, Gp, U, \eta, 1_{\textbf{Grp}}, \mathscr{E}, \mathscr{F}) \]
+with $\mathscr{E}$ and $\mathscr{F}$ the classes of surjections in \textbf{Mon} and \textbf{Grp} respectively.
+
+We will prove that this Galois structure is admissible, but before we do so, let us explicitly exhibit the induced adjunction by a monoid $M$
+\begin{center}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \mathscr{E}/M \arrow[rr, bend left, "Gp_M", ""{name=GpM}] & & \mathscr{F}/Gp(M), \arrow[ll, bend left, "U_M", ""{name=UM}] \arrow[phantom, from=GpM, to=UM, "\dashv" rotate=-90]
+    \end{tikzcd}
+\end{center}
+where we write $\mathscr{E}/M$ and $\mathscr{F}/Gp(M)$ for the full subcategories of admissible arrows as we did in Chapter \ref{cap:categorical_galois}. Here $Gp_M$ is the restriction of $Gp$, and $U_M$ sends $(A,f)$ to the pullback in \textbf{Mon}
+\begin{center}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \pullback M\times_{Gp(M)}A \arrow[rr, "\pi_A"] \arrow[dd, two heads, "U_M(f)"'] & & A \arrow[dd, two heads, "f"] \\ \\ M \arrow[rr, "\eta_M"'] & & Gp(M)
+    \end{tikzcd}
+\end{center}
+of $f$ along $\eta_M$. 
+\begin{oss*}
+    Note that in the proof of Lemma \ref{lem:RestrictionInducedAdjunction} we used the fact that the unit is admissible to prove that $U_M(f)$ is admissible, but in this setting regular epimorphisms are preserved by any pullback.    
+\end{oss*}
+Given a morphism $\alpha:(A,f)\rightarrow (B,g)$ in $\mathscr{F}/Gp(M)$, its image $U_M(\alpha)$ is given by the universal property of the pullback:
+\begin{equation}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        \pullback M\times_{Gp(M)}A \arrow[dr, "U_M(\alpha)"] \arrow[rr, "\pi_A"] \arrow[dddd, two heads, "U_M(f)"' near end] & & A \arrow[dr, "\alpha"] \arrow[dddd, two heads, "f" near end] \\ & \pullback M\times_{Gp(M)}B \arrow[lddd, two heads, "U_M(g)"] \arrow[rr, crossing over, "\pi_B" near start] & & B \arrow[lddd, two heads, "g"] \\ \\ \\ M \arrow[rr, "\eta_M"'] & & Gp(M)
+    \end{tikzcd}
+\end{equation}
+
+%% AMMISSIBILITA %%
+\begin{proposition}
+\label{prop:AdmissibilityMonoids}
+    The Galois structure $\Gamma = (\textbf{Mon}, \textbf{Grp}, Gp, U, \eta, 1_{\textbf{Grp}}, \mathscr{E}, \mathscr{F})$ is admissible.
+    \begin{proof}
+        We split the proof into three lemmas. In Lemma \ref{lem:AdmissibilityFaithful} we prove that $U_M$ is faithful, in Lemma \ref{lem:AdmissibilityFullFree} we prove that $U_M$ is full if $M$ is a free monoid and finally, in Lemma \ref{lem:AdmissibilityFull} we extend the proof to the general case.
+    \end{proof}
+\end{proposition}
+%% U_M FAITHFUL %%
+\begin{lemma}
+\label{lem:AdmissibilityFaithful}
+    The functor $U_M$ is faithful for all monoids $M$.
+    \begin{proof}
+        Consider two morphisms $\alpha,\beta:(A,f)\rightarrow (B,g)$ such that $U_M(\alpha) = U_M(\beta)$. For any $a \in A$, the class $f(a)$ in $Gp(M)$ is represented by a word of the form
+        \[ [m_1][m_2]^{-1}[m_3][m_4]^{-1}\cdots[m_n]^{\iota(n)}\text{ or } [m_1]^{-1}[m_2][m_3]^{-1}[m_4]\cdots[m_n]^{\iota(n)}, \]
+        where no further cancellation is possible. We prove $\alpha(a) = \beta(a)$ by induction on the length $n$ of the word that represents $f(a)$.
+
+        If $n=1$ and $f(a) =\overline{[m]}$, then $(m,a)\in M\times_{Gp(M)}A$ and $U_M(\alpha)(m,a) = U_M(\beta)(m,a)$ implies
+        \[ \alpha(a) = \pi_B(U_M(\alpha)(m,a)) = \pi_B(U_M(\beta)(m,a)) = \beta(a). \]
+        If $n=1$ and $f(a) = \overline{[m]^{-1}}$, then $f(a^{-1})=\overline{[m]}$ and from the previous case $\alpha(a^{-1}) = \beta(a^{-1})$; hence $\alpha(a) = \beta(a)$.
+
+        If $n>1$, $f(a)$ is represented by the concatenation of a word of length one and a word of length $n-1$. By the surjectivity of $f$, there exists $a_1\in A$ such that $f(a_1)=\overline{[m_1]}$ (or $\overline{[m_1]^{-1}}$ in the second case); hence $f(a_1^{-1}a)$ is represented by the second part of the representation of $f(a)$ of length $n-1$. By the induction hypothesis, $\alpha(a_1) = \beta(a_1)$ and $\alpha(a_1^{-1}a) = \beta(a_1^{-1}a)$. Then
+        \[ \alpha(a) = \alpha(a_1)\alpha(a_1^{-1}a) = \beta(a_1)\beta(a_1^{-1}a) = \beta(a). \]
+    \end{proof}
+\end{lemma}
+%% U_M FULL FREE %%
+\begin{lemma}
+\label{lem:AdmissibilityFullFree}
+    The functor $U_M$ is full for all free monoids $M$.
+    \begin{proof}
+        Since $M$ is free, the group $Gp(M)$ is free and coincide with $GpF(M)$. Consider a monoid homomorphism
+        \[ \gamma:(M\times_{Gp(M)}A, U_M(f))\longrightarrow (M\times_{Gp(M)}B, U_M(g)). \]
+        We define a group homomorphism $\alpha:(A,f)\rightarrow(B,g)$ in $\mathscr{F}/Gp(M)$ as follows. For any $a\in A$, if $f(a)=[m]$, then $(m,a)\in M\times_{Gp(M)}A$ and we define
+        \[ \alpha(a) := \pi_B(\gamma(m,a)). \]
+        If $f(a)=[m]^{-1}$, then $f(a^{-1})=[m]$ and we define
+        \[ \alpha(a) := \pi_B(\gamma(m,a^{-1}))^{-1}. \]
+        In the general case, $f(a)$ is a concatenation of $n$ words of length one $[m_i]^{\iota(i)}$, with $\iota(i)=\pm1$. By surjectivity of $f$, there exist $a_1,\dots, a_n\in A$ such that $f(a_i)=[m_i]$ for every $i=1,\dots, n$; hence, we have a decomposition $a = a_1a_2^{-1}\cdots a_n^{\iota(n)}$ or $a=a_1^{-1}a_2\cdots a_n^{\iota(n)}$. Note that each of these $a_i$ is an element in the image of $\pi_A$ since $(m_i,a_i)\in M\times_{Gp(M)}A$ for every $i=1,\dots, n$. We can take the minimum $n$ for which there is a decomposition of $a$ into a product of elements in the image of $\pi_A$, and define
+        \[ \alpha(a) := \alpha(a_1)\alpha(a_2)^{-1}\cdots\alpha(a_n)^{\iota(n)} \]
+        or
+        \[ \alpha(a) = \alpha(a_1)^{-1}\alpha(a_2)\cdots\alpha(a_n)^{\iota(n)}. \]
+        We will consider only the first case in the decomposition; the second case can be studied similarly. To prove that $\alpha$ is a group homomorphism, it is sufficient to show that it is well defined. If $a=x_1x_2^{-1}\cdots x_k^{\iota(k)}$ is a second decomposition of $a$ into elements in the image of $\pi_A$, then there are $l_i\in M$ such that $f(x_i)=[l_i]$, and we need to prove that
+        \[ \alpha(a_1)\alpha(a_2)^{-1}\cdots\alpha(a_n)^{\iota(n)} = \alpha(x_1)\alpha(x_2)^{-1}\cdots\alpha(x_k)^{\iota(k)}. \]
+        Since $Gp(M)$ is a free group, $n$ is the minimum length and $f$ is a group homomorphism, considering the image
+        \[ [m_1][m_2]^{-1}\cdots[m_n]^{\iota(n)}=f(a_1a_2^{-1}\cdots a_n^{\iota(n)})=f(a)=f(x_1x_2^{-1}\cdots x_k^{\iota(k)})=[l_1][l_2]^{-1}\cdots[l_k]^{\iota(k)}, \]
+        we get that $k=n$ and $l_i=m_i$ for every $i=1,\dots,n$. In this way, we need to prove the result for decompositions of length $n$ mapping down to the same word in $Gp(M)$ through $f$. We do this by induction on $n$.
+
+        If $n=1$ and $f(a_1)=f(x_1)=[m_1]$, then obviously
+        \[ \alpha(a_1) = \pi_B(\gamma(m_1,a_1)) = \pi_B(\gamma(m_1,a)) = \pi_B(\gamma(m_1,x_1)) = \alpha(x_1). \]
+        
+        More generally, if two elements $b,c\in A$ are such that $f(b)=f(c)=[m]$, then $f(c^{-1}b)=[1]$, so
+        \[ \alpha(b) = \pi_B(\gamma(m,b)) = \pi_B(\gamma(m,c))\pi_B(\gamma(1,c^{-1}b)) = \alpha(c)\alpha(c^{-1}b), \]
+        which implies that
+        \[ \alpha(c^{-1}b) = \alpha(c)^{-1}\alpha(b). \]
+        
+        If $n=2$ consider $a=a_1a_2^{-1}=x_1x_2^{-1}$ and $f(a_i)=f(x_i)=[m_i]$. Then $x_1^{-1}a_1 = x_2^{-1}a_2$, and
+        \[ \alpha(x_1^{-1}a_1) = \alpha(x_1)^{-1}\alpha(a_1) = \alpha(x_2)^{-1}\alpha(a_2) = \alpha(x_2^{-1}a_2) \]
+        by the formula above. Reordering the terms, we get:
+        \[\alpha(a_1)\alpha(a_2)^{-1} = \alpha(x_1)\alpha(x_2)^{-1}. \]
+        
+        If $n=3$ consider $a = a_1a_2^{-1}a_3 = x_1x_2^{-1}x_3$ and $f(a_i)=f(x_i)=[m_i]$. Multiplying by $x_1^{-1}$ on the left, we get
+        \[ x_1^{-1}a_1a_2^{-1}a_3 = (a_2a_1^{-1}x_1)^{-1}a_3 = x_2^{-1}x_3, \]
+        and they both map to $[m_2]^{-1}[m_3]$, so that
+        \[ \alpha(a_2a_1^{-1}x_1)^{-1}\alpha(a_3) = \alpha(x_2)^{-1}\alpha(x_3) \]
+        by the case $n=2$. Similarly, multiplying by $a_3^{-1}$ on the right, we get
+        \[ \alpha(a_1)\alpha(a_2)^{-1} = \alpha(x_1)\alpha(a_3x_3^{-1}x_2)^{-1}. \]
+        Moreover, $a_2a_1^{-1}x_1$ and $a_3x_3^{-1}x_2$ both map to $[m_2]$ and we get
+        \[ \alpha(a_2a_1^{-1}x_1) = \alpha(a_3x_3^{-1}x_2) \]
+        by the case $n=1$. As a consequence of these last three equations, we obtain
+        \[ \alpha(x_1)^{-1}\alpha(a_1)\alpha(a_2)^{-1} = \alpha(a_3x_3^{-1}x_2)^{-1} = \alpha(a_2a_1^{-1}x_1)^{-1} = \alpha(x_2)^{-1}\alpha(x_3)\alpha(a_3)^{-1}. \]
+        Reordering the terms, we get:
+        \[ \alpha(a_1)\alpha(a_2)^{-1}\alpha(a_3) = \alpha(x_1)\alpha(x_2)^{-1}\alpha(x_3). \]
+
+        If $n\geq4$ consider $a = a_1a_2^{-1}a_3\cdots a_n^{\iota(n)}=x_1x_2^{-1}x_3\cdots x_n^{\iota(n)}$ and $f(a_i)=f(x_i)=[m_i]$. Multiplying by $x_1^{-1}$ on the left, we get
+        \[ x_1^{-1}a_1a_2^{-1}a_3\cdots a_n^{\iota(n)}=(a_2a_1^{-1}x_1)^{-1}a_3\cdots a_n^{\iota(n)}=x_2^{-1}x_3\cdots x_n^{\iota(n)}, \]
+        and they both map to $[m_2]^{-1}[m_3]\cdots[m_n]^{\iota(n)}$, so that
+        \[ \alpha(a_2a_1^{-1}x_1)^{-1}\alpha(a_3)\cdots\alpha(a_n)^{\iota(n)} = \alpha(x_2)^{-1}\alpha(x_3)\cdots\alpha(x_n)^{\iota(n)} \]
+        by the induction hypothesis. In the case $n=3$ we have shown that
+        \[ \alpha(x_1)^{-1}\alpha(a_1)\alpha(a_2)^{-1} = \alpha(a_2a_1^{-1}x_1)^{-1}. \]
+        Multiplying again by $\alpha(x_1)$ on the left, we get
+        \[ \alpha(a_1)\alpha(a_2)^{-1}\alpha(a_3)\cdots\alpha(a_n)^{\iota(n)} = \alpha(x_1)\alpha(x_2)^{-1}\alpha(x_3)\cdots\alpha(x_n)^{\iota(n)}. \]
+    \end{proof}
+\end{lemma}
+%% U_M FULL %%
+\begin{lemma}
+\label{lem:AdmissibilityFull}
+    The functor $U_M$ is full for all monoids $M$.
+    \begin{proof}
+        Consider a monoid homomorphism
+        \[ \gamma:(M\times_{Gp(M)}A, U_M(f))\longrightarrow (M\times_{Gp(M)}B, U_M(g)). \]
+        We cover the monoid $M$ with the free monoid $F(M)$ on $M$, then apply the Grothendieck group functor and consider the kernels to obtain the following diagram:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                Ker(r_M) \arrow[rr, tail] \arrow[dd] & & F(M) \arrow[rr, "r_M", two heads] \arrow[dd, "\eta_{F(M)}"'] & & M \arrow[dd, "\eta_M"] \\ \\ N(M) \arrow[rr, tail] & & GpF(M) \arrow[rr, "q_M"'] & & Gp(M)
+            \end{tikzcd}
+        \end{center}
+        where $r_M$ sends a word in $F(M)$ to the product of its letters in $M$. We pull back $U_M(f)$, $U_M(g)$ and $\gamma$ along the surjection $r_M$ and we obtain the following:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}, center picture]
+                F(M)\times_{Gp(M)}A \arrow[rr, two heads, "r_M\times_{Gp(M)}1_A"] \arrow[dddd, two heads, "r_M^*(U_M(f))"' near end] \arrow[dr, "r_M^*(\gamma)"] & & M\times_{Gp(M)}A \arrow[dr, "\gamma"] \arrow[rr, "\pi_A"] \arrow[dddd, two heads, "U_M(f)"' near end] & & A \arrow[dddd, two heads, "f" near end] \\ & F(M)\times_{Gp(M)}B \arrow[lddd, two heads, "r_M^*(U_M(g))"] \arrow[rr, two heads, "r_M\times_{Gp(M)}1_B" fill=white, crossing over] & & M\times_{Gp(M)}B \arrow[lddd, two heads, "U_M(g)"] \arrow[rr, crossing over, "\pi_B" near start] & & B \arrow[lddd, two heads, "g"] \\ \\ \\ F(M) \arrow[rr, two heads, "r_M"'] & & M \arrow[rr, "\eta_M"'] & & Gp(M).
+            \end{tikzcd}
+        \end{center}
+        Since $\eta_Mr_M=q_M\eta_{F(M)}$, the pullback of $f$ and $g$ along $\eta_Mr_M$ can also be obtained by taking the pullbacks along $q_M\eta_{F(M)}$, obtaining
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}, center picture, column sep=1.8em]
+                F(M)\times_{Gp(M)}A \arrow[rr, "\eta_{F(M)}\times_{Gp(M)}1_A"] \arrow[dddd, two heads, "r_M^*(U_M(f))"' near end] \arrow[dr, "r_M^*(\gamma)"] & & GpF(M)\times_{Gp(M)}A \arrow[rr, "p_A"] \arrow[dddd, two heads, "q_M^*(f)"' near end] & & A \arrow[dddd, two heads, "f" near end] \\ & F(M)\times_{Gp(M)}B \arrow[lddd, two heads, "r_M^*(U_M(g))"] \arrow[rr, "\eta_{F(M)}\times_{Gp(M)}1_B" fill=white, crossing over] & & GpF(M)\times_{Gp(M)}B \arrow[lddd, two heads, "q_M^*(g)"] \arrow[rr, crossing over, "p_B" near start] & & B \arrow[lddd, two heads, "g"] \\ \\ \\ F(M) \arrow[rr, "\eta_{F(M)}"'] & & GpF(M) \arrow[rr, "q_M"'] & & Gp(M).
+            \end{tikzcd}
+        \end{center}
+        Since $U_{F(M)}$ is full by Lemma \ref{lem:AdmissibilityFullFree}, there is a morphism
+        \[ \beta:(GpF(M)\times_{Gp(M)}A, q_M^*(f))\longrightarrow(GpF(M)\times_{Gp(M)}B, q_M^*(g)) \]
+        such that $U_{F(M)}(\beta) = r_M^*(\gamma)$.
+        We define the desired morphism $\alpha:A\to B$ by the universal property of $p_A$ as a cokernel of its kernel. Explicitly, if we show that $\beta(Ker(p_A))\subset Ker(p_B)$, there exists a unique $\alpha:(A,f)\longrightarrow(B,g)$ such that $p_B\circ\beta = \alpha\circ p_A$. We now prove that $\beta$ keeps elements in the kernel fixed. Note that the kernels of $p_A$ and $p_B$ are given by $N(M)\times_{Gp(M)}\{1\}\cong N(M)$; since $N(M)$ is generated by words $[m_1][m_2][m_1\cdot m_2]^{-1}$ as a normal subgroup of $GpF(M)$, it suffices to prove that
+        \[ \beta([m_1][m_2][m_1\cdot m_2]^{-1}, 1_A) = ([m_1][m_2][m_1\cdot m_2]^{-1}, 1_B). \]
+        By the surjectivity of $f$, there exists $a\in A$ such that $f(a)=\overline{[m_1][m_2]}=\overline{[m_1\cdot m_2]}$, so that $([m_1][m_2],a),([m_1\cdot m_2],a)\in F(M)\times_{Gp(M)}A$ and
+        \[ (r_M\times_{Gp(M)}1_A)([m_1][m_2],a) = (m_1\cdot m_2,a) =(r_M\times_{Gp(M)}1_A)([m_1\cdot m_2],a). \]
+        For some $b\in B$ we have $\gamma(m_1\cdot m_2,a) =(m_1\cdot m_2,b)$, so that
+        \[ r_M^*(\gamma)([m_1][m_2],a)=([m_1][m_2],b) \]
+        and
+        \[ r_M^*(\gamma)([m_1\cdot m_2],a)=([m_1\cdot m_2],b) \]
+        by the commutativity of the second diagram. On the other hand, 
+        \begin{align*}
+            \beta([m_1][m_2],a)&=\beta\circ( \eta_{F(M)}\times_{Gp(M)}1_A)([m_1][m_2],a)\\& = (\eta_{F(M)}\times_{Gp(M)}1_B)\circ r_M^*(\gamma)([m_1][m_2],a) \\&= r_M^*(\gamma)([m_1][m_2],a) = ([m_1][m_2],b) 
+        \end{align*}
+        and
+        \begin{align*}
+            \beta([m_1\cdot m_2],a)&=\beta\circ (\eta_{F(M)}\times_{Gp(M)}1_A)([m_1\cdot m_2],a)\\& = (\eta_{F(M)}\times_{Gp(M)}1_B)\circ r_M^*(\gamma)([m_1\cdot m_2],a)\\ &= r_M^*(\gamma)([m_1\cdot m_2],a) = ([m_1\cdot m_2],b) 
+        \end{align*}
+        by the commutativity of the third diagram. Since $\beta$ is a group homomorphism, we obtain
+        \begin{align*}
+            \beta([m_1][m_2][m_1\cdot m_2]^{-1}, 1_A) &= \beta([m_1][m_2][m_1\cdot m_2]^{-1}, aa^{-1}) \\&= \beta([m_1][m_2],a)\beta([m_1\cdot m_2], a)^{-1}\\
+            & = ([m_1][m_2],b)([m_1\cdot m_2],b)^{-1} \\&= ([m_1][m_2][m_1\cdot m_2]^{-1}, bb^{-1}) = ([m_1][m_2][m_1\cdot m_2]^{-1}, 1_B).
+        \end{align*}
+        To conclude the proof we show explicitly that $U_M(\alpha) = \gamma$. Since $U_M(\alpha)$ is defined by the universal property of $M\times_{Gp(M)}B$ as a pullback, it is sufficient to show that $\pi_B\circ\gamma = \alpha\circ\pi_A$. Fix $(m,a)\in M\times_{Gp(M)}A$ and the element $b\in B$ such that $\gamma(m,a)=(m,b)$. We need to show that $\alpha(a)=b$. As we did in the previous argument, we obtain that $\beta([m],a) = ([m],b)$. Since $\alpha$ is defined by the universal property of $p_A$ as a cokernel, we have that $p_B\circ\beta = \alpha\circ p_A$. Thus,
+        \[ \alpha(a) = p_B\circ \beta([m],a) = b. \]
+    \end{proof}
+\end{lemma}
+
+%% ESEMPIO M = N^2 CHE PROVA NON VANNO BENE TUTTE LE FRECCE %%
+\begin{example}
+    Let us show that we cannot have admissibility if we consider all the arrows in \textbf{Mon} and \textbf{Grp} as we did in Chapter \ref{cap:categorical_classical}. Take $M=\mathbb{N}^2$; then $Gp(\mathbb{N}^2)\cong \mathbb{Z}^2$. Fix $(A,f)$ as the inclusion of the subgroup $A=\{(a,-a)\text{ : }a\in \mathbb{Z}\}$ in $\mathbb{Z}^2$ and $(B,g)$ as the projection on the first two components $\mathbb{Z}^3\rrightarrow\mathbb{Z}^2$. Note that $f$ is not a surjection: this example shows that $U_{\mathbb{N}^2}$ is not faithful. It is easy to check that $\mathbb{N}^2\times_{\mathbb{Z}^2}A = 0$ and $\mathbb{N}^2\times_{\mathbb{Z}^2}B \cong \mathbb{Z}$, so that any two different morphisms $A\to B$ are mapped to the unique arrow $0\to \mathbb{Z}$ through $U_{\mathbb{N}^2}$. 
+\end{example}
+
+
+\section{Trivial, central and normal extensions}
+\label{sec:Extensions}
+
+%% INTRODUZIONE %%
+In this section, we move our focus to the morphisms that are related to a Galois structure. In particular, in Definition \ref{def:SplitObjectSigma}, we defined the notion of an object in a slice category split by a morphism, relative to the adjunction considered. Explicitly, with a fixed morphism $\sigma:M\to N$ and under the assumption that the induced adjunction has a full and faithful right adjoint, this definition was made to exhibit two full subcategories: $Split_M(1_M)$ of those objects that make the induced adjunction an equivalence, as in Lemma \ref{lem:EquivalenceSplitP/S(S)}; and $Split_N(\sigma)$ of those objects whose pullback along $\sigma$ is split by $1_M$. As in Section \ref{sec:GaloisStructureMonoids}, we want to give notions that are possibly not related to a fixed morphism. In doing so, we first define some subclasses of arrows; then we prove that they are those considered in Chapter \ref{cap:categorical_galois}. Finally, we can state Theorem \ref{thm:CategoricalGaloisTheorem} with these new notation.
+%% DEFINIZIONI ESTENSIONI %%
+\begin{definition}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be a Galois structure. A trivial extension is a morphism $f:A\to M$ in $\overline{\mathcal{A}}$ such that the square
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            \pullback A \arrow[rr, "\eta_A"] \arrow[dd, "f"'] & & \mathcal{C}\mathcal{S}(A) \arrow[dd, "\mathcal{C}\mathcal{S}(f)"] \\ \\ M \arrow[rr, "\eta_M"'] & & \mathcal{C}\mathcal{S}(M)
+        \end{tikzcd}
+    \end{center}
+    is a pullback.
+    
+    We will write $Triv(M)$ for the full subcategory of $\overline{\mathcal{A}}/M$ of trivial extensions of $M$.
+\end{definition}
+\begin{definition}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be a Galois structure. A central extension is a morphism $f:A\to N$ in $\overline{\mathcal{A}}$ whose pullback $\sigma^*(f):M\times_NA\to M$ is a trivial extension for some morphism $\sigma:M\to N$ in $\overline{\mathcal{A}}$.
+    
+    We will write $Centr(N)$ for the full subcategory of $\overline{\mathcal{A}}/N$ of central extensions of $N$, and $Centr(N,\sigma)$ for the full subcategory of central extensions of $N$ that satisfy the definition with a fixed $\sigma:M\to N$.
+\end{definition}
+\begin{definition}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be a Galois structure. A normal extension is a morphism $\sigma:M\to N$ in $\overline{\mathcal{A}}$ such that $\sigma^*(\sigma):M\times_NM\to M$ is a trivial extension. Explicitly, $\sigma$ is a normal extension if its kernel pair projections are trivial extensions.
+    
+    We will write $Norm(N)$ for the full subcategory of $\overline{\mathcal{A}}/N$ of normal extensions of $N$.
+\end{definition}
+\begin{oss*}
+    It is clear by definition that every normal extension is also a central extension:
+    \[ \sigma\in Norm(N) \iff \sigma \in Centr(N,\sigma) \Longrightarrow \sigma \in Centr(N). \]
+\end{oss*}
+
+Let us show the relations between these definitions and the subcategories $Split_M(1_M)$ and $Split_N(\sigma)$ considered in Section \ref{sec:galois_theorem}, for a $\sigma:M\to N$.
+%% TRIVIALI = SPEZZATE DALL'UNITA %%
+\begin{proposition}
+\label{prop:Trivial=Split}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be a Galois structure and fix $M\in Ob(\mathcal{A})$; then 
+    \[ Triv(M)=Split_M(1_M). \]
+    \begin{proof}
+        Fix $f:A\to M$ and consider $\eta^M$ the unit of the induced adjunction $\mathcal{S}_M\dashv\mathcal{C}_M$. One has the following commutative diagram defining the unit $\eta^M$ of the induced adjunction:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                A \arrow[dddr, "f"', bend right] \arrow[dr, "\eta_{(A,f)}^M"] \arrow[drrr, "\eta_{A}", bend left] \\ & \pullback \mathcal{C}_M\mathcal{S}(A) \arrow[rr, "\pi_{\mathcal{C}\mathcal{S}(A)}"] \arrow[dd, "\mathcal{C}_M(\mathcal{S}(f))"] & & \mathcal{C}\mathcal{S}(A) \arrow[dd, "\mathcal{C}\mathcal{S}(f)"] \\ \\ & M \arrow[rr, "\eta_M"'] & & \mathcal{C}\mathcal{S}(M).
+            \end{tikzcd}
+        \end{center}
+        By Lemma \ref{lem:ObjectsSplitUnit}, $f$ is split by $1_M$ if and only if $\eta_{(A,f)}^M$ is an isomorphism. That is, if and only if $f$ is a trivial extension.
+    \end{proof}
+\end{proposition}
+
+From the previous result it is clearer that we could have defined trivial extensions of $M$ as the image of the induced functor $\mathcal{C}_M:\overline{\mathcal{P}}/\mathcal{S}(M)\longrightarrow\overline{\mathcal{A}}/M$. As we did in Section \ref{sec:galois_theorem}, when we have the admissibility of the structure, we obtain an equivalence of categories.
+\begin{corollary}
+\label{cor:Triv=P/SM}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be an admissible Galois structure and fix $M\in Ob(\mathcal{A})$. The induced adjunction $\mathcal{S}_M\dashv\mathcal{C}_M$ restricts to an equivalence of categories
+    \[ Triv(M)\approx \overline{\mathcal{P}}/\mathcal{S}(M). \]
+    \begin{proof}
+        As in Lemma \ref{lem:EquivalenceSplitP/S(S)}: note that the admissibility of the structure was crucial to establish the equivalence.
+    \end{proof}
+\end{corollary}
+%% CENTRALI CON SIGMA = SPEZZATE DA SIGMA %%
+\begin{corollary}
+\label{cor:Central=Split}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be a Galois structure and fix a morphism $\sigma:M\to N$ in $\overline{\mathcal{A}}$; then 
+    \[ Centr(N,\sigma)=Split_N(\sigma). \]
+    \begin{proof}
+        It follows directly from Proposition \ref{prop:Trivial=Split} and Corollary \ref{cor:ObjectsSplitSigma}.
+    \end{proof}
+\end{corollary}
+\begin{oss*}
+    The previous results show us that any trivial extension $f:A\to M$ is a central extension choosing $\sigma=1_M$:
+    \[ Triv(M) = Centr(M,1_M)\subseteq Centr(M). \]
+\end{oss*}
+
+It remains to show how normal extensions are related with the work done in Section \ref{sec:galois_theorem}. The following result will be useful:
+\begin{proposition}
+\label{prop:PullbackTrivialExtensions}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be an admissible Galois structure; then the functor $\mathcal{S}:\mathcal{A}\to \mathcal{P}$ preserves pullbacks along trivial extensions. In particular, trivial extensions are pullback-stable and every trivial extension is a normal extension.
+    \begin{proof}
+        Fix a trivial extension $f:A\to M$ and a morphism $g:B\to M$. Consider the pullback of $f$ along $g$ and the pullback defining $f$ as a trivial extension:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback C \arrow[rr, "p_A"] \arrow[dd, "p_B"'] & & \pullback A \arrow[dd, "f"] \arrow[rr, "\eta_A"]  & & \mathcal{C}\mathcal{S}(A) \arrow[dd, "\mathcal{C}\mathcal{S}(f)"] \\ \\ B \arrow[rr, "g"'] & & M \arrow[rr, "\eta_M"'] & & \mathcal{C}\mathcal{S}(M).
+            \end{tikzcd}
+        \end{center}
+        We need to prove that $\mathcal{S}(C)$ is a pullback of $S(f)$ along $S(g)$. We have that the exterior of the previous diagram is a pullback and equivalently, using $\eta_M\circ g = \mathcal{C}\mathcal{S}(g)\circ \eta_B$, the exterior of
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                C \arrow[rr, "\eta_C"] \arrow[dd, "p_B"'] & & \mathcal{C}\mathcal{S}(C) \arrow[dd, "\mathcal{C}\mathcal{S}(p_B)"] \arrow[rr, "\mathcal{C}\mathcal{S}(p_A)"]  & & \mathcal{C}\mathcal{S}(A) \arrow[dd, "\mathcal{C}\mathcal{S}(f)"] \\ \\ B \arrow[rr, "\eta_B"'] & & \mathcal{C}\mathcal{S}(B) \arrow[rr, "\mathcal{C}\mathcal{S}(g)"'] & & \mathcal{C}\mathcal{S}(M).
+            \end{tikzcd}
+        \end{center}
+        is a pullback. Fix $X$ as a pullback of $\mathcal{S}(f)$ along $\mathcal{S}(g)$. We need to prove that the comparison morphism $h=\limitmorph{\mathcal{S}(p_A)}{\mathcal{S}(p_B)}:\mathcal{S}(C)\longrightarrow X$ is an isomorphism. Since the functor $\mathcal{C}_B$ is full and faithful, it suffices to prove that $\mathcal{C}_B(h)$ is an isomorphism. One has
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}, center picture]
+                C \arrow[rr, "\eta_C"] \arrow[dddd, "p_B" near end] \arrow[dr, Rightarrow, no head] & & \mathcal{C}\mathcal{S}(C) \arrow[dr, "\mathcal{C}(h)"] \arrow[rr, "\mathcal{C}\mathcal{S}(p_A)"] \arrow[dddd, "\mathcal{C}\mathcal{S}(p_B)"' near end] & & \mathcal{C}\mathcal{S}(A) \arrow[dr, Rightarrow, no head] \arrow[dddd, "\mathcal{C}\mathcal{S}(f)" near end] \\ & C \arrow[lddd] \arrow[rr, fill=white, crossing over] & & \mathcal{C}(X) \arrow[lddd, "\mathcal{C}(b)"] \arrow[rr, crossing over, "\mathcal{C}(a)" near start] & & \mathcal{C}\mathcal{S}(A) \arrow[lddd] \\ \\ \\ B \arrow[rr, "\eta_B"'] & & \mathcal{C}\mathcal{S}(B) \arrow[rr, "\mathcal{C}\mathcal{S}(g)"'] & & \mathcal{C}\mathcal{S}(M)
+            \end{tikzcd}
+        \end{center}
+        where the exterior is a pullback and the front square on the right is a pullback since $\mathcal{C}$ preserves limits as a right adjoint. In this way, also the front square on the left is a pullback and
+        \[ 1_C = \eta_B^*\mathcal{C}(h) = \mathcal{C}_B(h). \]
+        In particular, $p_B$ is a trivial extension of $B$ and taking $g=f$ one has that every trivial extension is a normal extension.        
+    \end{proof}
+\end{proposition}
+\begin{oss*}
+    In this way, for every $M\in Ob(\mathcal{A})$, we established that
+    \[ Triv(M) \subseteq Norm(M)\subseteq Centr(M). \]
+\end{oss*}
+
+Suppose that the Galois structure $\Gamma$ is admissible and fix $\sigma:M\to N$ in $\overline{\mathcal{A}}$; in Lemma \ref{lem:PullbackMonadicSplitCategory} we proved that the functor $\Sigma_\sigma$ restricts to the subcategories of split objects, but it was actually assumed on $\sigma$ in Definition \ref{def:MorphismRelativeGaloisDescent} through the property we now recall here:
+\begin{enumerate}[(iii)]
+    \item the object $\Sigma_\sigma\mathcal{C}_M(X,f)$ is split by $\sigma$, for every $(X,f)$ object of $\overline{\mathcal{P}}/\mathcal{S}(M)$. 
+\end{enumerate}
+By Corollary \ref{cor:Triv=P/SM} and Corollary \ref{cor:Central=Split}, we can write this property in terms of trivial and central extensions:
+\begin{equation}
+\tag{P}
+\label{PropertyNormal}
+    \sigma\circ g\in Centr(N,\sigma)\text{ for all }g\in Triv(M).
+\end{equation}
+
+%% NORMALI = CONDIZIONE 3 %%
+\begin{proposition}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be an admissible Galois structure. A morphism $\sigma:M\to N$ is a normal extension if and only if $\sigma$ has the Property \eqref{PropertyNormal}.
+    \begin{proof}
+        Fix $g\in Triv(M)$. We have the following:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback M\times_NA \arrow[rr] \arrow[dd, "p_1^{*}(g)"'] & & A \arrow[dd, "g"] \\ \\ \pullback M\times_NM \arrow[rr, "p_1"] \arrow[dd, "p_2"'] & & M \arrow[dd, "\sigma"] \\ \\ M \arrow[rr, "\sigma"'] & & N.
+            \end{tikzcd}
+        \end{center}
+        If $\sigma$ is a normal extension, $p_1$ and $p_2$ are trivial; and we need to prove that $p_2\circ p_1^*(g)$ is trivial. Obviously, the composition of trivial extensions is trivial and $p_1^*(g)$ is trivial by Proposition \ref{prop:PullbackTrivialExtensions}. On the other hand, take $g=1_M$; then Property \eqref{PropertyNormal} ensures that $\sigma\in Centr(N,\sigma)$, so that $\sigma$ is a normal extension.
+    \end{proof}
+\end{proposition}
+
+%% CAMPI %%
+\begin{example}
+    In Section \ref{sec:field_case}, we actually studied trivial, central, and normal extensions in that scenario. In Proposition \ref{prop:Split=Split}, we have shown that the $K$-algebras split by $L$ (in the classical sense of Definition \ref{def:SplitAlgebras}) are exactly the central extensions of $K$. Moreover, in Proposition \ref{prop:GaloisIsDescent}, we proved that a Galois field extension $\sigma:K\hookrightarrow L$ is a normal extension of $K$. Note that $\sigma$ is Galois if and only if it splits itself.
+\end{example}
+
+%% TEOREMA %%
+To conclude this section, let us state Theorem \ref{thm:CategoricalGaloisTheorem} exploiting these new notations.
+\begin{theorem}
+    Let $\Gamma = (\mathcal{A}, \mathcal{P}, \mathcal{S}, \mathcal{C}, \eta, \varepsilon, \overline{\mathcal{A}}, \overline{\mathcal{P}})$ be an admissible Galois structure. Suppose that $\sigma:M\to N$ is a normal extension that has a monadic pullback functor. There exists an equivalence of categories
+    \[ Centr(N,\sigma) \approx \overline{\mathcal{P}}^{Gal[\sigma]} \]
+    between the central extensions that are split by $\sigma$ and the internal covariant presheaves $(P,p,\pi)$ on the internal groupoid $Gal[\sigma]$, where $Gal[\sigma]$ is given as in Definition \ref{def:GaloisGroupoid}.
+\end{theorem}
+
+\section{Special Schreier and special homogeneous surjections}
+\label{sec:SpecialHomoSurjections}
+
+In this section, we want to describe trivial, central and normal extensions with respect to the admissible Galois structure for monoids defined in Section \ref{sec:GaloisStructureMonoids}
+\[ \Gamma = (\textbf{Mon}, \textbf{Grp}, Gp, U, \eta, 1_{\textbf{Grp}}, \mathscr{E}, \mathscr{F}) \]
+where $\mathscr{E}$ and $\mathscr{F}$ are the classes of surjections in \textbf{Mon} and \textbf{Grp} respectively. It turns out that central and normal extensions coincide and are special homogeneous surjections. We will see that the notion of special homogeneous surjection is given referring to an underlying split epimorphism of sets; this characterization shows that it is not necessary, and special homogeneous surjections, along with its related notions, can be described from the point of view of categorical Galois theory.
+
+%% DEFINIZIONI SPLIT EPI %%
+\begin{definition}
+    A split epimorphism of monoids is an epimorphism $f:A\rrightarrow M$ along with a morphism $s:M\rightarrow A$ such that $fs(m)=m$ for any $m\in M$.
+\end{definition}
+\begin{definition}
+    Consider a split epimorphism $(f,s)$ of monoids with its kernel:
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            K \arrow[rr, tail] & & A \arrow[rr, "f", two heads, shift left=1.5] & & M. \arrow[ll, "s", shift left=1.5]
+        \end{tikzcd}
+    \end{center}
+    It is called a Schreier split epimorphism when, for any $a\in A$, there exists a unique $k\in K$ such that $a=k\cdot sf(a)$.
+
+    It is said to be a right homogeneous split epimorphism when, for any $m\in M$, the map
+    \[ \mu^r_m:K\longrightarrow f^{-1}(m)\text{, } k \longmapsto k\cdot s(m) \]
+    defined by multiplication on the right by $s(m)$ is bijective.
+
+    It is said to be a left homogeneous split epimorphism when, for any $m\in M$, the map
+    \[ \mu^l_m:K\longrightarrow f^{-1}(m)\text{, }k \longmapsto s(m)\cdot k \]
+    defined by multiplication on the left by $s(m)$ is bijective.
+
+    It is said to be a homogeneous split epimorphism when it is both right and left homogeneous.
+\end{definition}
+
+%% SCHREIER = RIGHT HOMO %%
+Let us recall a key property of Schreier split epimorphisms that establishes its connection with homogeneous split epimorphisms.
+\begin{proposition}
+\label{prop:SchreierRightHomo}
+    Consider a split epimorphism $(f,s)$ of monoids with its kernel $K$. The following are equivalent:
+    \begin{enumerate}
+        \item $(f,s)$ is a Schreier split epimorphism;
+        \item $(f,s)$ is a right homogeneous split epimorphism;
+        \item there exists a set-theoretical map $q:A\to K$ such that $q(a)\cdot sf(a)=a$ and $q(k\cdot s(m))=k$, for all $a\in A$, $k\in K$ and $m\in M$.
+    \end{enumerate}
+    \begin{proof}
+        If $(f,s)$ is a Schreier split epimorphism, we can define a map $q:A\to K$ that sends $a\in A$ to the unique $k\in K$ such that $k\cdot sf(a) = a$. Fix $m\in M$ and consider the restriction of $q$ to $f^{-1}(m)$; then, for any $a\in f^{-1}(m)$,
+        \[ a = q(a)\cdot sf(a) = q(a)\cdot s(m), \]
+        so that $\mu^r_m\circ q = 1_{f^{-1}(m)}$. Moreover, for any $k\in K$,
+        \[ k\cdot s(m) = k\cdot sf(k\cdot s(m)), \]
+        so that $q(k\cdot s(m)) = k$ and $q\circ\mu^r_m = 1_K$. The set-theoretical map $q$ just defined has the properties required in $3.$ and is the inverse of $\mu^r_m$ when restricted to every preimage $f^{-1}(m)$, making it a bijection.
+
+        Noting that $\{f^{-1}(m)\}_{m\in M}$ is a partition of $A$, if $(f,s)$ is right homogeneous, the inverses of $\mu^r_m$ yield the unique map $q:A\to K$ that has the required properties. On the other hand, if there is such a map $q:A\to K$, then it defines the unique element in $K$ asked in the definition of a Schreier split epimorphism.
+    \end{proof}
+\end{proposition}
+
+Explicitly, a Schreier split epimorphism $(f,s)$ can be expressed with its kernel and the set-theoretical map $q:A\to K$:
+\begin{equation}
+\label{diag:SchreierSplitEpimorphism}
+    \begin{tikzcd}[every label/.append style = {font = \small}]
+        K \arrow[rr, tail, shift right=1.5] & & A \arrow[ll, "q"', shift right=1.5, dashed] \arrow[rr, "f", two heads, shift left=1.5] & & M. \arrow[ll, "s", shift left=1.5]
+    \end{tikzcd}
+\end{equation}
+It is immediate to show that $q(k) = k$ and $q(s(m))=1_A$, for every $k\in K$ and $m\in M$.
+ 
+A clearer description of Schreier split epimorphisms is given by actions between monoids. In \cite{martins2013semidirect}, it has been shown that Schreier split epimorphisms as in \eqref{diag:SchreierSplitEpimorphism} corresponds exactly to actions of $M$ on $K$, i.e. a monoid homomorphism $\varphi:M\to End(K)$, where $End(K)$ is the monoid of endomorphisms of $K$. This equivalence is given via a semidirect product construction.
+
+%% SCHREIER = SEMIDIRECT %%
+\begin{proposition}
+\label{prop:SchreierSplitSemidirect}
+    Consider a Schreier split epimorphism as in \eqref{diag:SchreierSplitEpimorphism}. It corresponds to an action $\varphi:M\to End(K)$ defined as
+    \[ \varphi(m)(k) = q(s(m)\cdot k) \]
+    for any $m\in M$ and $k\in K$. Moreover, there is an isomorphism of split epimorphisms between \eqref{diag:SchreierSplitEpimorphism} and
+    \begin{equation}
+    \label{diag:SchreierSplitSemidirect}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            K \arrow[rr, "\limitmorph{1}{0}"', tail, shift right=1.5] & & K\rtimes_\varphi M \arrow[ll, "\pi_K"', shift right=1.5, dashed, two heads] \arrow[rr, "\pi_M", two heads, shift left=1.5] & & M \arrow[ll, "\limitmorph{0}{1}", tail, shift left=1.5]
+        \end{tikzcd}
+    \end{equation}
+    where $\limitmorph{1}{0}$ and $\limitmorph{0}{1}$ are the canonical injections in the product and $K\rtimes_\varphi M$ is the semidirect product of $K$ and $M$ with respect to $\varphi$: the cartesian product $K\times M$ equipped with the operation
+    \[ (k_1,m_1)\cdot (k_2,m_2) = (k_1\cdot \varphi(m_1)(k_2), m_1\cdot m_2). \]
+    \begin{proof}
+        We just provide the isomorphism $\zeta:A\longrightarrow K\rtimes_\varphi M$: it is given by
+        \[ \zeta:a\longmapsto (q(a),f(a)), \]
+        with the inverse given by
+        \[ \zeta^{-1}:(k,m)\longmapsto k\cdot s(m). \]
+        It is just a computation to show that it is an isomorphism of split epimorphisms.
+    \end{proof}
+\end{proposition}
+\begin{oss*}
+    For any $m\in M$ and $k\in K$, $\varphi(m)(k)$ is the unique element in $K$ such that
+    \[ \varphi(m)(k)\cdot s(m) = s(m)\cdot k. \]
+    This property is crucial to prove that the previous maps are monoid homomorphisms. Note that $\varphi(m)(k)$ is analogous to a conjugate of $k$ through $s(m)$.
+\end{oss*}
+
+In Proposition \ref{prop:SchreierRightHomo}, we proved the equivalence between Schreier split epimorphisms and right homogeneous split epimorphisms. A homogeneous split epimorphism can be seen as a Schreier split epimorphism also with the defining property on the left: for any $a\in A$, there exists a unique $k\in K$ such that $a = sf(a)\cdot k$. In the equivalence with monoid actions, we obtain the following:
+%% HOMOGENEOUS = FACTORS IN AUT %%
+\begin{proposition}[\cite{bourn2014schreier}, Proposition $3.8$]
+    A Schreier split epimorphism as in \eqref{diag:SchreierSplitEpimorphism} (or equivalently in \eqref{diag:SchreierSplitSemidirect}) is a homogeneous split epimorphism if and only if the corresponding action $\varphi:M\to End(K)$ factors through the group $Aut(K)$ of automorphisms of $K$.
+    \begin{proof}
+        Just note, for every $m\in M$, that
+        \[ \varphi(m) = q\circ \mu_m^l \]
+        and recall that $q$ is defined as the inverse of $\mu_m^r$ when restricted to $f^{-1}(m)$.
+    \end{proof}
+\end{proposition}
+
+%% SPLIT EPI IN GROUPS %%
+\begin{proposition}
+\label{prop:SplitEpiInGroups}
+    If $M$ is a group, then every split epimorphism $(f,s)$ is a homogeneous split epimorphism.
+    \begin{proof}
+        It is sufficient to define $q(a)=a\cdot {sf(a)}^{-1}$ for any $a\in A$ to show that it is a Schreier split epimorphism. The dual notion of left homogeneous is given fixing $q(a) = {sf(a)}^{-1}\cdot a$ for any $a\in A$.
+    \end{proof}
+\end{proposition}
+
+%% DEFINIZIONI SPECIAL EPI %%
+Since we will consider general surjections and not split epimorphisms, we can extend these concepts to the split epimorphism given by the kernel pair of a surjective homomorphism.
+\begin{definition}
+    Consider a surjective homomorphism $\sigma$ of monoids with its kernel pair:
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            M\times_NM \arrow[rr, "p_1", two heads, shift left=3] \arrow[rr, "p_2"', two heads, shift right=3] & & M \arrow[ll, "\Delta" description] \arrow[rr, "\sigma", two heads] & & N
+        \end{tikzcd}
+    \end{center}
+    where we considered the canonical kernel pair as a subobject of the cartesian product $M\times M$ and $p_1, p_2$ are the projection of the element on the right and left respectively.
+    
+    It is called a special Schreier surjection when $(p_1,\Delta)$ is a Schreier split epimorphism.
+
+    It is called a special homogeneous surjection when $(p_1,\Delta)$ is a homogeneous split epimorphism.
+\end{definition}
+\begin{oss*}
+    By Proposition \ref{prop:SchreierRightHomo}, it is clear that if $\sigma$ is a special homogeneous surjection, then it is a special Schreier surjection.
+\end{oss*}
+
+We now state some properties of special Schreier (resp. special homogeneous) surjections providing brief proofs. More details can be found in \cite{bourn2014schreierSemirings} and \cite{bourn2014schreier}. 
+%% TEOREMA 5.5 %%
+\begin{theorem}[\cite{bourn2014schreier}, Theorem $5.5$]
+    Any reflexive relation
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            R \arrow[rr, "d_1", two heads, shift left=3] \arrow[rr, "d_2"', two heads, shift right=3] & & M \arrow[ll, "s" description]
+        \end{tikzcd}
+    \end{center}
+    such that $(d_1,s)$ is a Schreier split epimorphism is transitive. It is an equivalence relation if and only if the kernel $K[d_1]$ of $d_1$ is a group.
+\end{theorem}
+%% KERNEL GRUPPO SE SPECIAL SCHREIER %%
+\begin{corollary}
+\label{cor:KernelGroup}
+    If a surjective homomorphism $\sigma$ of monoids is a special Schreier surjection, then its kernel $K$ is a group.
+    \begin{proof}
+        Since the kernel pair of $\sigma$ is an equivalence relation on $M$, the kernel $K[p_1]$ of $p_1$ is a group. Moreover, $K[p_1]$ is given by
+        \[ \{(k,1_M)\in M\times M\text{ : }\sigma(k)=\sigma(1_M)=1_N\} \]
+        so that it is isomorphic to $K$ via $p_2$.
+    \end{proof}
+\end{corollary}
+%% SCHREIER SPLIT -> SPECIAL IFF K GROUP %%
+\begin{corollary}
+\label{cor:split+group=special}
+    A special Schreier (resp. special homogeneous) surjection $\sigma$ which is a split epimorphism is also a Schreier (resp. homogeneous) split epimorphism. On the other hand, a Schreier (resp. homogeneous) split epimorphism $(\sigma,s)$ such that its kernel is a group is a special Schreier (resp. special homogeneous) surjection.
+    \begin{proof}
+        Fix a special Schreier surjection $\sigma:M\rrightarrow N$ that is also split by $s:N\to M$. We need to show that, for any $m\in M$, there exists a unique $k\in K$ such that $k\cdot s\sigma(m) = m$. Since $(p_1,\Delta)$ is a Schreier split epimorphism and $(m,s\sigma(m))\in M\times_NM$ for any $m\in M$, there exists a unique $(k,1_M)\in K[p_1]$ such that
+        \[ (m,s\sigma(m)) = (k,1_M)\cdot (s\sigma(m), s\sigma(m)) = (k\cdot s\sigma(m), s\sigma(m)). \]
+        On the other hand, fix a Schreier split epimorphism $(\sigma,s)$ such that its kernel is a group and consider its kernel pair $M\times_NM$. It suffices to show that for any $m_1,m_2\in M$ such that $\sigma(m_1) = \sigma(m_2)$, there exists a unique $k\in K$ such that $k\cdot m_2 = m_1$. Since $(\sigma, s)$ is a Schreier split epimorphism, there are unique $k_1,k_2\in K$ such that $k_i\cdot s\sigma(m_i)=m_i$ for $i=1,2$. Thus,
+        \[ m_1 = k_1\cdot s\sigma(m_1) = k_1\cdot s\sigma(m_2) = k_1\cdot k_2^{-1}\cdot m_2. \]
+    \end{proof}
+\end{corollary}
+%% SIGMA SPECIAL HOMO = P1 SPECIAL HOMO %%
+\begin{corollary}
+\label{cor:SpecialIFFSpecial}
+    A surjective homomorphism $\sigma$ of monoids is a special Schreier (resp. special homogeneous) surjection if and only if its kernel pair projection $p_1$ is a special Schreier (resp. special homogeneous) surjection.
+    \begin{proof}
+        If $\sigma$ is a special Schreier surjection, then $(p_1,\Delta)$ is a Schreier split epimorphism and its kernel is a group since $K[p_1]\cong K$; then $p_1$ is a special Schreier surjection. On the other hand, if $p_1$ is a special Schreier surjection, $(p_1,\Delta)$ is a Schreier split epimorphism; then $\sigma$ is a special Schreier surjection.
+    \end{proof}
+\end{corollary}
+%% PULLBACK DI SPECIAL HOMO %%
+\begin{proposition}[\cite{bourn2014schreierSemirings}, Proposition $7.1.4$, $7.1.5$]
+\label{prop:PullbackSpecialHomo}
+    Special Schreier and special homogeneous surjections are stable under products and pullbacks. Moreover, given any pullback of surjective homomorphism of monoids
+    \begin{center}
+        \begin{tikzcd}
+            \pullback A \arrow[rr, "g", two heads] \arrow[dd, "f"', two heads] & & A' \arrow[dd, "f'", two heads] \\ \\ B \arrow[rr, "h"', two heads] & & B'
+        \end{tikzcd}
+    \end{center}
+    if $f$ is a special Schreier (resp. special homogeneous) surjection, then $f'$ is a special Schreier (resp. special homogeneous) surjection.
+\end{proposition}
+
+As we did with Schreier split epimorphisms, we can give a clearer description of the kernel pair of a special Schreier surjection through semidirect products.
+%% FORM OF SPECIAL SCHREIER %%
+\begin{proposition}
+\label{prop:KernelPairSemidirect}
+    Consider a special Schreier surjection $\sigma$ with its kernel pair, the kernel $K[p_1]$ of $p_1$ and the map $q$ given in Proposition \ref{prop:SchreierRightHomo}:
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            K[p_1] \arrow[rr, tail, shift right=1.5] & &  M\times_NM \arrow[ll, "q"', shift right=1.5, dashed] \arrow[rr, "p_1", two heads, shift left=3] \arrow[rr, "p_2"', two heads, shift right=3] & & M \arrow[ll, "\Delta" description] \arrow[rr, "\sigma", two heads] & & N.
+        \end{tikzcd}
+    \end{center}
+    There is an isomorphism of split epimorphisms with
+    \begin{equation}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            K \arrow[rr, tail, shift right=1.5] & & K\rtimes_\varphi M \arrow[ll, "\pi_K"', shift right=1.5, dashed, two heads] \arrow[rr, "\pi_M", two heads, shift left=3] \arrow[rr, "\bullet"', two heads, shift right=3] & & M \arrow[ll, tail] \arrow[rr, "\sigma", two heads] & & N
+        \end{tikzcd}
+    \end{equation}
+    where $K$ is the kernel of $\sigma$ and $\bullet$ is the multiplication on $M$: $(k,m)\longmapsto k\cdot m$. Note that we omitted to name the canonical inclusions for the sake of clarity.
+    \begin{proof}
+        Mostly it is a consequence of Proposition \ref{prop:SchreierSplitSemidirect} and the isomorphism $K[p_1]\cong K$. Let us show explicitly why $p_2$ corresponds to the multiplication on $M$: in this setting
+        \[ q(m_1,m_2) = (k, 1_M) \text{ such that } k\cdot m_2 = m_1 \]
+        for any $(m_1,m_2)\in M\times_NM$. Note that such a $k$ exists and is unique because $(p_1,\Delta)$ is a Schreier split epimorphism. Now, considering $K[p_1]\cong K$, the isomorphism $\zeta$ expressed in Proposition \ref{prop:SchreierSplitSemidirect} is given by
+        \[ \zeta:(m_1,m_2)\longmapsto (k, m_2) \text{ such that }k\cdot m_2 = m_1 \]
+        with the inverse given by
+        \[ \zeta^{-1}:(k, m)\longmapsto (k\cdot m, m). \]
+        It is clear that 
+        \[ \bullet(k,m) = p_2\circ \zeta^{-1}(k,m) = k\cdot m \]
+    \end{proof}
+\end{proposition}
+\begin{oss*}
+    The action $\varphi:M\to End(K)$ is given by
+    \[ \varphi(m)(k) = q(m\cdot k, m) \]
+    for any $m\in M$ and $k\in K$, and it is such that
+    \[ \varphi(m)(k)\cdot m = m\cdot k. \]
+\end{oss*}
+
+We are now ready to characterize trivial split extensions, central and normal extensions in the admissible Galois structure
+\[ \Gamma = (\textbf{Mon}, \textbf{Grp}, Gp, U, \eta, 1_{\textbf{Grp}}, \mathscr{E}, \mathscr{F}). \]
+In Definition \ref{def:GaloisGroupoid}, we defined the Galois groupoid of $\sigma$ as the image of the groupoid $K(\sigma)$ induced by the kernel pair of $\sigma$ through the left adjoint of the considered Galois structure. In doing so, it is useful to understand how a morphism of split epimorphisms works when it involves the unit $\eta$; note that in this scenario we will consider actually homogeneous split epimorphisms since $\eta$ maps into a group and by Proposition \ref{prop:SplitEpiInGroups}. We will state and prove the next result utilizing the semidirect product form \eqref{diag:SchreierSplitSemidirect}, for the (equivalent) statement using the other form see \cite{montoli2014galois}. This will be crucial to describe $Gp(M\times_NM)$ in a semidirect form and to gain a clearer understanding of the Galois groupoid $Gal[\sigma]$.
+%% MORFISMO DI HOMO SPLIT FATTORIZZA %%
+\begin{lemma}
+\label{lem:HomoSplitFactors}
+    Consider any morphism involving $\eta_M$ of homogeneous split epimorphisms and their kernels:
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            K \arrow[dd, "\widetilde{u}"'] \arrow[rr, tail, shift right=1.5] & & K\rtimes_\varphi M \arrow[dd, "u"'] \arrow[ll, "\pi_K"', shift right=1.5, dashed, two heads] \arrow[rr, "\pi_M", two heads, shift left=1.5] & & M \arrow[dd, "\eta_M"] \arrow[ll, tail, shift left=1.5] \\ \\ K' \arrow[rr, tail, shift right=1.5] & & K'\rtimes_\psi Gp(M) \arrow[ll, "\pi_{K'}"', shift right=1.5, dashed, two heads] \arrow[rr, "\pi_{Gp(M)}", two heads, shift left=1.5] & & Gp(M) \arrow[ll, tail, shift left=1.5]
+        \end{tikzcd}
+    \end{center}
+    where $\widetilde{u}$ is the component of $u$ on $K$. It factors into the composite
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            K \arrow[dd, equal] \arrow[rr, tail, shift right=1.5] & & K\rtimes_\varphi M \arrow[dd, "\overline{\eta_M}"'] \arrow[ll, "\pi_K"', shift right=1.5, dashed, two heads] \arrow[rr, "\pi_M", two heads, shift left=1.5] & & M \arrow[dd, "\eta_M"] \arrow[ll, tail, shift left=1.5] \\ \\ K \arrow[dd, "\widetilde{u}"'] \arrow[rr, tail, shift right=1.5] & & K\rtimes_{\overline{\varphi}} Gp(M) \arrow[dd, "\overline{u}"'] \arrow[ll, "\pi_K"', shift right=1.5, dashed, two heads] \arrow[rr, "\pi_{Gp(M)}", two heads, shift left=1.5] & & Gp(M) \arrow[dd, equal] \arrow[ll, tail, shift left=1.5] \\ \\ K' \arrow[rr, tail, shift right=1.5] & & K'\rtimes_\psi Gp(M) \arrow[ll, "\pi_{K'}"', shift right=1.5, dashed, two heads] \arrow[rr, "\pi_{Gp(M)}", two heads, shift left=1.5] & & Gp(M) \arrow[ll, tail, shift left=1.5]
+        \end{tikzcd}
+    \end{center}
+    where $\overline{\varphi}:Gp(M)\to Aut(K)$ is the unique group homomorphism satisfying $\varphi = \overline{\varphi}\circ \eta_M$.
+    \begin{proof}
+        Since $f$ is homogeneous, $\varphi:M\to Aut(K)$ is a monoid homomorphism into a group. By adjointness there is a unique group homomorphism $\overline{\varphi}:Gp(M)\to Aut(K)$ such that $\varphi = \overline{\varphi}\circ \eta_M$. Note that $\overline{\varphi}$ is necessarily given by the action $\varphi$ on the representatives of the classes:
+        \[ \overline{\varphi}(\overline{[m_1]{[m_2]}^{-1}\cdots[m_n]^{\iota(n)}}) = \varphi   (m_1){\varphi(m_2)}^{-1}\cdots {\varphi(m_n)}^{\iota(n)} \]
+        or
+        \[ \overline{\varphi}(\overline{{[m_1]}^{-1}[m_2]\cdots[m_n]^{\iota(n)}}) = {\varphi   (m_1)}^{-1}\varphi(m_2)\cdots {\varphi(m_n)}^{\iota(n)}. \]
+        The map $\overline{\eta_M}:K\rtimes_\varphi M\to K\rtimes_{\overline{\varphi}}Gp(M)$ is given by $1_K\times\eta_M$. Since $\varphi(m)(k) = \overline{\varphi}(\overline{[m]})(k)$, $1_K\times\eta_M$ is a monoid homomorphism.
+
+        The map $\overline{u}:K\rtimes_{\overline{\varphi}}Gp(M)\to K'\rtimes_\psi Gp(M)$ is given by $\widetilde{u}\times1_{Gp(M)}$. This is actually a monoid homomorphism since $\widetilde{u}$ is a morphism of $Gp(M)$-actions: explicitly,
+        \[ \widetilde{u}(\overline{\varphi}(x)(k)) = \psi(x)(\widetilde{u}(k)) \]
+        for every $x\in Gp(M)$ and $k\in K$. When $x=\eta_M(m)$ is a generator, it follows directly by $u:K\rtimes_{\varphi}M\to K'\rtimes_\psi Gp(M)$ being a monoid homomorphism and $\varphi = \overline{\varphi}\circ \eta_M$; it extends to all $x\in Gp(M)$ since $\overline{\varphi}$ acts as $\varphi$ on generators.
+    \end{proof}
+\end{lemma}
+
+%% SPLIT, TRIVIALI = SPECIAL HOMO %%
+\begin{theorem}
+\label{thm:TrivialSplit=SpecialHomo}
+    Consider a split epimorphism $(f,s)$; then $f$ is a trivial extension if and only if $f$ is a special homogeneous surjection.
+    \begin{proof}
+        By Proposition \ref{prop:SplitEpiInGroups}, $(Gp(f),Gp(s))$ is a homogeneous split epimorphism. Since the kernel of $Gp(f)$ is a group, by Corollary \ref{cor:split+group=special} $Gp(f)$ is a special homogeneous surjection. If $f$ is a trivial extension, then
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                \pullback A \arrow[dd, "f", two heads, shift left=1.5] \arrow[rr, "\eta_A"] & & Gp(A) \arrow[dd, "Gp(f)", two heads, shift left=1.5] \\ \\ M \arrow[uu, "s", shift left=1.5] \arrow[rr, "\eta_M"] & & Gp(M) \arrow[uu, "Gp(s)", shift left=1.5]
+            \end{tikzcd}
+        \end{center}
+        is a pullback. Since special homogeneous surjection are stable under pullbacks, by Proposition \ref{prop:PullbackSpecialHomo}, $f$ is a special homogeneous surjection. On the other hand, if $f$ is a special homogeneous surjection, then its kernel is a group by Corollary \ref{cor:KernelGroup}. Consider the morphism of special homogeneous surjections and their kernels
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                K \arrow[dd, "{\eta_A}_{|_K}"'] \arrow[rr, tail] & & A \arrow[dd, "\eta_A"'] \arrow[rr, "f", two heads, shift left=1.5] & & M \arrow[dd, "\eta_M"] \arrow[ll, "s", tail, shift left=1.5] \\ \\ K' \arrow[rr, tail] & & Gp(A)  \arrow[rr, "Gp(f)", two heads, shift left=1.5] & & Gp(M). \arrow[ll, "Gp(s)", tail, shift left=1.5]
+            \end{tikzcd}
+        \end{center}
+        By Theorem $2.3.7$ in \cite{bourn2014schreierSemirings}, the right square is a pullback (so that $f$ is a trivial extension) if and only if the restriction ${\eta_A}_{|_K}$ to the kernels is an isomorphism. By Lemma \ref{lem:HomoSplitFactors}, $\eta_A:A\to Gp(A)$ factors into $A':=K\rtimes_{\overline{\varphi}}Gp(M)$:
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                K \arrow[dd, equal] \arrow[rr, "\iota", tail] & & A \arrow[dd, "\overline{\eta_M}"'] \arrow[rr, "f", two heads, shift left=1.5] & & M \arrow[dd, "\eta_M"] \arrow[ll, "s", tail, shift left=1.5] \\ \\ K \arrow[dd, "{\eta_A}_{|_K}"'] \arrow[rr, "\limitmorph{1}{0}"', tail] & & A' \arrow[dd, "\overline{\eta_A}"'] \arrow[rr, "\pi_{Gp(M)}", two heads, shift left=1.5] & & Gp(M) \arrow[dd, equal] \arrow[ll, "\limitmorph{0}{1}", tail, shift left=1.5] \\ \\ K' \arrow[rr, tail] & & Gp(A)  \arrow[rr, "Gp(f)", two heads, shift left=1.5] & & Gp(M) \arrow[ll, "Gp(s)", tail, shift left=1.5]
+            \end{tikzcd}
+        \end{center}
+        where $\limitmorph{1}{0}$ and $\limitmorph{0}{1}$ are the canonical injections in the product and $\iota$ is the injection in $A$. Notice that we have used the same notation of Lemma \ref{lem:HomoSplitFactors}, but $\overline{\eta_M}$ and $\overline{\eta_A}$ have a different expression since we did not express the split epimorphisms in the semidirect product form. One has $K\cong K'$ exactly when $\overline{\eta_A}:A'\to Gp(A)$ is an isomorphism. Since $K$ is a group, $A'$ is a group; then $\overline{\eta_M}:A\to A'$ induces a map $g:Gp(A)\to A'$ by the universal property of $Gp(A)$ such that $g\circ\eta_A = \overline{\eta_M}$. Notice that $g$ is actually a morphism of split epimorphisms:
+        \[ \pi_{Gp(M)}\circ g\circ \eta_A = \pi_{Gp(M)}\circ \overline{\eta_{M}} = \eta_M\circ f = Gp(f) \circ \eta_A \]
+        so that $\pi_{Gp(M)}\circ g = Gp(f)$, and 
+        \[ g\circ Gp(s)\circ \eta_M = g\circ \eta_A\circ s = \overline{\eta_M}\circ s = \limitmorph{0}{1}\circ \eta_M \]
+        so that $g\circ Gp(s)$ is the inclusion $\limitmorph{0}{1}:Gp(M)\to A'$.
+
+        Let us show that $g$ is the inverse of $\overline{\eta_A}$:
+        \[ \overline{\eta_A}\circ g \circ \eta_A = \overline{\eta_A} \circ \overline{\eta_M} = \eta_A \]
+        so that $\overline{\eta_A}\circ g = 1_{Gp(A)}$. On the other hand, it suffices to show that $g\circ\overline{\eta_A} = 1_{A'}$ in each component of $A'$, by Lemma $2.1.6$ in \cite{martins2013semidirect}. One has
+        \[ g\circ\overline{\eta_A}\circ \limitmorph{1}{0} = g\circ\overline{\eta_A}\circ\overline{\eta_M}\circ \iota = g\circ \eta_A\circ \iota = \overline{\eta_M}\circ \iota = \limitmorph{1}{0} \]
+        and
+        \[ g\circ \overline{\eta_A}\circ \limitmorph{0}{1} = g\circ Gp(s) = \limitmorph{0}{1}. \]
+        Since $g\circ \overline{\eta_A} = 1_{A'}$ and $\overline{\eta_A}\circ g = 1_{Gp(A)}$, we get that $\overline{\eta_A}$ is an isomorphism. Thus, ${\eta_A}_{|_K}$ is an isomorphism.
+    \end{proof}
+\end{theorem}
+\begin{oss*}
+    Note that we characterized trivial extensions as special homogeneous surjections only if they are split epimorphisms. Moreover, we characterized the image of a split trivial extension $(f,s)$ as a semidirect product of groups, since 
+    \[ Gp(A) \cong K\rtimes_{\overline{\varphi}} Gp(M) \]
+    where $K$ is the kernel of $f$ and $\overline{\varphi}$ is given as in Lemma \ref{lem:HomoSplitFactors}. 
+\end{oss*}
+
+%% CENTRALI = NORMALI = SPECIAL HOMO %%
+\begin{theorem}
+\label{thm:Normal=SpecialHomo}
+    Let $\sigma:M\rrightarrow N$ be a surjective homomorphism of monoids. The following are equivalent:
+    \begin{enumerate}
+        \item $\sigma$ is a central extension;
+        \item $\sigma$ is a normal extension;
+        \item $\sigma$ is a special homogeneous surjection.
+    \end{enumerate}
+    \begin{proof}
+        Consider $\sigma$ and its kernel pair
+        \begin{center}
+            \begin{tikzcd}[every label/.append style = {font = \small}]
+                M\times_NM \arrow[rr, "p_1", two heads, shift left=3] \arrow[rr, "p_2"', two heads, shift right=3] & & M \arrow[ll, "\Delta" description] \arrow[rr, "\sigma", two heads] & & N.
+            \end{tikzcd}
+        \end{center}
+        Let us first prove $2.\iff 3.$: By definition, $\sigma$ is a normal extension if and only if $p_1$ is a trivial extension. Since $(p_1,\Delta)$ is a split epimorphism, by Theorem \ref{thm:TrivialSplit=SpecialHomo}, $p_1$ is a trivial extension if and only if it is a special homogeneous surjection. By Corollary \ref{cor:SpecialIFFSpecial}, $p_1$ is a special homogeneous surjection if and only if $\sigma$ is a special homogeneous surjection.
+        
+        By definition we get $2.\Rightarrow 1.$. To prove $1.\Rightarrow 3.$, suppose that $\sigma$ is a central extension. There exists $p$ such that $p^*(\sigma)$ is a trivial extension and, by Proposition \ref{prop:PullbackTrivialExtensions}, $p^*(\sigma)$ is a normal extension. Applying $2.\iff 3.$, we get that $p^*(\sigma)$ is a special homogeneous surjection, but since $p$ is a surjective homomorphism of monoids, $\sigma$ is a special homogeneous surjection by Proposition \ref{prop:PullbackSpecialHomo}.
+    \end{proof}
+\end{theorem}
+
+With the last theorem, we can apply the categorical Galois theorem whenever we fix a special homogeneous surjection $\sigma$. Recall that in the considered Galois structure for monoids, every extension has a monadic pullback functor, being a surjection. The next step is to characterize the Galois groupoid $Gal[\sigma]$ of a special homogeneous surjection $\sigma:M\rrightarrow N$. We defined $Gal[\sigma]$ as the image of the groupoid $K(\sigma)$ induced by the kernel pair of $\sigma$ through the functor $Gp:\textbf{Mon}\longrightarrow \textbf{Grp}$. In Proposition \ref{prop:KernelPairSemidirect}, we gave an isomorphic structure of this kernel pair as a semidirect product: we can extend it to the induced groupoid $K(\sigma)$.
+
+%% SEMIDIRECT K(\sigma) %%
+\begin{corollary}
+\label{cor:GroupoidKernelPairSemidirect}
+    Consider a special homogeneous surjection $\sigma:M\rrightarrow N$ and the groupoid $K(\sigma)$ in \textbf{Mon} described in Example \ref{ex:KernelPairInternalGroupoid}; then it is isomorphic to
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            (K\rtimes_\varphi M)\times_M(K\rtimes_\varphi M) \arrow[rr, "m"] & &  K\rtimes_\varphi M \arrow[rrr, "\bullet"', two heads, bend right, shift right=2] \arrow[rrr, "\pi_M", two heads, bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] & & & M \arrow[lll, tail]
+        \end{tikzcd}
+    \end{center}
+    where $(K\rtimes_\varphi M)\times_M(K\rtimes_\varphi M)$ is the pullback of $\bullet$ along $\pi_M$, $m(k_1,m_2,k_2,m_3) = (k_1\cdot k_2, m_3)$ and $\tau(k_1,m_2) = (k^{-1}_1, k_1\cdot m_2)$.
+    \begin{proof}
+        By Proposition \ref{prop:KernelPairSemidirect}, it suffices to prove the actual form of the maps $m$ and $\tau$. Recall that the isomorphism $\zeta:M\times_NM\longrightarrow K\rtimes_{\varphi}M$ is given by
+        \[ \zeta:(m_1,m_2)\longmapsto (k_1, m_2) \text{ such that }k_1\cdot m_2 = m_1 \]
+        and the groupoid multiplication in $K(\sigma)$ was given by the projection onto the first and the fourth factor. An element of $(K\rtimes_\varphi M)\times_M(K\rtimes_\varphi M)$ is given by $(k_1,m_2,k_2,m_3)$ such that $m_2=k_2\cdot m_3$; so that
+        \[ m(k_1,m_2,k_2,m_3) = m(\zeta(m_1,m_2),\zeta(m_2,m_3)) = \zeta(m_1,m_3) = (k_1\cdot k_2,m_3) \]
+        since $k_1\cdot k_2\cdot m_3 = k_1\cdot m_2 = m_1$. Analogously:
+        \[ \tau(k_1,m_2) = \tau(\zeta(m_1,m_2)) = \zeta(m_2,m_1) = (k_1^{-1}, m_1) = (k_1^{-1},k_1\cdot m_2) \]
+        since $K$ is a group and $k^{-1}_1\cdot m_1 = m_2$.
+        
+    \end{proof}
+\end{corollary}
+
+Note that $m$ and $\tau$ correspond to the multiplication and inverse on $K$. To fully describe the Galois groupoid $Gal[\sigma]$, it remains to apply the functor $Gp$. By Lemma \ref{lem:HomoSplitFactors} and Theorem \ref{thm:TrivialSplit=SpecialHomo} we get once again a semidirect form of $Gal[\sigma]$.
+
+%% SEMIDIRECT Gal[\sigma] %%
+\begin{proposition}
+\label{prop:GaloisGroupoidSemidirect}
+    Consider $\sigma:M\rrightarrow N$ a special homogeneous surjection and its Galois groupoid $Gal[\sigma] :=Gp(K(\sigma))$ in \textbf{Grp} described in Definition \ref{def:GaloisGroupoid}; then it is isomorphic to
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}]
+            (K\rtimes_{\overline{\varphi}} Gp(M))\times_{Gp(M)}(K\rtimes_{\overline{\varphi}} Gp(M)) \arrow[rr, "m"] & &  K\rtimes_{\overline{\varphi}} Gp(M) \arrow[rrr, "\bullet"', two heads, bend right, shift right=2] \arrow[rrr, "\pi_{Gp(M)}", two heads, bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] & & & Gp(M) \arrow[lll, tail]
+        \end{tikzcd}
+    \end{center}
+    where $\overline{\varphi}:Gp(M)\to Aut(K)$ is the unique homomorphism satisfying $\varphi = \overline{\varphi}\circ \eta_M$ and $\bullet$ is the multiplication on $Gp(M)$, viewing $K$ as a subset of $Gp(M)$ through $\eta_K$. Moreover, $m$ and $\tau$ are given in the same way of Corollary \ref{cor:GroupoidKernelPairSemidirect}.
+    \begin{proof}
+        First, note that the proof of Lemma \ref{lem:GaloisGroupoid} holds since $\sigma$ is a normal extension, so that $Gp(K(\sigma))$ is indeed a groupoid. Since $\sigma$ is a special homogeneous surjection, Lemma \ref{lem:HomoSplitFactors} holds and there is the isomorphism of split epimorphisms
+        \[ Gp(K\rtimes_\varphi M)\cong K\rtimes_{\overline{\varphi}} Gp(M) \]
+        described in the proof of Theorem \ref{thm:TrivialSplit=SpecialHomo}. It remains to explicitly exhibit the morphisms involved. Recall that $\overline{\eta_M}:K\rtimes_\varphi M\to K\rtimes_{\overline{\varphi}}Gp(M)$ is given by $1_K\times \eta_M$. Since they are group homomorphisms, it suffices to show how they act on elements of the form $(k_1,\overline{[m_2]}) = \overline{\eta_M}(k_1,m_2)$ for some $k_1\in K$ and $m_2\in M$, and we will do it exploiting the expressions from Corollary \ref{cor:GroupoidKernelPairSemidirect}: one has
+        \[ \bullet(k_1, \overline{[m_2]}) = \eta_M(k_1\cdot m_2) = \overline{[k_1\cdot m_2]} = \overline{[k_1]}\cdot \overline{[m_2]} \]
+        and
+        \[ \tau(k_1,\overline{[m_2]}) = \overline{\eta_M}(k_1^{-1}, k_1\cdot m_2) = (k_1^{-1}, \overline{[k_1\cdot m_2]}) = (k_1^{-1}, \overline{[k_1]}\cdot \overline{[m_2]}). \]
+        Analogously, if $\overline{[m_2]} = \overline{[k_2]}\cdot \overline{[m_3]}$,
+        \[ m(k_1,\overline{[m_2]},k_2,\overline{[m_3]}) = \overline{\eta_M}(k_1\cdot k_2, m_3) = (k_1\cdot k_2, \overline{[m_3]}). \]
+    \end{proof}
+\end{proposition}
+\begin{oss*}
+    We proved that $Gal[\sigma]$ is a groupoid completely determined by the group $K$. Indeed, multiplication and inverse in the groupoid correspond to the structure on $Ker(\sigma)$.
+\end{oss*}
+
+%% INTERNAL COVARIANT PRESHEAVES %%
+To conclude, let us also describe an internal covariant presheaf $(G,f,\pi)$ on the internal groupoid $Gal[\sigma]$ in \textbf{Grp}, with $f:G\rrightarrow Gp(M)$ surjection.
+\begin{proposition}
+\label{prop:InternalCovariantSemidirect}
+    Consider a special homogeneous surjection $\sigma:M\rrightarrow N$ and its Galois groupoid $Gal[\sigma]$ in \textbf{Grp}. Fix an internal covariant presheaf $(G,f,\pi)$ on $Gal[\sigma]$; then $\pi$ is a group action of $K$ on $G$ that is compatible with the morphism $f:G\rrightarrow Gp(M)$.
+    \begin{proof}
+        Recall Definition \ref{def:InternalPresheaves} and consider the form of $Gal[\sigma]$ we just described in Proposition \ref{prop:GaloisGroupoidSemidirect}. First, note that $K$ acts on $Gp(M)$ by the multiplication $\bullet:(k_1,x)\to \overline{[k_1]}\cdot x$. Let us prove that
+        \[ (K\rtimes_{\overline{\varphi}} Gp(M))\times_{Gp(M)}G \cong K\rtimes_{\overline{\varphi}\circ f}G. \]
+        Indeed, $(K\rtimes_{\overline{\varphi}} Gp(M))\times_{Gp(M)}G$ is defined as the pullback of $f$ along $\pi_{Gp(M)}$, and for any $c,c'\in K$, $g,g'\in G$ such that $f(g)=x\in Gp(M)$ and $f(g')=x'\in Gp(M)$, it holds
+        \[ (c,x,g)(c',x',g') = (c\cdot \overline{\varphi}\circ f(g)(c'), x\cdot x',g\cdot g'). \]
+        With this isomorphism, $\pi:(K\rtimes_{\overline{\varphi}} Gp(M))\times_{Gp(M)}G\to G$ is isomorphic to a map, that we also call $\pi$,
+        \[ \pi:K\rtimes_{\overline{\varphi}\circ f}G \longrightarrow G. \]
+        It is just a computation to show that the commutativity of Diagram \ref{diag:InternalPresheaves} corresponds to the axioms for $\pi$ to be a group action that is compatible with $f$:
+        \[ \pi(1_M,g) = g, \]
+        \[ \pi(k_1,\pi(k_2,g)) = \pi(k_1\cdot k_2, g) \]
+        and
+        \[ f\circ \pi(k_1,g) = \overline{[k_1]}\cdot f(g). \]
+    \end{proof}
+\end{proposition}
+\begin{oss*}
+    Note that we did something similar in Proposition \ref{prop:GroupoidIsGroup}. In that setting the Galois groupoid was a group; in this scenario, it remains a groupoid, but its structure is such that we obtain a similar result, being completely determined by a group.
+\end{oss*}
+
+%% CONCLUSION %%
+To conclude, let us recall the work we have done in this chapter on the Galois structure
+\[ \Gamma = (\textbf{Mon}, \textbf{Grp}, Gp, U, \eta, 1_{\textbf{Grp}}, \mathscr{E}, \mathscr{F}). \]
+We proved that it is admissible in Proposition \ref{prop:AdmissibilityMonoids}. In Theorem \ref{thm:Normal=SpecialHomo}, we proved that the Categorical Galois Theorem holds if $\sigma:M\rrightarrow N$ is a special homogeneous surjection, establishing an equivalence of categories
+\[ Centr(N,\sigma)\approx \mathscr{F}^{Gal[\sigma]} \]
+between central extensions split by $\sigma$ and internal covariant presheaves $(G,f,\pi)$ on $Gal[\sigma]$ with $f\in \mathscr{F}$. Again in Theorem \ref{thm:Normal=SpecialHomo}, we proved that central extensions are also normal extensions, and equivalently special homogeneous surjection. Finally, we explicitly described the Galois groupoid $Gal[\sigma]$ of $\sigma$ in Proposition \ref{prop:GaloisGroupoidSemidirect}, and the internal covariant presheaves on it in Proposition \ref{prop:InternalCovariantSemidirect}. We proved that $Gal[\sigma]$ is completely determined by the kernel $Ker(\sigma)$ and that internal covariant presheaves on $Gal[\sigma]$ are pointed groups $G$ on $Gp(M)$, along with a compatible action of $Ker[\sigma]$ on $G$.

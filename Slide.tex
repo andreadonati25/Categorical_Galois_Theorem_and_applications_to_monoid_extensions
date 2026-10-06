@@ -1,0 +1,680 @@
+\documentclass[4pt]{beamer}
+
+%\setbeamertemplate{background canvas}[vertical
+%shading][bottom=white,top=structure.fg!20]
+
+\usetheme{Warsaw}
+\setbeamertemplate{headline}{} \setbeamertemplate{footline}{}
+
+\usepackage[all,arc]{xy}
+\usepackage[italian,british]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumerate}
+\usepackage{tikz-cd}
+\usepackage{sansmathaccent}
+\pdfmapfile{+sansmathaccent.map}
+
+%% MIEI %%
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\usepackage{csquotes}
+\usepackage{mathtools}
+\usepackage{comment}
+\usepackage[
+    backend=biber,
+    style=numeric,
+    sorting=nyt,
+    maxbibnames=10,
+  ]{biblatex}
+\addbibresource{bibliography/biblio_Slide.bib}
+% tikzcd center picture
+\tikzset{
+    trim node/.default=1cm,
+    trim node/.style={
+    overlay,
+    append after command={% restore smaller bounding box
+    ([xshift={+#1}]\tikzlastnode.north west)
+    ([xshift={+-#1}]\tikzlastnode.south east)}},
+    down and trim/.default=1cm,
+    down and trim/.style={
+    yshift=-(\pgfmatrixcurrentcolumn-1)*1.5\baselineskip,
+    trim node={#1}},
+    downup and trim/.default=1cm,
+    downup and trim/.style={
+    yshift=iseven(\pgfmatrixcurrentcolumn) ? -1.5\baselineskip : 0pt,
+    trim node={#1}},
+    -|/.style={to path={-|(\tikztotarget)\tikztonodes}},
+    |-/.style={to path={|-(\tikztotarget)\tikztonodes}},
+    -| sl/.style={-|, xslant=-1},
+    |- sl/.style={|-, xslant= 1},
+    center picture/.style={
+    trim left=(current bounding box.center),
+    trim right=(current bounding box.center)}
+}
+\pgfplotsset{compat = 1.18}
+
+\title{Categorical Galois Theorem and applications to monoid extensions}
+\author{{\large Andrea Donati}}
+%\institute{{\large Universit\`{a} degli Studi di Milano}}
+\date{}
+
+\newtheorem{teo}{Theorem}[section]
+\newtheorem{cor}[teo]{Corollary}
+\newtheorem{lem}[teo]{Lemma}
+\newtheorem{defi}[teo]{Definition}
+\newtheorem{oss}[teo]{Remark}
+\newtheorem{prop}[teo]{Proposition}
+\newtheorem{examp}[teo]{Example}
+
+\newcommand{\bl}[1]{\color{white}{#1}}
+
+% MIEI %
+\newcommand{\rrightarrow}{\mathrel{\mathrlap{\rightarrow}\mkern1mu\rightarrow}}
+\newcommand{\tens}[1]{\otimes_{#1}}
+\DeclareRobustCommand\longrrightarrow
+     {\relbar\joinrel\rrightarrow}
+\newcommand{\pullback}{|[label={[label distance=-2mm]-45:\lrcorner}]|}
+\newcommand{\limitmorph}[2]{\langle{#1},{#2}\rangle}
+\newcommand{\opcat}[1]{{#1}^{\mathrm{op}}}
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\newdir{ |>}{{}*!/-3.5pt/@{|}*!/-8pt/:(1,-.2)@^{>}*!/-8pt/:(1,+.2)@_{>}}
+
+%\def\pullback{% with thanks to Valerian Even
+% \ar@{-}[]+R+<6pt,-1pt>;[]+RD+<6pt,-6pt>%
+% \ar@{-}[]+D+<1pt,-6pt>;[]+RD+<6pt,-6pt>}
+
+\newcommand{\po}{\ar[dr,phantom,at end,"{\scalebox{1.5}{$\ulcorner$}}"]}
+\newcommand{\pb}{\ar[dr,phantom,very near start,"{\scalebox{1.5}{$\lrcorner$}}"]}
+\newcommand{\sqlab}[1]{\ar[dr,phantom,"{#1}"]}
+
+\begin{document}
+
+% TITOLO %
+\begin{frame}
+  \begin{figure}
+		\centering
+		\includegraphics[width=0.65\textwidth]{figure/tesi_SCIENZE_TECNOLOGIE.jpg} 
+	\end{figure}
+    \titlepage
+\end{frame}
+
+% 1 %
+\begin{frame}{Pullback functor}
+    Let $\sigma:S\to R$ be a morphism in a category $\mathcal{A}$ with pullbacks. 
+    
+    The functor
+    \[
+    \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, row sep=1pt]
+        \sigma^*:{\mathcal{A}}/R \arrow[r] \& {\mathcal{A}}/S \\
+        a:A\to R \arrow[r] \& p_S:S\times_RA\to S
+    \end{tikzcd}
+    \]
+    
+    %\pause
+    \vspace{4mm}
+    
+    has a left adjoint functor
+    \[
+    \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, row sep=1pt]
+        \Sigma_\sigma:{\mathcal{A}}/S \arrow[r] \& {\mathcal{A}}/R \\
+        a:A\to S \arrow[r] \& \sigma\circ a:A\to R.
+    \end{tikzcd}
+    \]
+\end{frame}
+
+% 2 %
+\begin{frame}{Induced adjunction}
+    Let $\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+        \mathcal{A} \arrow[r, bend left, "\mathcal{S}", ""{name=S}] \& \mathcal{P} \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}$ be an adjunction where $\mathcal{A}$ has pullbacks.
+    
+    For every object $S\in\mathcal{A}$, the functor
+    \[
+    \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, row sep=1pt]
+        \mathcal{S}_S:{\mathcal{A}}/S \arrow[r] \& {\mathcal{P}}/\mathcal{S}(S) \\
+        a:A\to S \arrow[r] \& \mathcal{S}(a):\mathcal{S}(A)\to \mathcal{S}(S)
+    \end{tikzcd}
+    \]
+
+    %\pause
+    \vspace{3mm}
+    
+    has a right adjoint functor
+    \[
+    \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, row sep=1pt]
+        \mathcal{C}_S:{\mathcal{P}}/\mathcal{S}(S) \arrow[r] \& {\mathcal{A}}/S \\
+        f:X\to \mathcal{S}(S) \arrow[r] \& \eta_S^*(\mathcal{C}(f)):S\times_{\mathcal{C}\mathcal{S}(S)}\mathcal{C}(X)\to S
+    \end{tikzcd}
+    \]
+    where $\eta_S$ is the unit of $\mathcal{S}\dashv\mathcal{C}$.
+\end{frame}
+
+% 3 %
+\begin{frame}{Relatively admissible adjunction}
+    \begin{defi}
+        A relatively admissible adjunction 
+        $\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+            (\mathcal{A},\overline{\mathcal{A}}) \arrow[r, bend left, "\mathcal{S}", ""{name=S}] \& (\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+        \end{tikzcd}$ consists in an adjunction $\mathcal{S}\dashv\mathcal{C}$ and two classes of arrows $\overline{\mathcal{A}}$, $\overline{\mathcal{P}}$ such that:
+        
+        %\pause
+        \vspace{1mm}
+        
+        \begin{enumerate}
+            \item $\overline{\mathcal{A}}$ and $\overline{\mathcal{P}}$ contain all isomorphisms;
+            \item $\overline{\mathcal{A}}$ and $\overline{\mathcal{P}}$ are closed under composition;
+            \item $\overline{\mathcal{A}}$ and $\overline{\mathcal{P}}$ are pullback-stable;
+            \item $\mathcal{S}(\overline{\mathcal{A}})\subset\overline{\mathcal{P}}$;
+            \item $\mathcal{C}(\overline{\mathcal{P}})\subset\overline{\mathcal{A}}$;
+            \item $\eta_A\in\overline{\mathcal{A}}$, for every $A$ in $\mathcal{A}$;
+            \item $\varepsilon_X\in\overline{\mathcal{P}}$, for every $X$ in $\mathcal{P}$.
+        \end{enumerate}
+    \end{defi}
+\end{frame}
+
+% 4 %
+\begin{frame}{Relative Galois descent morphism}
+    \begin{defi}    
+        $a:A\to R$ is split by $\sigma:S\to R$ in $\overline{\mathcal{A}}$ when
+        \[ \eta^S_{\sigma^*(a)}:\sigma^*(a)\longrightarrow \mathcal{C}_S\mathcal{S}_S(\sigma^*(a)) \]
+        is an isomorphism.
+    \end{defi}
+
+    \pause \vspace{2mm}
+    
+    \begin{defi}
+        A morphism $\sigma:S\longrightarrow R$ in $\overline{\mathcal{A}}$ is of relative Galois descent with respect to a relatively admissible adjunction when
+        \begin{enumerate}
+            \item $\sigma^*:\overline{\mathcal{A}}/R\longrightarrow\overline{\mathcal{A}}/S$ is monadic;
+            \vspace{1mm}
+            \item $\varepsilon^S_f:f\to\mathcal{S}_S\mathcal{C}_S(f)$ is an isomorphism, $\forall f:X\to\mathcal{S}(S)$;
+            \vspace{1mm}
+            \item $\sigma\circ \mathcal{C}_S(f)\in Split_R(\sigma)$, $\forall f:X\to\mathcal{S}(S)$.
+        \end{enumerate}
+    \end{defi}
+\end{frame}
+
+% 5 %
+\begin{frame}{General setting}
+    \[\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+        \overline{\mathcal{A}}/R \arrow[rr, "\sigma^*", bend left, ""{name=pull}] \& \& \overline{\mathcal{A}}/S \arrow[ll, "\Sigma_\sigma", bend left, ""{name=comp}] \arrow[rr, "\mathcal{S}_S", bend left, ""{name=Ss}] \& \& \overline{\mathcal{P}}/\mathcal{S}(S) \arrow[ll, "\mathcal{C}_S", bend left, ""{name=Cs}] \\ \\ \\ Split_R(\sigma) \arrow[uuu, tail] \arrow[rr, "\sigma^*", bend left, ""{name=pullres}] \& \& Split_S(1_S) \arrow[uuu, tail] \arrow[rr, bend left, "\mathcal{S}_S", ""{name=Ssequi}] \arrow[ll, "\Sigma_\sigma", bend left, ""{name=compres}] \& \& \overline{\mathcal{P}}/\mathcal{S}(S) \arrow[uuu, Rightarrow, no head] \arrow[ll, "\mathcal{C}_S", bend left, ""{name=Csequi}] \arrow[phantom, from=pull, to=comp, "\dashv" rotate=90] \arrow[phantom, from=pullres, to=compres, "\dashv" rotate=90] \arrow[phantom, from=Ss, to=Cs, "\dashv" rotate=270] \arrow[phantom, from=Ssequi, to=Csequi, "\approx"]
+    \end{tikzcd}\]
+
+    %\pause
+    
+    \begin{center}
+        $\mathcal{S}_S\circ \sigma^*:Split_R(\sigma)\longrightarrow\overline{\mathcal{P}}/\mathcal{S}(S)$ is monadic.
+    \end{center}
+    The functorial part of the monad is the composite:
+    \[ T^\sigma=\mathcal{S}_S\circ\sigma^*\circ\Sigma_\sigma\circ \mathcal{C}_S. \]
+\end{frame}
+
+% 6 %
+\begin{frame}{Kernel pair groupoid}
+    Consider the kernel pair $\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+        S\times_RS \arrow[r, "p_1", shift left=1.5] \arrow[r, "p_2"', shift right=1.5] \& S \arrow[r, "\sigma"] \& R
+    \end{tikzcd}$ of $\sigma$.
+
+    It induces an internal groupoid $K(\sigma)$ in $\overline{\mathcal{A}}$:
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, center picture]
+            (S\times_RS)\times_S(S\times_RS) \arrow[rr, "m"] \& \&  S\times_RS \arrow[rrr, "p_2"', bend right, shift right=2] \arrow[rrr, "p_1", bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] \& \& \& S \arrow[lll, "\Delta"']
+        \end{tikzcd}
+    \end{center}
+    fixing:
+    \begin{enumerate}
+        \item $\Delta:=\limitmorph{1_S}{1_S}$;
+        \item $\tau:=\limitmorph{p_2}{p_1}$;
+        \item $m:=\limitmorph{\pi_1}{\pi_4}$.
+    \end{enumerate}
+\end{frame}
+
+% 7 %
+\begin{frame}{Galois groupoid}
+    The functor $\mathcal{S}$ transforms $K(\sigma)$ into an internal groupoid in $\overline{\mathcal{P}}$:
+    \small
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \footnotesize}, ampersand replacement=\&, center picture]
+             \mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}\mathcal{S}(S\times_RS) \arrow[rr, "\mathcal{S}(m)"] \& \&  \mathcal{S}(S\times_RS) \arrow[rrr, "\mathcal{S}(p_2)"', bend right, shift right=2] \arrow[rrr, "\mathcal{S}(p_1)", bend left, shift left=2] \arrow["\mathcal{S}(\tau)"', loop, distance=2em, in=305, out=235] \& \& \& \mathcal{S}(S) \arrow[lll, "\mathcal{S}(\Delta)"']
+        \end{tikzcd}
+    \end{center}
+
+    \vspace{3mm}
+    
+    \begin{defi}
+        The image $Gal[\sigma]:=\mathcal{S}(K(\sigma))$ of $K(\sigma)$ through $\mathcal{S}$ is called the Galois groupoid of $\sigma$.
+    \end{defi}
+\end{frame}
+
+% 8 %
+\begin{frame}{Internal covariant presheaves}
+    An internal covariant presheaf on $Gal[\sigma]$ in $\overline{\mathcal{P}}$ is a triple $(X,f,\pi)$ where
+    
+    \vspace{1mm}
+    
+    \begin{enumerate}
+        \item $f:X\longrightarrow \mathcal{S}(S)$
+        \item $\pi:\mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}X\longrightarrow X$
+    \end{enumerate}
+    with compatibility with the structure of $Gal[\sigma]$.
+
+    \vspace{3mm}
+    
+    The forgetful functor
+    \[
+    \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, row sep=1pt]
+        U:\overline{\mathcal{P}}^{Gal[\sigma]} \arrow[r] \& \overline{\mathcal{P}}/\mathcal{S}(S) \\
+        (X,f,\pi) \arrow[r] \& f:X\to \mathcal{S}(S)
+    \end{tikzcd}\]
+    is monadic. 
+
+    \vspace{1mm}
+
+    The functorial part of the monad is the composite:
+    \[ T=\Sigma_{\mathcal{S}(p_2)}\circ{\mathcal{S}(p_1)}^*. \]
+\end{frame}
+
+% 9 %
+\begin{frame}{Categorical Galois Theorem}
+    \begin{teo}
+        Let
+        $\begin{tikzcd}[ampersand replacement=\&]
+            (\mathcal{A},\overline{\mathcal{A}}) \arrow[r, bend left, "\mathcal{S}", ""{name=S}] \& (\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+        \end{tikzcd}$
+        be a relatively admissible adjunction where $\mathcal{A}$ and $\mathcal{P}$ are categories with pullbacks. Let $\sigma:S\to R$ be of relative Galois descent with respect to these data. There exists an equivalence of categories
+        \[ Split_R(\sigma)\approx\overline{\mathcal{P}}^{Gal[\sigma]} \]
+        between the category of those objects in $\overline{\mathcal{A}}/R$ that are split by $\sigma$ and the category of internal covariant presheaves on the internal groupoid $Gal[\sigma]$ in $\overline{\mathcal{P}}$.
+    \end{teo}
+\end{frame}
+
+
+\begin{comment}
+\begin{frame}{Proof}
+    \begin{enumerate}
+        \item We defined two monadic functors
+            \[ \mathcal{S}_S\circ \sigma^*:Split_R(\sigma)\longrightarrow\overline{\mathcal{P}}/\mathcal{S}(S) \]
+            and
+            \[ U:\overline{\mathcal{P}}^{Gal[\sigma]}\longrightarrow \overline{\mathcal{P}}/\mathcal{S}(S). \]
+            %\pause
+        \item The two monads are isomorphic:
+            \[ T^\sigma = \mathcal{S}_S\circ\sigma^*\circ\Sigma_\sigma\circ \mathcal{C}_S \cong \Sigma_{\mathcal{S}(p_2)}\circ{\mathcal{S}(p_1)}^* = T. \]
+            %\pause
+        \item The desired equivalence is then given via their respective categories of algebras:
+            \[ Split_R(\sigma)\approx{\overline{\mathcal{P}}/\mathcal{S}(S)}^{T^\sigma}\approx{\overline{\mathcal{P}}/\mathcal{S}(S)}^T\approx\overline{\mathcal{P}}^{Gal[\sigma]}. \]
+    \end{enumerate}
+\end{frame}
+\end{comment}
+
+
+\begin{comment}
+% 12 %
+\begin{frame}{Grothendieck's Galois theory}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \[\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+            (\mathcal{A},\overline{\mathcal{A}})\hspace{0.42em} \arrow[r, bend left, "\mathcal{S}", ""{name=S}] \& \hspace{0.42em}(\mathcal{P},\overline{\mathcal{P}}) \arrow[l, bend left, "\mathcal{C}", ""{name=C}] \arrow[phantom, from=S, to=C, "\dashv" rotate=-90]
+        \end{tikzcd}\]
+
+        \[ \sigma:S\to R \]
+        
+        \begin{enumerate}
+            \item $\sigma^*$ is monadic;
+            \item $\mathcal{C}_S$ is full and faithful;
+            \item $\sigma\in Split_R(\sigma)$.
+        \end{enumerate}
+
+        %\pause
+        
+        \column{0.5\textwidth}
+        \[\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+            \opcat{\textbf{K-Alg}}\hspace{0.41em} \arrow[r, bend left, "Sp", ""{name=Sp}] \& \hspace{0.41em}\textbf{Prof} \arrow[l, bend left, "\mathcal{C}(-{,}K)", ""{name=C}] \arrow[phantom, from=Sp, to=C, "\dashv" rotate=-90]
+        \end{tikzcd}\]
+
+        \[ \sigma:K\hookrightarrow L \]
+        
+        \begin{enumerate}
+            \item $L\tens{K}-$ is monadic;
+            \item $\mathcal{C}(-,L)$ is full and faithful;
+            \item $\sigma$ is Galois.
+        \end{enumerate}
+    \end{columns}
+\end{frame}
+
+% 13 % 
+\begin{frame}{Grothendieck's Galois theory}
+    \begin{enumerate}
+        \item $Split_{K}(\sigma)\cong Split_{K}(L)$;
+        \vspace{2mm}
+        \item $Sp(L\tens{K}-)\cong \text{Hom}_{K}(-,L)$;
+        \vspace{2mm}
+        \item $Sp(L)=Spec(Idemp(L))=Spec(\{0,1\}) = \{1\}$;
+        \vspace{2mm}
+        \item $Gal[\sigma] \cong Sp(L\tens{K}L) \cong \text{Aut}_K(L)$;
+        \vspace{2mm}
+        \item $\textbf{Prof }^{Gal[\sigma]} \cong \text{Aut}_K(L)\textbf{-Prof}$.
+    \end{enumerate}
+    
+    %\pause
+    \vspace{5mm}
+    
+    For a Galois extension of fields $\sigma:K\hookrightarrow L$:
+    \[ \opcat{Split_K(L)} \approx \text{Aut}_K(L)\textbf{-Prof}. \]
+\end{frame}
+
+% 14 %
+\begin{frame}{Classical Galois correspondence}
+    For a finite Galois extension of fields $\sigma:K\hookrightarrow L$:
+    \[ \opcat{Split_K(L)}_f \approx \text{Aut}_K(L)\textbf{-Set}_f. \]
+
+    %\pause
+    \vspace{5mm}
+
+    Contravariant isomorphism between the subfields $M$
+    \[ K\hookrightarrow M\hookrightarrow L \]
+    and the subgroups
+    \[ \text{Aut}_L(L)\leq \text{Aut}_M(L) \leq \text{Aut}_K(L). \]
+    
+\end{frame}
+\end{comment}
+
+
+% 11 %
+\begin{frame}{Classical Galois correspondence}
+    Fix a finite Galois extension $\sigma:K\hookrightarrow L$ of fields.
+
+    \vspace{3mm}
+
+    \begin{enumerate}
+        \item $Split_{K}(\sigma)\cong Split_{K}(L)$;
+        \vspace{1mm}
+        \item $Gal[\sigma]\cong \text{Aut}_K(L)$;
+        \vspace{1mm}
+        \item Presheaves on $Gal[\sigma]$ correspond to group actions of $\text{Aut}_K(L)$ on finite sets.
+    \end{enumerate}
+
+    \vspace{3mm}
+
+     Contravariant isomorphism between the subfields $M$
+    \[ K\hookrightarrow M\hookrightarrow L \]
+    and the subgroups
+    \[ \text{Aut}_L(L)\leq \text{Aut}_M(L) \leq \text{Aut}_K(L). \]
+\end{frame}
+
+% 12 %
+\begin{frame}{Grothendieck group of monoids}
+    \begin{defi}
+        Let $(M,\cdot, 1)$ be a monoid. The Grothendieck group of $M$ is given by
+        \[ Gp(M)=\frac{GpF(M)}{N(M)}, \]
+        where $GpF(M)$ denotes the free group on $M$ and $N(M)$ the normal subgroup generated by elements of the form $[m_1][m_2][m_1\cdot m_2]^{-1}$.
+    \end{defi}
+
+    \pause
+
+    \[\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+        \textbf{Mon} \arrow[r, bend left, "Gp", ""{name=Sp}] \& \textbf{Grp} \arrow[l, bend left, "U", ""{name=C}] \arrow[phantom, from=Sp, to=C, "\dashv" rotate=-90]
+    \end{tikzcd}\]
+\end{frame}
+
+% 13 %
+\begin{frame}{Galois structure for monoids}
+    \[ \Gamma = (\textbf{Mon}, \textbf{Grp}, Gp, U, \eta, 1_{\textbf{Grp}}, \mathscr{E}, \mathscr{F}) \]
+    with $\mathscr{E}$ and $\mathscr{F}$ the classes of surjections in \textbf{Mon} and \textbf{Grp}.
+
+    %\pause
+    \vspace{3mm}
+
+    With this choice:
+    
+    \vspace{1mm}
+    
+    \begin{enumerate}
+        \item $\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+            \mathscr{E}/M \arrow[r, bend left, "Gp_M", ""{name=GpM}] \& \mathscr{F}/Gp(M) \arrow[l, bend left, "U_M", ""{name=UM}] \arrow[phantom, from=GpM, to=UM, "\dashv" rotate=-90]
+        \end{tikzcd}$ is such that $U_M$ is full and faithful;
+        \item Every $f\in\mathscr{E}$ is a morphism of descent.
+    \end{enumerate}
+\end{frame}
+
+\begin{comment}
+% 14 %
+\begin{frame}{Trivial, central and normal extensions}
+    \begin{defi}
+        \begin{enumerate}
+            \item $f\in\mathscr{E}/M$ is a trivial extension if \[\begin{tikzcd}[ampersand replacement=\&]
+                \pullback A \arrow[r, "\eta_A"] \arrow[d, "f"'] \& Gp(A) \arrow[d, "Gp(f)"] \\ M \arrow[r, "\eta_M"'] \& Gp(M)
+            \end{tikzcd}\] is a pullback.
+            \item $f\in\mathscr{E}/N$ is a central extension if $\sigma^*(f)$ is a trivial extension for some $\sigma\in\mathscr{E}/N$.
+            \item $\sigma\in\mathscr{E}/N$ is a normal extension if $\sigma^*(\sigma)$ is a trivial extension.
+        \end{enumerate}
+    \end{defi}
+\end{frame}
+\end{comment}
+
+% 14 %
+\begin{frame}{Trivial, central and normal extensions}
+
+    $a:A\rrightarrow M$ trivial extension when $a\in Split_M(1_M)$.
+
+    \vspace{3mm}
+    
+    $a:A\rrightarrow N$ central extension when $a\in Split_N(\sigma)$ for some $\sigma\in\mathscr{E}$.
+
+    \vspace{3mm}
+    
+    $\sigma:M\rrightarrow N$ normal extension when $\sigma\in Split_N(\sigma)$.
+
+    %\pause
+    \vspace{5mm}
+
+    In the Galois structure $\Gamma = (\textbf{Mon}, \textbf{Grp}, Gp, U, \eta, 1_{\textbf{Grp}}, \mathscr{E}, \mathscr{F})$.
+    
+    If $\sigma\in Norm(N)$, there exists an equivalence of categories
+    \[ Centr(N,\sigma) \approx \mathscr{F}^{Gal[\sigma]}. \]
+\end{frame}
+
+% 15 %
+\begin{frame}{Schreier and homogeneous split epimorphisms}
+    Consider a split epimorphism $(f,s)$ of monoid with its kernel:
+    \[\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+        K \arrow[rr, tail] \& \& A \arrow[rr, "f", two heads, shift left=1.5] \& \& M. \arrow[ll, "s", shift left=1.5]
+    \end{tikzcd}\]
+    \begin{defi}
+        $(f,s)$ is a Schreier split epimorphism when, for any $a\in A$, there exists a unique $k\in K$ such that $a=k\cdot sf(a)$.
+    \end{defi}
+    \begin{defi}
+        $(f,s)$ is a homogeneous split epimorphism when all the maps
+        \[ \mu^r_m:K\longrightarrow f^{-1}(m)\text{, } k \longmapsto k\cdot s(m) \]
+        \[ \mu^l_m:K\longrightarrow f^{-1}(m)\text{, }k \longmapsto s(m)\cdot k \]
+        are bijective.
+    \end{defi}
+\end{frame}
+
+% 16 %
+\begin{frame}{Special Schreier and special homogeneous surjections}
+    Consider a surjection $\sigma:M\rrightarrow N$ of monoid with its kernel pair:
+    \[\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+        M\times_NM \arrow[rr, "p_1", two heads, shift left=3] \arrow[rr, "p_2"', two heads, shift right=3] \& \& M \arrow[ll, "\Delta" description] \arrow[rr, "\sigma", two heads] \& \& N
+    \end{tikzcd}\]
+    \begin{defi}
+        $\sigma:M\rrightarrow N$ is a special Schreier surjection when $(p_1,\Delta)$ is a Schreier split epimorphism.
+    \end{defi}
+    \begin{defi}
+        $\sigma:M\rrightarrow N$ is a special homogeneous surjection when $(p_1,\Delta)$ is a homogeneous split epimorphism.
+    \end{defi}
+\end{frame}
+
+% 17 %
+\begin{frame}{Semidirect form of Schreier split epimorphisms}
+    \begin{prop}
+        There is an isomorphism of Schreier split epimorphisms
+        \[\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, background color=bg]
+            K \arrow[d, Rightarrow, no head] \arrow[rr, tail] \& \&  M\times_NM \arrow[d, "\zeta", shift left=1.5] \arrow[rr, "p_1", two heads, shift left=3] \arrow[rr, "p_2"', two heads, shift right=3] \& \& M \arrow[d, Rightarrow, no head] \arrow[ll, "\Delta" description] \arrow[rr, "\sigma", two heads] \& \& N \arrow[d, Rightarrow, no head] \\ K \arrow[rr, tail] \& \& K\rtimes_\varphi M \arrow[u, "\zeta^{-1}", shift left=1.5] \arrow[rr, two heads, shift left=3] \arrow[rr, "\bullet"', two heads, shift right=3] \& \& M \arrow[ll, tail] \arrow[rr, "\sigma", two heads] \& \& N
+        \end{tikzcd}\]
+    \end{prop}
+
+    \begin{enumerate}
+        \item $\varphi:M\to End(K)$ is given by $\varphi(m)(k)\cdot m = m\cdot k$;
+        \item $K\rtimes_\varphi M$ is the semidirect product with respect to $\varphi$;
+        \item $\zeta(m_1,m_2)=(k,m_2)$, where $m_1=k\cdot m_2$;
+        \item $\zeta^{-1}(k,m) = (k\cdot m, m)$;
+        \item $\bullet(k,m)=k\cdot m$.
+    \end{enumerate}
+\end{frame}
+
+% 18 %
+\begin{frame}{Characterization of monoid extensions}
+    \begin{teo}
+        Consider a split epimorphism $(f,s)$; then $f$ is a trivial extension if and only if $f$ is a special homogeneous surjection.
+    \end{teo}
+
+    \pause \vspace{5mm}
+
+    \begin{teo}
+        Let $\sigma:M\rrightarrow N$ be a surjective homomorphism of monoids. The following are equivalent:
+        \begin{enumerate}
+            \item $\sigma$ is a central extension;
+            \item $\sigma$ is a normal extension;
+            \item $\sigma$ is a special homogeneous surjection.
+        \end{enumerate}
+    \end{teo}
+\end{frame}
+
+% 19 %
+\begin{frame}{Semidirect form of $K(\sigma)$}   
+    Consider $\sigma\in Norm(N)$ and its kernel pair groupoid $K(\sigma)$
+    
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&, center picture]
+            (K\rtimes_\varphi M)\times_M(K\rtimes_\varphi M) \arrow[r, "m"] \& K\rtimes_\varphi M \arrow[rr, "\bullet"', two heads, bend right, shift right=2] \arrow[rr, two heads, bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] \& \& M \arrow[ll, tail]
+        \end{tikzcd}
+    \end{center}
+
+    where:
+
+    \vspace{1mm}
+    
+    \begin{enumerate}
+        \item $\varphi:M\to Aut(K)$ is given by $\varphi(m)(k) \cdot m = m \cdot k$;
+        \item $\bullet(k,m)=k\cdot m$;
+        \item $\tau(k,m)=(k^{-1}, k\cdot m)$;
+        \item $m(k_1,m_2,k_2,m_3) = (k_1\cdot k_2, m_3)$.
+    \end{enumerate}
+\end{frame}
+
+% 20 %
+\begin{frame}{Semidirect form of $Gal[\sigma]$}
+    Consider $\sigma\in Norm(N)$ and its Galois groupoid $Gal[\sigma]=Gp(K(\sigma))$
+    
+    \begin{center}
+    \small
+        \begin{tikzcd}[every label/.append style = {font = \footnotesize}, ampersand replacement=\&, center picture]
+            (K\rtimes_{\overline{\varphi}} Gp(M))\times_{Gp(M)}(K\rtimes_{\overline{\varphi}} Gp(M)) \arrow[r, "m"] \&  K\rtimes_{\overline{\varphi}} Gp(M) \arrow[rr, "\bullet"', two heads, bend right, shift right=2] \arrow[rr, two heads, bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] \& \& Gp(M) \arrow[ll, tail]
+        \end{tikzcd}
+    \end{center}
+
+    where:
+
+    \vspace{1mm}
+    
+    \begin{enumerate}
+        \item $\overline{\varphi}:Gp(M)\to Aut(K)$ is given by $\overline{\varphi}(\overline{[m]})(k) \cdot m = m \cdot k$;
+        \item $\bullet(k,\overline{[m]})=\overline{[k]}\cdot \overline{[m]}$;
+        \item $\tau(k,\overline{[m]})=(k^{-1}, \overline{[k]}\cdot\overline{[m]})$;
+        \item $m(k_1,\overline{[m_2]},k_2,\overline{[m_3]}) = (k_1\cdot k_2, \overline{[m_3]})$.
+    \end{enumerate}
+\end{frame}
+
+
+\begin{comment}
+% 23 %
+\begin{frame}{Internal covariant presheaves}
+    Consider $\sigma\in Norm(N)$ and fix $(G,f,\pi)\in \mathscr{F}^{Gal[\sigma]}$.
+
+    \vspace{5mm}
+
+    $\pi:K\rtimes_{\overline{\varphi}\circ f}G\rightarrow G$ is a group action of $K$ on $G$ that is compatible with $f:G\rrightarrow Gp(M)$.
+
+    \vspace{3mm}
+
+    \begin{enumerate}
+        \item $\pi(1_M,g) = g$;
+        \item $\pi(k_1,\pi(k_2,g)) = \pi(k_1\cdot k_2, g)$;
+        \item $f\circ \pi(k_1,g) = \overline{[k_1]}\cdot f(g)$.
+    \end{enumerate}
+\end{frame}
+\end{comment}
+
+
+\begin{frame}{Essential bibliography}
+    \nocite{*}
+    \printbibliography
+\end{frame}
+
+
+\begin{comment}
+
+\begin{frame}{}
+    
+\end{frame}
+
+\begin{frame}{}
+    
+\end{frame}
+
+% 9 %
+\begin{frame}{Internal covariant presheaves}
+    \[\begin{tikzcd}[ampersand replacement=\&, center picture, row sep=30pt, column sep=30pt]
+        \mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}\mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}X \arrow[d, "\mathcal{S}(m)\times 1"'] \arrow[r, "1\times \pi"] \& \mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}X \arrow[d, "\pi"] \& X \arrow[l, "\limitmorph{\mathcal{S}(\Delta)\circ f}{1}"'] \\ \mathcal{S}(S\times_RS)\times_{\mathcal{S}(S)}X \arrow[r, "\pi"] \arrow[d, "\alpha_1"'] \& X \arrow[d, "f"] \arrow[ru, Rightarrow, no head] \\ \mathcal{S}(S\times_RS) \arrow[r, "\mathcal{S}(p_2)"'] \& \mathcal{S}(S)
+    \end{tikzcd}\]
+
+    \pause \vspace{3mm}
+
+    We will write $\overline{\mathcal{P}}^{Gal[\sigma]}$ for the category of internal covariant presheaves on $Gal[\sigma]$ in $\overline{\mathcal{P}}$, with internal natural transformation as arrows.
+\end{frame}
+
+
+\begin{frame}{Kernel pair groupoid}
+    Consider the kernel pair $\begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+        S\times_RS \arrow[r, "p_1", shift left=1.5] \arrow[r, "p_2"', shift right=1.5] \& S \arrow[r, "\sigma"] \& R
+    \end{tikzcd}$ of $\sigma$.
+
+    It induces an internal groupoid $K(\sigma)$ in $\overline{\mathcal{A}}$:
+    \begin{center}
+        \begin{tikzcd}[every label/.append style = {font = \small}, ampersand replacement=\&]
+            (M\times_NM)\times_M(M\times_NM) \arrow[rr, "m"] \& \&  M\times_NM \arrow[rrr, "p_2"', bend right, shift right=2] \arrow[rrr, "p_1", bend left, shift left=2] \arrow["\tau"', loop, distance=2em, in=305, out=235] \& \& \& M \arrow[lll, "\Delta"']
+        \end{tikzcd}
+    \end{center}
+    fixing
+    \begin{enumerate}
+        \item $\Delta:=\limitmorph{1_S}{1_S}$;
+        \item $\tau:=\limitmorph{p_2}{p_1}$;
+        \item $m:=\limitmorph{\pi_1}{\pi_4}$.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Schreier and homogeneous split epimorphisms}
+    \begin{prop}
+        There is an isomorphism of Schreier split epimorphisms
+        \[\begin{tikzcd}[every label/.append style = {font = \small}, background color=bg, ampersand replacement=\&]
+            K \arrow[d, Rightarrow, no head] \arrow[rr, tail] \& \& A \arrow[d, "\zeta", shift left=1.5] \arrow[rr, "f", two heads, shift left=1.5] \& \& M \arrow[d, Rightarrow, no head] \arrow[ll, "s", shift left=1.5] \\
+            K \arrow[rr, tail] \& \& K\rtimes_\varphi M \arrow[u, "\zeta^{-1}", shift left=1.5] \arrow[rr, two heads, shift left=1.5] \& \& M \arrow[ll, tail, shift left=1.5]
+        \end{tikzcd}\]
+        where $\varphi:M\to End(K)$ is given by $\varphi(m):=(\mu_m^r)^{-1}\circ \mu_m^l$ and $K\rtimes_\varphi M$ is the semidirect product of $K$ and $M$ with respect to $\varphi$: the cartesian product $K\times M$ equipped with the operation
+        \[ (k_1,m_1)\cdot (k_2,m_2) = (k_1\cdot \varphi(m_1)(k_2), m_1\cdot m_2). \]
+    \end{prop}
+
+    $\zeta(a) = (k, f(a))\text{ where } a =k\cdot sf(a)$ and $\zeta^{-1}(k,m) = k\cdot s(m)$.
+\end{frame}
+
+\end{comment}
+
+\end{document}

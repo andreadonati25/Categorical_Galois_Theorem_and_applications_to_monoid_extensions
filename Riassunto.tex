@@ -1,0 +1,129 @@
+%%%%%%%%%%%%%%%%%%%%%%  PACKAGES  %%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{comment}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{tikz-cd}
+\usepackage{pgfplots}
+\usepackage{csquotes}
+\usepackage{mathtools}
+\usepackage[pdfa]{hyperref}
+
+%\usepackage{refcheck}
+%\norefnames
+
+%%%%%%%%%%%%%  STYLE & COMMAND  %%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}{Corollary}[theorem]
+
+\theoremstyle{definition}
+\newtheorem*{oss*}{Observation}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\newcommand{\rrightarrow}{\mathrel{\mathrlap{\rightarrow}\mkern1mu\rightarrow}}
+\newcommand{\tens}[1]{\otimes_{#1}}
+\DeclareRobustCommand\longrrightarrow
+     {\relbar\joinrel\rrightarrow}
+\newcommand{\pullback}{|[label={[label distance=-2mm]-45:\lrcorner}]|}
+\newcommand{\limitmorph}[2]{\langle{#1},{#2}\rangle}
+\newcommand{\opcat}[1]{{#1}^{\mathrm{op}}}
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+% changes to the layout
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\topmargin}{0cm}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{23cm}
+
+\linespread{1.0}
+\pagestyle{plain}
+\pgfplotsset{compat = 1.18}
+
+%%%%%%%%%%%%%%%%%%%%%%  BIBLIOGRAFIA  %%%%%%%%%%%%
+\usepackage[
+    backend=biber,
+    style=numeric,
+    sorting=nyt,
+    maxbibnames=10,
+  ]{biblatex}
+\addbibresource{bibliography/biblio.bib}
+
+% per caricarlo correttamente
+\pdfminorversion=4
+
+% aggiunti da me
+%\allowdisplaybreaks
+
+%\bibliographystyle{plain}
+\setlength{\parindent}{0em}
+\begin{document}
+	\begin{center}
+		{\bf RIASSUNTO DI TESI MAGISTRALE }
+		\vskip0.6cm
+			\hrule
+			
+			\vskip0.4cm 
+	{\bf \large	 Categorical Galois Theorem\\      }
+		
+		\vskip0.2cm 
+			{\bf \large and applications to monoid extensions }
+		
+		
+		\vskip0.4cm 
+		
+	{  \large Candidato: Andrea Donati,  \hspace{1cm}  Matricola 15764A}
+		
+	\end{center} 
+
+
+	\hrule
+	
+\vspace{1cm}
+   
+
+Galois theory stands as one of the most profound foundational results in modern algebra, bridging the study of a priori distinct mathematical structures. It provides a framework that connects seemingly separate theories, such as the classical correspondence between group theory and field theory. The framework of Galois-type theories has been extended multiple times. An initial step in this generalization, primarily inspired by the work of Grothendieck, was the extension of the classical subfields-subgroups correspondence to arbitrary $K$-algebras and to infinite dimensional Galois extensions. The next major step replaced the base field $K$ with a general commutative ring $R$, leading to the development of a Galois theory for rings. Magid, in \cite{magid2014separable}, systematically developed Grothendieck's Galois theory in full generality for commutative rings. The final step, due to Janelidze \cite{JANELIDZE1990270}, was a complete categorical generalization, inspired by the ring-theoretic setting.
+
+\medskip
+
+This work aims to offer a shift in perspective on the classical and historical process of generalization. Despite the terminology, which maintains a clear connection to the classical Galois theory for fields, we approach and study the Categorical Galois Theorem independently, without explicit reference to the classical theory it generalizes. The categorical analogue of the fundamental theorem of Galois theory is presented as an equivalence of categories - specifically, between particular morphisms in an abstract category and a category of internal presheaves on a specific groupoid. The constructions in categorical Galois theory require the notions of admissible adjunction, which preserve pullbacks of a particular form, and effective descent morphisms, which are morphisms that allow one to move to a more "manageable extension" of an object and then "descend" back smoothly to the original object. For a fixed admissible adjunction, the specific groupoid is determined by the image through the adjunction of the kernel pair of a Galois effective descent morphism. Galois morphisms are also referred to as normal extensions or self-splitting extensions, recovering terminology from classical field theory. Only afterward we show that the classical results of Magid, Grothendieck and Galois himself emerge as specific cases of the categorical theorem, either by considering the algebraic setting of rings or by restricting it to the case of fields. In the latter case, the Galois groupoid is indeed a group, and the internal covariant presheaves on it reduce to a group action on a set.
+
+\medskip
+
+The power of the categorical approach lies in its versatility: it allows the definition and study of Galois-type theories across different mathematical contexts. Notable examples include the study of central extensions of groups and the interpretation of the covering theory of locally connected topological spaces as a form of Galois theory. One of the objectives of this thesis is to contribute to the study of a Galois theory for monoids. This direction is primarily motivated by the work of Montoli, Rodelo and Van der Linden in \cite{montoli2014galois}, where a Galois theory for monoids is developed. We prove that the adjunction between the categories of monoids and groups, related to the Grothendieck group construction \cite{malcev1937, malcev1939immersion, malcev1940immersion}, is admissible in the sense of categorical Galois theory with respect to the class of surjective homomorphisms. A key result of this approach is the explicit characterization of central extensions - those particular morphisms that establish the Galois equivalence - as special homogeneous surjections. In particular, our aim is to explicitly describe the Galois groupoid $Gal[\sigma]$ associated with a monoid extension $\sigma$. A fundamental feature of special homogeneous surjections, seen as special Schreier surjections, allows us to give this explicit description of $Gal[\sigma]$ in terms of a semidirect product construction. The algebraic structure of semidirect products of monoids, or equivalently, the study of monoid actions $M\to End(K)$, has been extensively investigated in \cite{patchkoria1998crossed}. It has been shown that such actions correspond to a specific class of split epimorphisms, later formalized as Schreier split epimorphisms in the more recent works \cite{bourn2014schreierSemirings, bourn2014schreier, martins2013semidirect}. Since normal extensions turn out to be exactly the special homogeneous surjections, we are able to describe the kernel pair of a normal extension $\sigma:M\rrightarrow N$ as a semidirect product of monoids determined by its domain $M$ and its kernel $K$. Moreover, this construction is preserved by the admissible adjunction: the Galois groupoid $Gal[\sigma]$ can be described as a semidirect product of groups determined by the Grothendieck group of $M$ and $K$.
+
+\medskip
+
+The thesis is organized as follows.
+
+\smallskip
+
+In Chapter $1$, we introduce the categorical Galois theory in full generality. At first, introducing the notions of effective descent morphisms and internal groupoid and presheaves; then proving the categorical analogue of the fundamental theorem of Galois theory. 
+
+\smallskip
+
+In Chapter $2$, we apply the Categorical Galois Theorem to the category of rings. In particular, to the Pierce spectrum adjunction between the categories of rings and profinite spaces, that is admissible with respect to all the morphisms. Restricting our focus on fields, we fully recover the classical Galois correspondence.
+
+\smallskip
+
+Finally, in Chapter $3$, we study the Galois structure for monoids given by the Grothendieck group construction. We prove that it is admissible with respect to the class of surjective homomorphisms and we characterize central and normal extensions as special homogeneous surjections. Moreover, we give an explicit description of the Galois groupoid as a semidirect product of groups completely determined by the kernel of the fixed monoid extension.
+
+\newpage 
+\printbibliography
+\end{document}

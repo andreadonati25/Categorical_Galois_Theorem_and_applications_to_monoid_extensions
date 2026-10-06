@@ -1,0 +1,208 @@
+\chapter{Further details}
+\label{cap:Appendix}
+
+\section{Stone duality}
+\label{sec:AppendixStone}
+
+\begin{lemma}[\cite{borceux2001galois}, $4.1.8$ - $4.1.11$ ]
+\label{lem:Spec(B)}
+    Let $B$ be a Boolean algebra. Consider, for every $b\in B$, the subsets
+    \[ U_b = \{ F\in Spec(B)\text{ : }b\in F \} \]
+    in $Spec(B) := \{ F\subset B\text{ : } F \text{ is a ultrafilter in } B\}$. Then $\{U_b\}_{b\in B}$ constitutes a basis of clopens for a topology $\mathcal{T}$ on $Spec(B)$. Moreover, the space $(Spec(B), \mathcal{T})$ is a profinite space.
+    \begin{proof}
+        We need to show that
+        \begin{enumerate}
+            \item for every $F\in Spec(B)$, there exists $b\in B$ such that $F\in U_b$;
+            \item for every $b,b'\in B$ and $F\in U_b\cap U_{b'}$, there exists $y\in B$ such that $F\in U_y\subset U_b\cap U_{b'}$;
+            \item for every $b\in B$, there exists $b'\in B$ such that $U_b^c = U_{b'}$.
+        \end{enumerate}
+        Fix $F\in Spec(B)$; clearly $F\in U_b$ for every $b\in F$, and an (ultra)filter is never an empty set. Now, if $F\in U_b\cap U_{b'}$, then $b,b'\in F$, so that $b\wedge b'\in F$ and $F\in U_{b\wedge b'}$. It can be easily shown that $U_{b\wedge b'} = U_b\cap U_{b'}$. In this way $\{U_b\}_{b\in B}$ is a basis for a topology on $Spec(B)$. Moreover, if $b\not\in F$, then $b^c\in F$, obtaining
+        \[ U_b^c = \{ F \in Spec(B) \text{ : } b\not\in F \} = \{ F \in Spec(B) \text{ : } b^c\in F \} = U_{b^c}, \]
+        in such a way that every $U_b$ is also closed.
+
+        Finally, for $Spec(B)$ to be a profinite space, we need to show that it is a Hausdorff compact space, since we have already shown that it has a basis of clopens. If $F\not= F'$, the maximality of $F$ implies that $F\not\subset F'$. Choosing $b\in F\setminus F'$, we get $F\in U_b$ and $F'\not\in U_b$. It remains to prove that $Spec(B)$ is compact. Consider $Spec(B) = \bigcup_{a\in A}U_a$ where $A\subset B$ and suppose we cannot extract a finite covering. Then for every finite sequence $a_1,\dots, a_n\in A$, there exists an ultrafilter $F$ such that
+        \[ F\not\in U_{a_1}\cup\dots\cup U_{a_n} = U_{a_1\vee\dots\vee a_n} \]
+        or equivalently
+        \[ a_1\vee\dots\vee a_n\not\in F \]
+        or again
+        \[ (a_1\vee\dots\vee a_n )^c = a_1^c\wedge\dots\wedge a_n^c \in F.  \]
+        Since $0\not\in F$, for every finite list $a_1,\dots, a_n\in A$, we have $a_1^c\wedge\dots\wedge a_n^c\not= 0$. If we take
+        \[ G = \{ b\in B \text{ : } \exists a_1,\dots, a_n\in A\text{  } a_1^c\wedge\dots\wedge a_n^c\leq b \}, \]
+        it is just a computation to show that it is a filter and it is proper since $0\not\in G$. In particular, the set $\{a^c\text{ : }a \in A\}$ is contained in $G$, so that it is also contained in the ultrafilter $F$ that contains $G$ (it exists by Zorn's lemma). We got an ultrafilter $F$, such that for every $a\in A$, $a^c\in F$, so $a\not\in F$ contradicting that $\{U_a\}_{a\in A}$ is a covering of $Spec(B)$ since $F\not\in \bigcup_{a\in A}U_a$.
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}[\cite{borceux2001galois}, $4.1.12$, $4.1.13$]
+    Let $B$ be a Boolean algebra. A subset $U\subset Spec(B)$ is a clopen if and only if has the form $U_b$ for some $b\in B$. Moreover, $B$ is isomorphic to the set of clopens in $Spec(B)$.
+    \begin{proof}
+        Every $U_b$ is a clopen. Conversely, if $U$ is a clopen, it is closed in the compact space $Spec(B)$, so it is compact. If $U = \bigcup_{i\in I}U_{b_i}$, then 
+        \[ U = U_{b_1}\cup\dots U_{b_n} = U_{b_1\vee\dots\vee b_n}. \]
+        The isomorphism of Boolean algebras is given by the map $b\longmapsto U_b$.
+    \end{proof}
+\end{lemma}
+
+\begin{lemma}[\cite{borceux2001galois}, $4.1.15$]
+\label{lem:Clopen(X)}
+    Let $X$ be a profinite space. The set of clopens in $X$ is a Boolean algebra with the operations of intersection, union and complement. Moreover, $X$ is homeomorphic to the spectrum of the Boolean algebra of its clopens.
+    \begin{proof}
+        Trivially $Clopen(X)$ is a Boolean algebra. Moreover, given $x\in X$, we put
+        \[ F_x = \{ U\subset X \text{ : } U \text{ clopen, } x\in U\}. \]
+        It is trivially an ultrafilter in the Boolean algebra $Clopen(X)$. We shall prove
+        \[ \varphi:X\longrightarrow Spec(Clopen(X))\text{, }x\longmapsto F_x \]
+        to be a homeomorphism. If $x\not= y$, there exists a clopen $U$ such that $x\in U$ and $y\not\in U$. Thus, $U\in F_x$ and $U\not\in F_y$, from which $F_x\not= F_y$ and $\varphi$ is injective. If $F\subset Clopen(X)$ is an ultrafilter, consider
+        \[ V = \bigcap_{U\in F} U. \]
+        Since $F$ is a filter, a finite intersection is never empty, and since $X$ is compact, $V$ is non empty. Fix $x\in V$, then $x\in U$ for every $U\in F$, so that $F\subset F_x$. By maximality, $F = F_x = \varphi(x)$ and $\varphi$ is surjective. An element of the basis of $Spec(Clopen(X))$ has the form $U_W$ for some $W\in Clopen(X)$, so that
+        \[ \varphi^{-1}(U_W) = \{x\in X\text{ : }W\in F_x\} = \{x\in X\text{ : }x\in W\} = W, \]
+        and $\varphi$ is continuous. Since $\varphi$ is a continuous bijection between compact Hausdorff spaces, it is an homeomorphism.
+    \end{proof}
+\end{lemma}
+
+\begin{theorem}[\cite{borceux2001galois}, $4.1.16$]
+    The functors
+    \[ Spec:\opcat{\textbf{Bool }}\longrightarrow\textbf{Prof}\text{, }B\mapsto Spec(B) \]
+    and
+    \[ Clopen:\textbf{Prof}\longrightarrow\opcat{\textbf{Bool }}\text{, }X\mapsto Clopen(X)  \]
+    form an equivalence of categories.
+    \begin{proof}
+        If $f:B\to B'$ is a homomorphism of Boolean algebras, we put
+        \[ Spec(f):Spec(B')\longrightarrow Spec(B)\text{, }F\longmapsto f^{-1}(F). \]
+        This map is continuous since
+        \begin{align*}
+            Spec(f)^{-1}(U_b) &= \{ F\in Spec(B')\text{ : } Spec(f)(F)\in U_b \}\\
+            &= \{ F\in Spec(B')\text{ : } b\in Spec(f)(F) \}\\
+            &= \{ F\in Spec(B')\text{ : } b\in f^{-1}(F) \}\\
+            & = \{ F\in Spec(B')\text{ : } f(b)\in (F) \} = U_{f(b)}\\
+        \end{align*}
+        for $U_b\subset Spec(B)$. This defines the functor $Spec:\opcat{\textbf{Bool }}\longrightarrow\textbf{Prof}$.
+
+        On the other hand, if $g:X\to X'$ is a continuous map between profinite spaces, we put
+        \[ Clopen(g):Clopen(X')\longrightarrow Clopen(X)\text{, }U\longmapsto g^{-1}(U) \]
+        that is a homomorphism of Boolean algebras. This defines the functor $Clopen:\textbf{Prof}\longrightarrow\opcat{\textbf{Bool}}$.
+
+        We have already seen that the functors are mutually inverse up to isomorphism at the level of objects. Moreover, if $f:B\to B'$,
+        \[ (Clopen\circ Spec)(f):Clopen(Spec(B))\longrightarrow Clopen(Spec(B')) \]
+        is such that
+        \[ U_b \longmapsto Spec(f)^{-1}(U_b) = U_{f(b)}. \]
+        If $g:X\to X'$,
+        \[ (Spec\circ Clopen)(g):Spec(Clopen(X))\longrightarrow Spec(Clopen(X')) \]
+        is such that
+        \[ F_x\longmapsto \{W\in Clopen(X')\text{ : }g^{-1}(W)\in F_x\} = F_{g(x)}. \]
+    \end{proof}
+\end{theorem}
+
+\section{Admissibility of the Galois structure for rings}
+\label{sec:AppendixRing}
+
+\begin{definition}
+    Let $S$ be a ring. An ideal $I\subset S$ is regular when it is generated by its idempotent elements. Thus, when every $i\in I$ can be written
+    \[ i = s_1e_1 + \dots + s_n e_n \]
+    with $s_i\in S$, $e_i\in I$ and $e_i^2 = e_i$.
+\end{definition}
+
+\begin{definition}
+\label{def:AppIdealBoolean}
+    Let $B$ be a Boolean algebra. A proper ideal in $B$ is a subset $I\subset B$ such that
+    \begin{enumerate}
+        \item $0\in I$;
+        \item $x\in I$ and $y\in I$, then $x\vee y\in I$;
+        \item $x\in I$ and $x\geq y$, then $y\in I$;
+        \item $1\not\in I$;
+    \end{enumerate}
+    An maximal ideal in $B$ is a maximal element in the poset of proper ideals in $B$ ordered by inclusion.
+\end{definition}
+
+%% ISOMORFISMI %%
+\begin{lemma}
+\label{lem:A21}
+    Let $B$ be a Boolean algebra. The poset of filters in $B$ is isomorphic to the poset of ideals in $B$. The poset of filters in $B$ is isomorphic to the poset of open subsets of $Spec(B)$.
+    \begin{proof}
+        The first isomorphism follows directly by Definition \ref{def:FilterBool} and Definition \ref{def:AppIdealBoolean}. The correspondence is given by
+        \[ F \longmapsto I:=\{b\in B\text{ : }b^c\in F\} \]
+        and
+        \[ I\longmapsto F:=\{b\in B\text{ : }b^c\in I\}. \]
+        Moreover, note that the basis $\{U_b\}_{b\in B}$ of clopens we defined in Lemma \ref{lem:Spec(B)} is the same of $\{\mathcal{O}_b\}_{b\in B}$, where $\mathcal{O}_b:=U_b^c=U_{b^c}$. Its topology $\mathcal{T}$ is given by the subsets
+        \[ \mathcal{O}_H : = \{ F\in Spec(B)\text{ : } H\not\subseteq F \} \]
+        for every filter $H$ in $B$. Indeed, for every filter $H\subseteq B$, 
+        \[ H = \bigcup_{b\in H}\uparrow b \]
+        where $\uparrow b$ is the filter in $B$ given by $\{y\in B\text{ : }b\leq y\}$; then
+        \[ \mathcal{O}_H = \bigcup_{b\in H}\mathcal{O}_{\uparrow b}  = \bigcup_{b\in H}\mathcal{O}_{b}. \]
+        Finally, the map
+        \[ Filter(B)\longrightarrow\mathcal{T}\text{, } H\longmapsto \mathcal{O}_H \]
+        is surjective by definition and injective since every filter is the intersection of the ultrafilters which contain it. It is just a computation to show that
+        \[ H\subseteq H' \iff \mathcal{O}_H\subseteq \mathcal{O}_{H'}. \]
+    \end{proof}
+\end{lemma}
+
+%% SPEC COSA %%
+\begin{lemma}[\cite{borceux2001galois}, $4.2.10$, $4.2.11$]
+    Let $S$ be a ring. The Pierce spectrum $Sp(S)$ of $S$ is homeomorphic to the set of maximal regular ideals of $S$, provided with the topology constituted of the subsets
+    \[ \mathcal{O}_I = \{M\text{ : }I\not\subseteq M\} \]
+    for every regular ideal $I\subset S$.
+    \begin{proof}
+         By Lemma \ref{lem:A21}, it suffices to prove that the poset of ideals of $Idemp(S)$ is isomorphic to the poset of regular ideals of $S$. Fix a regular ideal $I\subset S$, then $Idemp(I)$ is clearly an ideal of the Boolean algebra $Idemp(S)$. By definition of regular ideal, distinct regular ideals have different idempotents, proving the injectivity of the correspondence. Moreover, if $J$ is an ideal of the Boolean algebra $Idemp(S)$, then we can define $I$ as the regular ideal generated by all elements of $J$; clearly $J\subseteq Idemp(I)$. Conversely, if $e\in Idemp(I)$, then $e=\sum_{i=1}^n s_i e_i$ with $s_i\in S$ and $e_i\in J$. Since $J$ is an ideal, $e':=e_1\vee \dots \vee e_n\in J$ and $e_ie'=e_i\wedge e=e_i$. We obtain $e\in J$ since $e=ee'=e\wedge e'$, that is $e\leq e'$. Finally, it is obvious that the correspondence $I\longmapsto Idemp(I)$ preserves and reflects the ordering.
+    \end{proof}
+\end{lemma}
+
+We now consider $Sp(S)$ as the set of maximal regular ideals of $S$ with the topology consisting of subsets $\mathcal{O}_I$ for every regular ideal $I\subset S$ and the basis given by the subsets $\mathcal{O}_e=\{M\text{ : }e\not\in M\}$ for every idempotent $e\in S$.
+
+%% PIERCE STRUCTURAL %%
+\begin{definition}
+    Let $S$ be a ring. The Pierce structural space of a ring is the disjoint union $\coprod_MS/M$ of all quotients $S/M$, where $M$ runs through all the maximal regular ideals of $S$; this set is provided with the final topology for all maps
+    \[ p_s^I:\mathcal{O}_I\longrightarrow \coprod_M S/M\text{, }N\longmapsto [s]\in S/N \]
+    where $I$ runs through the regular ideals of $S$ and $s$ through the elements of $S$.
+\end{definition}
+
+%% ONLY DUE IDEMPOTENTI %%
+\begin{lemma}[\cite{borceux2001galois}, $4.2.16$]
+\label{lem:A23}
+    Given a maximal regular ideal $M$ of $S$, the quotient ring $S/M$ admits only $0$ and $1$ as idempotents.
+    \begin{proof}
+        The ring $S/M$ is the filtered colimit of the rings $S/\langle e_1,\dots, e_n\rangle$, where $\langle e_1,\dots, e_n\rangle$ is the ideal generated by some idempotents $e_i\in M$. Fix $s\in S$ such that $[s]\in S/M$ is an idempotent; then it is an idempotent in a quotient $S/\langle e_1,\dots, e_n\rangle$. Clearly, if $s\in M$, then $[s]=0$. Suppose $s\not\in M$ and fix $e':=e_1\vee\dots\vee e_n$ and observe that $S/\langle e_1,\dots, e_n\rangle\cong S/\langle e'\rangle\cong \langle1-e'\rangle$. Indeed, 
+        \[S=\langle1-e'\rangle\oplus\langle e'\rangle\text{ and }\langle1-e'\rangle\cap\langle e'\rangle=0.\]
+        With the last isomorphism, there exists an element $e\in\langle1-e'\rangle$ such that $e^2=e$ and $[e]=[s]$. Since $s\not \in M$, $e\not\in M$; then, $1-e\in M$ by maximality. Thus, $[e]=[s]=1$.
+    \end{proof}
+\end{lemma}
+
+%% TEOREMA %%
+\begin{theorem}[\cite{borceux2001galois}, $4.3.6$]
+    Let $S$ be a ring. The right adjoint of the functor
+    \[ Sp_S:\opcat{\textbf{S-Alg}}\longrightarrow \textbf{Prof}/Sp(S)\text{, }A\longmapsto (Sp(A)\to Sp(S)) \]
+    is the functor
+    \[ {\mathcal{C}}_S:\textbf{Prof}/Sp(S)\longrightarrow\opcat{\textbf{S-Alg}}\text{, }(X,f)\longmapsto \text{Hom}((X,f),(\coprod_M S/M, p)) \]
+    where the Hom-set is provided pointwise with the structure of $S$-algebra, via the structure of $S$-algebra on each fibre $S/M$ and $p$ is the projection of the Pierce structural space of $S$ given by
+    \[ p:\coprod_M S/M \longrightarrow Sp(S)\text{, }[s]\in S/N\longmapsto N. \]
+    This right adjoint is full and faithful.
+    \begin{proof}
+        To prove the adjointness property, fix an $S$-algebra $A$; we must prove the existence of natural bijections
+        \[ \text{Hom}(\text{Hom}((X,f),(\coprod_MS/M,p)),A)\cong \text{Hom}((Sp(A),\alpha),(X,f)) \]
+        where $\alpha:Sp(A)\to Sp(S)$ is the canonical morphism corresponding, by the Stone duality, to the morphism
+        \[ Idemp(S)\longrightarrow Idemp(A)\text{, }e\longmapsto e\cdot 1 \]
+        of boolean algebras. 
+        
+        Given $\varphi:\text{Hom}((X,f),(\coprod_MS/M,p))\longrightarrow A$ and a clopen $U\subseteq X$, we consider the map
+        \[ \chi_U:X\to \coprod_MS/M\text{, }\chi_U(x) = \begin{cases}
+            [1]\in S/f(x)\text{ if }x\in U\\
+            [0]\in S/f(x)\text{ if }x\not\in U.
+        \end{cases} \]
+        The map $\chi_U$ is idempotent and $\varphi(\chi_U)$ is an idempotent of $A$. This yields a homomorphism
+        \[ \varphi':Clopen(X)\longrightarrow Idemp(A)\text{, }U\longmapsto \varphi(\chi_U). \]
+        This corresponds, by Stone duality, to a continuous map $\varphi'':Sp(A)\longrightarrow X$. To prove $f\circ \varphi'' = \alpha$, it suffices to prove
+        \[ \varphi'(f^{-1}(\mathcal{O}_{\langle e \rangle})) = \varphi(\chi_{f^{-1}(\mathcal{O}_{\langle e \rangle})}) = e\cdot 1 \]
+        for every idempotent $e\in S$. But, for every $x\in X$,
+        \[ e\in f(x) \iff x\not\in f^{-1}(\mathcal{O}_{\langle e \rangle}) \]
+        so that $\chi_{f^{-1}(\mathcal{O}_{\langle e \rangle})}(x) = [e] = e\cdot [1]$. Since $\varphi$ is a homomorphism of $S$-algebras, we obtain the desired equality. Clearly, the correspondence $\varphi\longmapsto\varphi''$ is natural.
+        
+        Observe that given $h:(X,f)\longrightarrow (\coprod_MS/M,p)$, the subsets $h^{-1}(p_s^{Sp(S)}(Sp(S)))$, for $s\in S$, constitute an open covering of $X$. Since $X$ has a base of clopens and is compact, we can extract a finite covering of clopens. This yields clopens $U_1,\dots, U_n\subseteq X$ and elements $s_1,\dots, s_n\in S$ such that
+        \[ h(x) = [s_i]\in S/f(x) \]
+        for every $x\in U_i$ and $i=1,\dots, n$. This proves that
+        \[ h=\sum_{i=1}^ns_i\cdot \chi_{U_i} \]
+        for some $s_i\in S$ and clopens $U_i$ that are a partition of $X$.
+
+        Let us prove the injectivity of the correspondence $\varphi\longmapsto \varphi''$. Consider two morphisms $\varphi$ and $\psi$ of $S$-algebras as before, such that $\varphi''=\psi''$. By Stone duality, $\varphi'=\psi'$ and by definition we obtain $\varphi(\chi_U)=\psi(\chi_U)$, for each clopen $U\subseteq X$. By the previous observation $\varphi(h)=\psi(h)$ for every $h\in\text{Hom}((X,f),(\coprod_MS/M,p))$.
+
+        Let us prove the surjectivity of the correspondence $\varphi\longmapsto \varphi''$. Consider $g:(Sp(A),\alpha)\longrightarrow (X,f)$ and, by Stone duality, its corresponding $\overline{g}:Clopen(X)\to Idemp(A)$. We need to define $\varphi(h)\in A$ for each $h\in \text{Hom}((X,f),(\coprod_MS/M,p))$, such that $\varphi''=g$. By the previous observation, it is sufficient to define $\varphi$ on the maps $\chi_U$, for each clopen $U\subseteq X$; putting $\varphi(\chi_U) := \overline{g}(U)$, we obtain $\varphi'=\overline{g}$ and, by Stone duality, $\varphi''=g$.
+        
+        Finally, let us prove that this right adjoint is full and faithful. $h:(X,f)\longrightarrow (\coprod_MS/M,p)$ is idempotent if and only if $h(x)$ is idempotent in $S/f(x)$, for every $x\in X$. By Lemma \ref{lem:A23}, the idempotents of $S/f(x)$ are only $[0]$ and $[1]$ so that, by the previous observation, we obtain that $h=\chi_U$, for a clopen $U\subseteq X$. By Stone duality,
+        \[ Sp(\text{Hom}((X,f),(\coprod_M S/M, p))) \cong X. \]
+    \end{proof}
+\end{theorem}
